@@ -1,0 +1,460 @@
+<!DOCTYPE html><html lang="zh-CN" data-theme="dark"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0,viewport-fit=cover"><title>TensorFlow 笔记1 | Obito Blog</title><meta name="author" content="Obito"><meta name="copyright" content="Obito"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#0d0d0d"><meta name="description" content="Tensorflow的基本结构	 tensor（张量）:tensorflow的数据中央控制单元 每一个tensor都有一系列的初始值组成，这些初始值形成一个任意维数的数组（一般tensor的列即为它的维度）。flow（流动）。 Tensorflow程序通常有两个阶段：构建图阶段和执行图阶段。 构建图阶段：定义数据（张量[^tensor]）与操作(节点[^Op])，这些执行步骤被描述成一个图。 执行">
+<meta property="og:type" content="article">
+<meta property="og:title" content="TensorFlow 笔记1">
+<meta property="og:url" content="http://example.com/2023/03/28/TensorFlow%20%E7%AC%94%E8%AE%B01/index.html">
+<meta property="og:site_name" content="Obito Blog">
+<meta property="og:description" content="Tensorflow的基本结构	 tensor（张量）:tensorflow的数据中央控制单元 每一个tensor都有一系列的初始值组成，这些初始值形成一个任意维数的数组（一般tensor的列即为它的维度）。flow（流动）。 Tensorflow程序通常有两个阶段：构建图阶段和执行图阶段。 构建图阶段：定义数据（张量[^tensor]）与操作(节点[^Op])，这些执行步骤被描述成一个图。 执行">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://raw.githubusercontent.com/OBITOoaoa/picture_bed/master/scenery_02.jpg">
+<meta property="article:published_time" content="2023-03-28T15:29:38.000Z">
+<meta property="article:modified_time" content="2023-08-03T14:06:29.367Z">
+<meta property="article:author" content="Obito">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://raw.githubusercontent.com/OBITOoaoa/picture_bed/master/scenery_02.jpg"><link rel="shortcut icon" href="/img/favicon.png"><link rel="canonical" href="http://example.com/2023/03/28/TensorFlow%20%E7%AC%94%E8%AE%B01/index.html"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="stylesheet" href="/css/index.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free/css/all.min.css" media="print" onload="this.media='all'"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/ui/dist/fancybox/fancybox.min.css" media="print" onload="this.media='all'"><script>const GLOBAL_CONFIG = {
+  root: '/',
+  algolia: undefined,
+  localSearch: undefined,
+  translate: undefined,
+  noticeOutdate: {"limitDay":500,"position":"top","messagePrev":"It has been","messageNext":"days since the last update, the content of the article may be outdated."},
+  highlight: {"plugin":"highlighjs","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":false},
+  copy: {
+    success: '复制成功',
+    error: '复制错误',
+    noSupport: '浏览器不支持'
+  },
+  relativeDate: {
+    homepage: true,
+    post: true
+  },
+  runtime: '',
+  dateSuffix: {
+    just: '刚刚',
+    min: '分钟前',
+    hour: '小时前',
+    day: '天前',
+    month: '个月前'
+  },
+  copyright: undefined,
+  lightbox: 'fancybox',
+  Snackbar: undefined,
+  source: {
+    justifiedGallery: {
+      js: 'https://cdn.jsdelivr.net/npm/flickr-justified-gallery/dist/fjGallery.min.js',
+      css: 'https://cdn.jsdelivr.net/npm/flickr-justified-gallery/dist/fjGallery.min.css'
+    }
+  },
+  isPhotoFigcaption: false,
+  islazyload: false,
+  isAnchor: false,
+  percent: {
+    toc: true,
+    rightside: false,
+  },
+  autoDarkmode: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: 'TensorFlow 笔记1',
+  isPost: true,
+  isHome: false,
+  isHighlightShrink: true,
+  isToc: false,
+  postUpdate: '2023-08-03 22:06:29'
+}</script><noscript><style type="text/css">
+  #nav {
+    opacity: 1
+  }
+  .justified-gallery img {
+    opacity: 1
+  }
+
+  #recent-posts time,
+  #post-meta time {
+    display: inline !important
+  }
+</style></noscript><script>(win=>{
+    win.saveToLocal = {
+      set: function setWithExpiry(key, value, ttl) {
+        if (ttl === 0) return
+        const now = new Date()
+        const expiryDay = ttl * 86400000
+        const item = {
+          value: value,
+          expiry: now.getTime() + expiryDay,
+        }
+        localStorage.setItem(key, JSON.stringify(item))
+      },
+
+      get: function getWithExpiry(key) {
+        const itemStr = localStorage.getItem(key)
+
+        if (!itemStr) {
+          return undefined
+        }
+        const item = JSON.parse(itemStr)
+        const now = new Date()
+
+        if (now.getTime() > item.expiry) {
+          localStorage.removeItem(key)
+          return undefined
+        }
+        return item.value
+      }
+    }
+  
+    win.getScript = url => new Promise((resolve, reject) => {
+      const script = document.createElement('script')
+      script.src = url
+      script.async = true
+      script.onerror = reject
+      script.onload = script.onreadystatechange = function() {
+        const loadState = this.readyState
+        if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
+        script.onload = script.onreadystatechange = null
+        resolve()
+      }
+      document.head.appendChild(script)
+    })
+  
+    win.getCSS = (url,id = false) => new Promise((resolve, reject) => {
+      const link = document.createElement('link')
+      link.rel = 'stylesheet'
+      link.href = url
+      if (id) link.id = id
+      link.onerror = reject
+      link.onload = link.onreadystatechange = function() {
+        const loadState = this.readyState
+        if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
+        link.onload = link.onreadystatechange = null
+        resolve()
+      }
+      document.head.appendChild(link)
+    })
+  
+      win.activateDarkMode = function () {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      win.activateLightMode = function () {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+        }
+      }
+      const t = saveToLocal.get('theme')
+    
+          if (t === 'dark') activateDarkMode()
+          else if (t === 'light') activateLightMode()
+        
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        if (asideStatus === 'hide') {
+          document.documentElement.classList.add('hide-aside')
+        } else {
+          document.documentElement.classList.remove('hide-aside')
+        }
+      }
+    
+    const detectApple = () => {
+      if(/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)){
+        document.documentElement.classList.add('apple')
+      }
+    }
+    detectApple()
+    })(window)</script><meta name="generator" content="Hexo 6.3.0"></head><body><div id="loading-box"><div class="loading-left-bg"></div><div class="loading-right-bg"></div><div class="spinner-box"><div class="configure-border-1"><div class="configure-core"></div></div><div class="configure-border-2"><div class="configure-core"></div></div><div class="loading-word">加载中...</div></div></div><script>(()=>{
+  const $loadingBox = document.getElementById('loading-box')
+  const $body = document.body
+  const preloader = {
+    endLoading: () => {
+      $body.style.overflow = ''
+      $loadingBox.classList.add('loaded')
+    },
+    initLoading: () => {
+      $body.style.overflow = 'hidden'
+      $loadingBox.classList.remove('loaded')
+    }
+  }
+
+  preloader.initLoading()
+  window.addEventListener('load',() => { preloader.endLoading() })
+
+  if (true) {
+    document.addEventListener('pjax:send', () => { preloader.initLoading() })
+    document.addEventListener('pjax:complete', () => { preloader.endLoading() })
+  }
+})()</script><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img is-center"><img src="https://i.loli.net/2021/02/24/5O1day2nriDzjSu.png" onerror="onerror=null;src='/img/friend_404.gif'" alt="avatar"/></div><div class="sidebar-site-data site-data is-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">14</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">0</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">1</div></a></div><hr class="custom-hr"/><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> Home</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> Archives</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> Tags</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> Categories</span></a></div><div class="menus_item"><a class="site-page group" href="javascript:void(0);"><i class="fa-fw fas fa-list"></i><span> List</span><i class="fas fa-chevron-down"></i></a><ul class="menus_item_child"><li><a class="site-page child" href="/music/"><i class="fa-fw fas fa-music"></i><span> Music</span></a></li><li><a class="site-page child" href="/movies/"><i class="fa-fw fas fa-video"></i><span> Movie</span></a></li></ul></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fas fa-link"></i><span> Link</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> About</span></a></div></div></div></div><div class="post" id="body-wrap"><header class="post-bg" id="page-header" style="background-image: url('https://raw.githubusercontent.com/OBITOoaoa/picture_bed/master/scenery_02.jpg')"><nav id="nav"><span id="blog-info"><a href="/" title="Obito Blog"><span class="site-name">Obito Blog</span></a></span><div id="menus"><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> Home</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> Archives</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> Tags</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> Categories</span></a></div><div class="menus_item"><a class="site-page group" href="javascript:void(0);"><i class="fa-fw fas fa-list"></i><span> List</span><i class="fas fa-chevron-down"></i></a><ul class="menus_item_child"><li><a class="site-page child" href="/music/"><i class="fa-fw fas fa-music"></i><span> Music</span></a></li><li><a class="site-page child" href="/movies/"><i class="fa-fw fas fa-video"></i><span> Movie</span></a></li></ul></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fas fa-link"></i><span> Link</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> About</span></a></div></div><div id="toggle-menu"><a class="site-page" href="javascript:void(0);"><i class="fas fa-bars fa-fw"></i></a></div></div></nav><div id="post-info"><h1 class="post-title">TensorFlow 笔记1</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">发表于</span><time class="post-meta-date-created" datetime="2023-03-28T15:29:38.000Z" title="发表于 2023-03-28 23:29:38">2023-03-28</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">更新于</span><time class="post-meta-date-updated" datetime="2023-08-03T14:06:29.367Z" title="更新于 2023-08-03 22:06:29">2023-08-03</time></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-wordcount"><i class="far fa-file-word fa-fw post-meta-icon"></i><span class="post-meta-label">字数总计:</span><span class="word-count">3.9k</span><span class="post-meta-separator">|</span><i class="far fa-clock fa-fw post-meta-icon"></i><span class="post-meta-label">阅读时长:</span><span>16分钟</span></span><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title="TensorFlow 笔记1"><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">阅读量:</span><span id="busuanzi_value_page_pv"><i class="fa-solid fa-spinner fa-spin"></i></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="post-content" id="article-container"><p><strong>Tensorflow的基本结构</strong>	</p>
+<p>tensor（张量）:tensorflow的数据中央控制单元 每一个tensor都有一系列的初始值组成，这些初始值形成一个任意维数的数组（一般tensor的列即为它的维度）。flow（流动）。</p>
+<p>Tensorflow程序通常有两个阶段：构建图阶段和执行图阶段。</p>
+<p>构建图阶段：定义数据（张量[^tensor]）与操作(节点[^Op])，这些执行步骤被描述成一个图。</p>
+<p>执行图阶段：使用会话（Session）执行构建好的图中的操作。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> tensorflow <span class="keyword">as</span> tf</span><br><span class="line"></span><br><span class="line">node1 = tf.constant(<span class="number">3.0</span>)</span><br><span class="line">node2 = tf.constant(<span class="number">4.0</span>)</span><br><span class="line">node3 = tf.add(node1,node2)</span><br><span class="line"><span class="built_in">print</span>(node1)	<span class="comment"># Tensor(&quot;Const:0&quot;, shape=(), dtype=float32)</span></span><br><span class="line"><span class="built_in">print</span>(node2)	<span class="comment"># Tensor(&quot;Const_1:0&quot;, shape=(), dtype=float32)</span></span><br><span class="line"><span class="built_in">print</span>(node3)	<span class="comment"># Tensor(&quot;Add:0&quot;, shape=(), dtype=float32)</span></span><br><span class="line"></span><br><span class="line"><span class="comment">#执行一个图为默认的会话(Session(图为空))</span></span><br><span class="line"><span class="keyword">with</span> tf.Session() <span class="keyword">as</span> sess:</span><br><span class="line">    node1_value=sess.run(node1)</span><br><span class="line">    node2_value=sess.run(node2)</span><br><span class="line">    node3_value=sess.run(node3)</span><br><span class="line">    <span class="built_in">print</span>(node1_value)	<span class="comment"># 3.0</span></span><br><span class="line">    <span class="built_in">print</span>(node2_value)	<span class="comment"># 4.0</span></span><br><span class="line">    <span class="built_in">print</span>(node3_value)	<span class="comment"># 7.0</span></span><br><span class="line">sess.close()</span><br></pre></td></tr></table></figure>
+
+<p>tensorflow中的图 tf.graph()</p>
+<ol>
+<li>通过张量本身直接出graph</li>
+</ol>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> tensorflow <span class="keyword">as</span> tf</span><br><span class="line"></span><br><span class="line">node=tf.constant(<span class="number">2.0</span>)</span><br><span class="line"><span class="comment"># 通过张量本身直接出graph</span></span><br><span class="line">default_graph=tf.get_default_graph()	<span class="comment"># 获取当前的默认图结构</span></span><br><span class="line"><span class="built_in">print</span>(default_graph)	</span><br><span class="line"><span class="comment"># &lt;tensorflow.python.framework.ops.Graph object at 0x000001EFCE019EF0&gt;</span></span><br><span class="line"></span><br><span class="line">sess=tf.Session()</span><br><span class="line">node_value=sess.run(node)</span><br><span class="line"><span class="built_in">print</span>(node.graph)</span><br><span class="line"><span class="built_in">print</span>(default_graph==node.graph)    <span class="comment"># True</span></span><br></pre></td></tr></table></figure>
+
+<ol start="2">
+<li>通过声明一个默认的图，然后定义张量内容，在后面可以调用或保存</li>
+</ol>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> tensorflow <span class="keyword">as</span> tf</span><br><span class="line"></span><br><span class="line">node1=tf.constant(<span class="number">4.0</span>)</span><br><span class="line">g=tf.Graph()</span><br><span class="line"><span class="keyword">with</span> g.as_default():</span><br><span class="line">    node2=tf.constant(<span class="number">2.0</span>)</span><br><span class="line"></span><br><span class="line">sess=tf.Session(graph=g)</span><br><span class="line">node_value=sess.run(node2)</span><br><span class="line"><span class="built_in">print</span>(g)</span><br><span class="line"><span class="built_in">print</span>(tf.get_default_graph())</span><br><span class="line"><span class="built_in">print</span>(node1.graph)</span><br><span class="line"><span class="comment"># node2:&lt;tensorflow.python.framework.ops.Graph object at 0x0000014501B59DA0&gt;</span></span><br><span class="line"><span class="comment"># &lt;tensorflow.python.framework.ops.Graph object at 0x0000014501B39F60&gt;</span></span><br><span class="line"><span class="comment"># &lt;tensorflow.python.framework.ops.Graph object at 0x0000014501B39F60&gt;</span></span><br></pre></td></tr></table></figure>
+
+<ol start="3">
+<li>通过多个声明，在后面可通过变量名分别调用（调用时Session()要写入对应的图的变量名）</li>
+</ol>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> tensorflow <span class="keyword">as</span> tf</span><br><span class="line"></span><br><span class="line">g1=tf.Graph()</span><br><span class="line"><span class="keyword">with</span> g1.as_default():</span><br><span class="line">    node1=tf.constant(<span class="number">2.0</span>)</span><br><span class="line">g2=tf.Graph()</span><br><span class="line"><span class="keyword">with</span> g2.as_default():</span><br><span class="line">    node2=tf.constant(<span class="number">5.0</span>)</span><br><span class="line">    </span><br><span class="line"><span class="keyword">with</span> tf.Session(graph=g1) <span class="keyword">as</span> sess1:</span><br><span class="line">    node1_value=sess1.run(node1)</span><br><span class="line">    <span class="built_in">print</span>(g1)</span><br><span class="line"><span class="keyword">with</span> tf.Session(graph=g2) <span class="keyword">as</span> sess2:</span><br><span class="line">    node2_value=sess2.run(node2)</span><br><span class="line">    <span class="built_in">print</span>(g2)    </span><br></pre></td></tr></table></figure>
+
+<p><strong>TensorFlow的对graph的常用操作</strong></p>
+<ol>
+<li>保存图(pb文件)</li>
+</ol>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> tensorflow <span class="keyword">as</span> tf</span><br><span class="line"></span><br><span class="line">g1=tf.Graph()</span><br><span class="line"><span class="keyword">with</span> g1.as_default():</span><br><span class="line">    node1=tf.constant(<span class="number">2.0</span>,name=<span class="string">&#x27;node1&#x27;</span>)</span><br><span class="line">g2=tf.Graph()</span><br><span class="line"><span class="keyword">with</span> g2.as_default():</span><br><span class="line">    node2=tf.constant(<span class="number">3.0</span>,name=<span class="string">&#x27;node2&#x27;</span>)</span><br><span class="line"></span><br><span class="line"><span class="keyword">with</span> tf.Session(graph=g1) <span class="keyword">as</span> sess1:</span><br><span class="line">    <span class="built_in">print</span>(sess1.run(node1))</span><br><span class="line"><span class="keyword">with</span> tf.Session(graph=g2) <span class="keyword">as</span> sess2:</span><br><span class="line">    <span class="built_in">print</span>(sess2.run(node2))</span><br><span class="line"><span class="comment"># g1的图定义 包含pb的path，pb文件名，是否为文本 默认False</span></span><br><span class="line">tf.train.write_graph(g1.as_graph_def(),<span class="string">&#x27;.&#x27;</span>,<span class="string">&#x27;graph.pb&#x27;</span>,<span class="literal">False</span>)</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>​		<code>tf.reset_default_graph</code>：对图进行重置。每使用一次，重置的新图，分配不同的地址。</p>
+<p>​		<code>g1.as_graph_def()</code>：将图进行序列化。</p>
+<p>​		<code>tf.train.write_graph()</code>：将序列化的图保存。一般不适用这个api，这样保存的模型，只能用于测试。（一般保存为 .ckpt 文件，用于继续训练或测试，直到效果ok再进行保存pb文件 ）	</p>
+<ol start="2">
+<li>调用pb文件的图</li>
+</ol>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> tensorflow <span class="keyword">as</span> tf</span><br><span class="line"><span class="keyword">from</span> tensorflow.python.platform <span class="keyword">import</span> gfile</span><br><span class="line"></span><br><span class="line"><span class="comment"># load graph</span></span><br><span class="line"><span class="keyword">with</span> gfile.FastGFile(<span class="string">&#x27;./graph.pb&#x27;</span>,<span class="string">&#x27;rb&#x27;</span>) <span class="keyword">as</span> f:</span><br><span class="line">    graph_def=tf.GraphDef() <span class="comment"># 创建一个序列化的空图</span></span><br><span class="line">    graph_def.ParseFromString(f.read()) <span class="comment"># 把pb文件导入到创建的序列化空图中</span></span><br><span class="line">    tf.import_graph_def(graph_def,name=<span class="string">&#x27;&#x27;</span>)  <span class="comment"># 将序列化图导入到当前图中</span></span><br><span class="line"></span><br><span class="line">sess=tf.Session()</span><br><span class="line">node1_tensor=sess.graph.get_tensor_by_name(<span class="string">&#x27;node1:0&#x27;</span>)</span><br><span class="line"><span class="comment"># 从图中获取到命名为&quot;node1:0&quot;的tensor，该tensor为&quot;node1&quot;节点的第0个输出</span></span><br><span class="line">node1=sess.run(node1_tensor)</span><br><span class="line"><span class="built_in">print</span>(node1)</span><br></pre></td></tr></table></figure>
+
+<p><strong>序列化和反序列化</strong>		</p>
+<p>序列化：把对象转化为可传输的字节序列过程称为序列化。</p>
+<p>反序列化：把字节序列还原为对象的过程称为反序列化。</p>
+<p>序列化最终的目的是为了对象可以<strong>跨平台存储，和进行网络传输</strong>。而我们进行跨平台存储和网络传输的方式就是IO，而我们的IO支持的数据格式就是字节数组。</p>
+<p>因为我们单方面的只把对象转成字节数组还不行，因为没有规则的字节数组我们是没办法把对象的本来面目还原回来的，所以我们必须在把对象转成字节数组的时候就制定一种规则（<strong>序列化</strong>），那么我们从IO流里面读出数据的时候再以这种规则把对象还原回来（<strong>反序列化</strong>）。</p>
+<p><strong>一般来讲，TensorFlow 有三种文件格式：</strong></p>
+<p><strong>checkpoint</strong>：一种独有的文件格式，包含四个文件。保存了计算图和权重，无法直接打开阅读。多用于训练时。<br>​<strong>pb</strong>：protobuf 格式的二进制文件，可以只保存计算图（很小），也同时保存了权重和计算图（很大），无法直接打开阅读。<br>包含权重的文件中所有的 variable 都已经变成了 tf.constant 和 graph 一起 frozen 到一个文件。<br>​<strong>pbtxt</strong>：pb 文件的可读文本，如果同时保存权重，文件会很大，一般用的比较少，可用于调试查看网络结构。</p>
+<p><strong>会话</strong></p>
+<ul>
+<li><p>tf.Session() :用于完整的程序当中，会话掌握着资源，用完需要回收，因此一般使用with上下文管理器。</p>
+<p>如果在创建Session时没有指定Graph，则该Session会加载默认Graph。如果创建了多个Graph，则需要创建不同的Session来加载每个Graph，而每个Graph则可以加载在多个Session中进行计算。</p>
+<p><code>tf.eval()</code>只适用于tensor，一次只能获得<strong>一个张量</strong>的值；而<code>session.run()</code>不仅适用于tensor，还可用于没有输出的op,可以在同一步骤中获取许多张量的值；对于tensor，调用session.run()与tensor.eval()是等价的。</p>
+<p>初始化会话以下三个参数：</p>
+<ul>
+<li>target</li>
+<li>graph</li>
+<li>config</li>
+</ul>
+</li>
+<li><p>tf.interactiveSession:用于交互式上下文的TensorFlow。</p>
+</li>
+</ul>
+<p><strong>Fetch and Feed</strong></p>
+<ul>
+<li>Fetch操作是指在会话当中，可以在sess.run()时同时运行一个或多个op；将多个op组成列表，传入run中可以得到多个op的输出结果。</li>
+</ul>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> tensorflow <span class="keyword">as</span> tf</span><br><span class="line"></span><br><span class="line">node1 = tf.constant(<span class="number">3.0</span>)</span><br><span class="line">node2 = tf.constant(<span class="number">4.0</span>)</span><br><span class="line">add = tf.add(node1, node2)</span><br><span class="line">mul = tf.multiply(node1, node2)</span><br><span class="line"></span><br><span class="line"><span class="keyword">with</span> tf.Session() <span class="keyword">as</span> sess:</span><br><span class="line">    node1_value = sess.run(node1)</span><br><span class="line">    node2_value = sess.run(node2)</span><br><span class="line">    value = sess.run([add,mul])</span><br><span class="line">    <span class="built_in">print</span>(value)  <span class="comment"># [7.0, 12.0]</span></span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>Feed操作需要在开始时通过占位符(placeholder)来声明数据。</li>
+</ul>
+<p>为什么需要feed操作：当我们构建一个模型时，常常需要我们在运行时候输入一系列数据，通过占位符可以提前声明这些数据；在train数据时,可以在一个graph上同时使用一个op，每一次写入的时候都会替换上一次的值，减少了graph的开销。</p>
+<p>由定义<code>def placeholder(dtype,shape=None,name=None);</code>可知声明时需要给定类型dtype。</p>
+<p>占位符不需要初始化。可以把feed_dict看作它特有的一种初始化方式。shape默认下feed_dict的数据的维度可任意。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> tensorflow <span class="keyword">as</span> tf</span><br><span class="line"></span><br><span class="line">a=tf.placeholder(tf.float32)</span><br><span class="line">b=tf.placeholder(tf.float32)</span><br><span class="line">c=tf.add(a,b)</span><br><span class="line"></span><br><span class="line"><span class="keyword">with</span> tf.Session() <span class="keyword">as</span> sess:</span><br><span class="line">    result=sess.run(c,feed_dict=&#123;a:<span class="number">1</span>,b:<span class="number">2</span>&#125;)</span><br><span class="line">    <span class="built_in">print</span>(result)</span><br></pre></td></tr></table></figure>
+
+<p><strong>张量(Tensors)</strong></p>
+<p>TensorFlow 是一个定义和运行张量计算的框架。张量是各种维度的向量和矩阵的统称。在内部，TensorFlow 用基本数据类型的多维数组来表示张量。</p>
+<p>在写 TensorFlow 程序的时候，主要操作和传递的对象就是 tf.Tensor，即张量。</p>
+<p>tf.Tensor对象的数据类型和张量的类型不是同一个概念。tf.Tensor对象的数据类型一般为float32，int32等；张量的类型一般为<code>tf.constant``,tf.Variabale</code>,<code>tf.placeholder</code>,除了<code>tf.Variable</code>以外，张量的值是不可变的，也就是说张量在单次执行的上下文中值是唯一的。但是，两次对同一个张量求值可能返回不同的值，比如，张量的值可能是从磁盘读取的数据，或者是一个随机数，那么每次产生的结果可能是不一样的。</p>
+<ul>
+<li><p><strong>四种常见的Tensor</strong></p>
+</li>
+<li><ul>
+<li><strong>1. 常量Tensor</strong>：值不能改变，常用<code>tf.constant(value,dtype=None,shape=None,name=&#39;Const&#39;,verify_shape=False)</code>创建,其中value值必须给定，<code>verify_shape</code>默认该常量的形状不可改。</li>
+</ul>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> tensorflow <span class="keyword">as</span> tf</span><br><span class="line"></span><br><span class="line"><span class="comment"># tf.zeros(shape,dtype=tf.float32,name=None) 产生全0的张量</span></span><br><span class="line">tensor1=tf.zeros(shape=[<span class="number">3</span>,<span class="number">4</span>])</span><br><span class="line"><span class="comment"># 创建一个和输入图像（tensor1）一样维度元素都为 0 的张量</span></span><br><span class="line">tensor1_1=tf.zeros_like(tensor1)</span><br><span class="line"></span><br><span class="line"><span class="comment"># tf.ones(shape,dtype=tf.float32,name=None) 产生全1的张量</span></span><br><span class="line">tensor2=tf.ones(shape=[<span class="number">3</span>,<span class="number">4</span>])</span><br><span class="line"><span class="comment"># 创建一个和输入图像（tensor2）一样维度元素都为 1 的张量</span></span><br><span class="line">tensor2_1=tf.ones_like(tensor1)</span><br><span class="line"></span><br><span class="line"><span class="keyword">with</span> tf.Session() <span class="keyword">as</span> sess:</span><br><span class="line">    <span class="built_in">print</span>(sess.run(tensor1))</span><br><span class="line">    <span class="built_in">print</span>(sess.run(tensor2))</span><br></pre></td></tr></table></figure>
+
+<p>常量Tensor无需初始化，但仍需在会话<code>tf.Session()</code>中获取数据，即数据只会在会话中流动。</p>
+<ul>
+<li><p><strong>2. 变量Tensor</strong>:值可以改变，<strong>可训练</strong>。在神经网络中，<strong>变量</strong>一般可作为储存权重和其他信息的矩阵，而<strong>常量</strong>可作为储存超参数或其他结构信息的变量，<strong>变量必须初始化</strong>。</p>
+<ul>
+<li><p><code>tf.Variable(initial_value, dtype=None, name=None, trainable=True, collections=None,validate_shape=True)</code></p>
+<p>全局变量初始化：<code>tf.global_variables_initializer()</code></p>
+<p>将一个变量的值赋值给另一个变量：<code>initialized_value()</code></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> tensorflow <span class="keyword">as</span> tf</span><br><span class="line"></span><br><span class="line">weight1 = tf.Variable(tf.ones(shape=[<span class="number">3</span>],name=<span class="string">&#x27;weight1&#x27;</span>))</span><br><span class="line"><span class="comment"># 用已经初始化的weight1作为weight2的值</span></span><br><span class="line">weight2 = tf.Variable(weight1.initialized_value(),name=<span class="string">&#x27;weight2&#x27;</span>)</span><br><span class="line">weight_twice = tf.Variable(weight1.initialized_value() * <span class="number">2</span>,name=<span class="string">&#x27;weight_twice&#x27;</span>)</span><br><span class="line">init = tf.global_variables_initializer()</span><br><span class="line"></span><br><span class="line"><span class="keyword">with</span> tf.Session() <span class="keyword">as</span> sess:</span><br><span class="line">    sess.run(init)</span><br><span class="line">    <span class="built_in">print</span>(weight1.<span class="built_in">eval</span>(),weight2.<span class="built_in">eval</span>(),weight_twice.<span class="built_in">eval</span>())</span><br></pre></td></tr></table></figure>
+
+<p>运行变量的初始化函数：<code>variable.initializer()</code></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> tensorflow <span class="keyword">as</span> tf</span><br><span class="line"></span><br><span class="line">weight = tf.Variable(tf.ones(shape=[<span class="number">3</span>]),name=<span class="string">&#x27;weight&#x27;</span>)</span><br><span class="line"><span class="keyword">with</span> tf.Session() <span class="keyword">as</span> sess:</span><br><span class="line">    <span class="comment"># weight.initializer.run()  两者相同</span></span><br><span class="line">    sess.run(weight.initializer) 	<span class="comment"># 仅仅初始化weight本身</span></span><br><span class="line">    <span class="built_in">print</span>(weight.<span class="built_in">eval</span>())</span><br></pre></td></tr></table></figure>
+</li>
+<li><p><code>tf.get_variable( name, shape=None,dtype=None, initializer=None,  trainable=True,  regularizer=None,collections=None, caching_device=None, partitioner=None, validate_shape=True,  use_resource=None,  custom_getter=None)</code>，这里的initializer初始化之后并没有实际的数据，当开启session时，才将相应的初始化数据传给tensor。</p>
+<ol>
+<li>初始化initializer常量</li>
+</ol>
+<p>通过<code>tf.constant</code>初始化variable不需要给定shape，其dtype由constant的值决定。</p>
+<p>通过<code>tf.constant_initializer</code>初始化variable需要给定shape ，其dtype为float32_ref</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> tensorflow <span class="keyword">as</span> tf</span><br><span class="line"></span><br><span class="line"><span class="comment"># init_const = tf.constant([[1,2],[3,4]])</span></span><br><span class="line"><span class="comment"># x = tf.get_variable(initializer=init_const,name=&#x27;x&#x27;)</span></span><br><span class="line"><span class="comment"># [[1 2]</span></span><br><span class="line"><span class="comment">#  [3 4]]</span></span><br><span class="line"><span class="comment"># &lt;tf.Variable &#x27;x:0&#x27; shape=(2, 2) dtype=int32_ref&gt;</span></span><br><span class="line"></span><br><span class="line">init_const = tf.constant_initializer([[<span class="number">1</span>,<span class="number">2</span>],[<span class="number">3</span>,<span class="number">4</span>]])</span><br><span class="line">x = tf.get_variable(initializer=init_const,name=<span class="string">&#x27;x&#x27;</span>,shape=[<span class="number">2</span>,<span class="number">2</span>])</span><br><span class="line"><span class="comment"># [[1. 2.]</span></span><br><span class="line"><span class="comment">#  [3. 4.]]</span></span><br><span class="line"><span class="comment"># &lt;tf.Variable &#x27;x:0&#x27; shape=(2, 2) dtype=float32_ref&gt;</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">init = tf.global_variables_initializer()</span><br><span class="line"><span class="keyword">with</span> tf.Session() <span class="keyword">as</span> sess:</span><br><span class="line">    sess.run(init)</span><br><span class="line">    <span class="built_in">print</span>(x.<span class="built_in">eval</span>())</span><br></pre></td></tr></table></figure>
+
+<ol start="2">
+<li><ul>
+<li><p>初始化initializer为 标准正态分布：<code>tf.random_normal_initializer()</code>																		</p>
+</li>
+<li><p>初始化initializer为 截断正态分布：<code>tf.truncated_normal_initializer()</code>根据<strong>正态分布的3σ原则</strong>，将小于μ-3σ和大于μ+3σ的值截断剩下 <code>μ-3σ&lt;x&lt;μ+3σ</code> 之间的值。	</p>
+</li>
+<li><p>初始化initializer为 均匀分布：	    <code>tf.random_uniform_initializer() </code></p>
+</li>
+</ul>
+</li>
+</ol>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> tensorflow <span class="keyword">as</span> tf</span><br><span class="line"></span><br><span class="line">init_random = tf.random_normal_initializer(mean=<span class="number">0.0</span>, stddev=<span class="number">1.0</span>)</span><br><span class="line">y1 = tf.get_variable(initializer=init_random, name=<span class="string">&#x27;y&#x27;</span>, shape=[<span class="number">10</span>])</span><br><span class="line"></span><br><span class="line">init_truncated = tf.truncated_normal_initializer(mean=<span class="number">0.0</span>, stddev=<span class="number">1.0</span>)</span><br><span class="line">y2 = tf.get_variable(initializer=init_truncated, name=<span class="string">&#x27;y2&#x27;</span>, shape=[<span class="number">10</span>])</span><br><span class="line"></span><br><span class="line">init_uniform = tf.random_uniform_initializer(minval=<span class="number">0</span>,maxval=<span class="number">10</span>)</span><br><span class="line">y3 = tf.get_variable(initializer=init_uniform,name=<span class="string">&#x27;y3&#x27;</span>,shape=[<span class="number">10</span>])</span><br><span class="line"></span><br><span class="line">init = tf.global_variables_initializer()</span><br><span class="line"></span><br><span class="line"><span class="keyword">with</span> tf.Session() <span class="keyword">as</span> sess:</span><br><span class="line">    sess.run(init)</span><br><span class="line">    <span class="built_in">print</span>(y1.<span class="built_in">eval</span>())</span><br><span class="line">    <span class="built_in">print</span>(y2.<span class="built_in">eval</span>())</span><br><span class="line">    <span class="built_in">print</span>(y3.<span class="built_in">eval</span>())</span><br></pre></td></tr></table></figure>
+</li>
+<li><p><code>tf.Variable()</code>与<code>tf.get_variable()</code>的区别</p>
+<ol>
+<li><strong>变量共享</strong>：</li>
+</ol>
+<p>使用tf.Variable()时，如果系统检测到命名相同，系统会<strong>自动加后缀</strong>，<strong>不支持变量共享</strong>。<br>使用tf.get_variable()，如果系统检测到命名相同，且参数<strong>reuse&#x3D;True</strong>，那么直接共享之前的变量值，<strong>支持变量共享</strong>。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line">import tensorflow as tf</span><br><span class="line"></span><br><span class="line">with tf.variable_scope(&#x27;scope1&#x27;):</span><br><span class="line">    w1 = tf.Variable(1, name=&#x27;w1&#x27;)</span><br><span class="line">    w2 = tf.get_variable(initializer=2.0, name=&#x27;w2&#x27;)</span><br><span class="line">    </span><br><span class="line">with tf.variable_scope(&#x27;scope1&#x27;, reuse=True):</span><br><span class="line">    w1_p = tf.Variable(5, name=&#x27;w1&#x27;)</span><br><span class="line">    w2_p = tf.get_variable(initializer=3.0, name=&#x27;w2&#x27;)</span><br><span class="line"></span><br><span class="line">init = tf.global_variables_initializer()</span><br><span class="line">with tf.Session() as sess:</span><br><span class="line">    sess.run(init)</span><br><span class="line">    print(w1.eval())        # 1</span><br><span class="line">    print(w2.eval())        # 2.0</span><br><span class="line">    print(w1_p.eval())      # 5   变量共享不了</span><br><span class="line">    print(w2_p.eval())      # 2.0 变量共享了W1</span><br><span class="line"></span><br><span class="line">print(w1.name, w1_p.name)	# scope1/w1:0 scope1_1/w1:0</span><br><span class="line">print(w2.name, w2_p.name)	# scope1/w2:0 scope1/w2:0</span><br></pre></td></tr></table></figure>
+
+<ol start="2">
+<li><code>tf.variable_scope()</code>可以对所有op加上前缀，指明作用域空间。<code>tf.name_scope()</code><strong>不能</strong>给<code>tf.get_variable()</code>变量指明作用域空间。</li>
+</ol>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> tensorflow <span class="keyword">as</span> tf</span><br><span class="line"></span><br><span class="line"><span class="comment"># tf.name_scope()</span></span><br><span class="line"><span class="keyword">with</span> tf.name_scope(<span class="string">&#x27;scope1&#x27;</span>):</span><br><span class="line">    w0 = tf.constant(<span class="number">1</span>,name=<span class="string">&#x27;w0&#x27;</span>)</span><br><span class="line">    w1 = tf.Variable(<span class="number">1</span>,name=<span class="string">&#x27;w1&#x27;</span>)</span><br><span class="line">    w2 = tf.get_variable(initializer=<span class="number">2.0</span>,name=<span class="string">&#x27;w2&#x27;</span>)</span><br><span class="line"><span class="comment"># tf.variable_scope()</span></span><br><span class="line"><span class="keyword">with</span> tf.variable_scope(<span class="string">&#x27;scope2&#x27;</span>):</span><br><span class="line">    w0_p = tf.constant(<span class="number">2</span>,name=<span class="string">&#x27;w0_p&#x27;</span>)</span><br><span class="line">    w1_p = tf.Variable(<span class="number">5</span>,name=<span class="string">&#x27;w1_p&#x27;</span>)</span><br><span class="line">    w2_p = tf.get_variable(initializer=<span class="number">3.0</span>,name=<span class="string">&#x27;w2_p&#x27;</span>)</span><br><span class="line"><span class="comment"># w2没有确定作用域空间</span></span><br><span class="line"><span class="built_in">print</span>(w0.name, w1.name, w2.name)		<span class="comment"># scope1/w0:0 scope1/w1:0 w2:0</span></span><br><span class="line"><span class="built_in">print</span>(w0_p.name,w1_p.name,w2_p.name)	<span class="comment"># scope2/w0_p:0 scope2/w1_p:0 scope2/w2_p:0</span></span><br></pre></td></tr></table></figure></li>
+</ul>
+</li>
+<li><p><strong>3. 占位符placeholder</strong></p>
+</li>
+<li><p><strong>4. 稀疏张量SparseTensor</strong>:定义时只需要定义非0的数，其他数会自动填充。<code>def tf.SparseTensor(values,indices,dense_shape)</code></p>
+<ul>
+<li>indices：非零值所对应的索引。</li>
+<li>values：对应索引位置的值。</li>
+<li>dense_shape：稀疏张量所对应的稠密张量的形状。</li>
+</ul>
+</li>
+</ul>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> tensorflow <span class="keyword">as</span> tf</span><br><span class="line"></span><br><span class="line"><span class="comment"># 稀疏张量 只需要给对应位置非0的值即可</span></span><br><span class="line">sparse_tensor=tf.SparseTensor(indices=[[<span class="number">0</span>,<span class="number">0</span>],values=[<span class="number">1</span>,<span class="number">5</span>],[<span class="number">1</span>,<span class="number">2</span>]],dense_shape=[<span class="number">3</span>,<span class="number">4</span>])</span><br><span class="line"><span class="comment"># 稠密张量 将稀疏张量转化为稠密张量</span></span><br><span class="line">dense_tensor=tf.sparse_tensor_to_dense(sparse_tensor)</span><br><span class="line"></span><br><span class="line"><span class="keyword">with</span> tf.Session() <span class="keyword">as</span> sess:</span><br><span class="line">    <span class="built_in">print</span>(sess.run(sparse_tensor))</span><br><span class="line">    <span class="built_in">print</span>(sess.run(dense_tensor))</span><br><span class="line"></span><br><span class="line"><span class="string">&#x27;&#x27;&#x27;</span></span><br><span class="line"><span class="string">输出如下:</span></span><br><span class="line"><span class="string">SparseTensorValue(indices=array([[0, 0],</span></span><br><span class="line"><span class="string">       [1, 2]], dtype=int64), values=array([1, 5]), dense_shape=array([3, 4], dtype=int64))</span></span><br><span class="line"><span class="string">[[1 0 0 0]</span></span><br><span class="line"><span class="string"> [0 0 5 0]</span></span><br><span class="line"><span class="string"> [0 0 0 0]]</span></span><br><span class="line"><span class="string">&#x27;&#x27;&#x27;</span></span><br></pre></td></tr></table></figure>
+</li>
+<li><p><strong>张量的秩</strong></p>
+</li>
+</ul>
+<p><code>tf.Tensor</code> 对象的秩就是它维度的数量。秩的也可以叫做阶数、度数或者是 n 维。注意：Tensorflow 里的秩和数学中矩阵的秩是不一样的。</p>
+<table>
+<thead>
+<tr>
+<th align="center">秩</th>
+<th align="center">数学实体</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="center">0</td>
+<td align="center">标量</td>
+</tr>
+<tr>
+<td align="center">1</td>
+<td align="center">向量</td>
+</tr>
+<tr>
+<td align="center">2</td>
+<td align="center">矩阵（二维矩阵）</td>
+</tr>
+<tr>
+<td align="center">3</td>
+<td align="center">3维张量(由数构成的方体)</td>
+</tr>
+<tr>
+<td align="center">4</td>
+<td align="center">4维张量（常用于图像处理）</td>
+</tr>
+<tr>
+<td align="center">n</td>
+<td align="center">n维张量</td>
+</tr>
+</tbody></table>
+<ul>
+<li><strong><code>tf.rank</code>获取张量的秩</strong></li>
+</ul>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> tensorflow <span class="keyword">as</span> tf</span><br><span class="line"></span><br><span class="line">tensor0 = tf.constant(<span class="number">1</span>)  <span class="comment"># 0阶</span></span><br><span class="line">tensor1 = tf.constant([<span class="number">2</span>, <span class="number">3</span>])  <span class="comment"># 1阶</span></span><br><span class="line">tensor2 = tf.constant([[<span class="number">4</span>, <span class="number">5</span>, <span class="number">6</span>], [<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>]])  <span class="comment"># 2阶</span></span><br><span class="line"><span class="comment"># 图像处理常用</span></span><br><span class="line">image = tf.zeros([<span class="number">10</span>, <span class="number">150</span>, <span class="number">150</span>, <span class="number">3</span>])  <span class="comment"># 4阶</span></span><br><span class="line"><span class="comment"># 各个维度分别代表一个样本批次的大小、图像的宽度、图像的高度以及颜色通道数。</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">with</span> tf.Session() <span class="keyword">as</span> sess:</span><br><span class="line">    <span class="built_in">print</span>(sess.run(tf.rank(tensor0)))  <span class="comment"># 0</span></span><br><span class="line">    <span class="built_in">print</span>(sess.run(tf.rank(tensor1)))  <span class="comment"># 1</span></span><br><span class="line">    <span class="built_in">print</span>(sess.run(tf.rank(tensor2)))  <span class="comment"># 2</span></span><br><span class="line">    <span class="built_in">print</span>(sess.run(tf.rank(image)))    <span class="comment"># 4</span></span><br></pre></td></tr></table></figure>
+
+<ul>
+<li><strong><code>tf.reshape</code>改变tensor对象的形状</strong></li>
+</ul>
+<p>变形前后的张量元素个数必须相同，如果不同，就会产生错误。</p>
+<p><code>Tensor.eval</code>用来求取张量的值。只能在启用了一个默认的会话才能正常使用，当Tensor的信息是不确定的，如使用<code>placeholder</code>的张量在没有给<code>placeholder</code>提供值之前是无法进行评估的。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> tensorflow <span class="keyword">as</span> tf</span><br><span class="line"></span><br><span class="line">matrixA=tf.ones([<span class="number">3</span>,<span class="number">4</span>,<span class="number">5</span>])</span><br><span class="line">matrixB=tf.reshape(matrixA,[<span class="number">4</span>,<span class="number">15</span>])</span><br><span class="line">matrixC=tf.reshape(matrixB,[<span class="number">3</span>,-<span class="number">1</span>])	</span><br><span class="line">matrixD=tf.reshape(matrixB,[<span class="number">4</span>,<span class="number">3</span>,-<span class="number">1</span>])</span><br><span class="line"><span class="comment"># -1 会自动计算这一维度的大小</span></span><br><span class="line"><span class="keyword">with</span> tf.Session() <span class="keyword">as</span> sess:</span><br><span class="line">    <span class="built_in">print</span>(matrixA.<span class="built_in">eval</span>())</span><br><span class="line">    <span class="built_in">print</span>(matrixA)	<span class="comment"># Tensor(&quot;ones:0&quot;, shape=(3, 4, 5), dtype=float32)</span></span><br><span class="line">    <span class="built_in">print</span>(matrixB)	<span class="comment"># Tensor(&quot;Reshape:0&quot;, shape=(4, 15), dtype=float32)</span></span><br><span class="line">    <span class="built_in">print</span>(matrixC)	<span class="comment"># Tensor(&quot;Reshape_1:0&quot;, shape=(3, 20), dtype=float32)</span></span><br><span class="line">    <span class="built_in">print</span>(matrixD)	<span class="comment"># Tensor(&quot;Reshape_2:0&quot;, shape=(4, 3, 5), dtype=float32)</span></span><br><span class="line">    <span class="built_in">print</span>(sess.run(matrixA))</span><br><span class="line">    <span class="built_in">print</span>(sess.run(matrixB))</span><br><span class="line">    <span class="built_in">print</span>(sess.run(matrixC))</span><br><span class="line">    <span class="built_in">print</span>(sess.run(matrixD))</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li><strong><code>tf.slice()</code>分割张量。</strong></li>
+</ul>
+<p><code>tf.slice()</code>从张量中提取想要的切片，由begin指定位置开始的张量提取尺寸为size的切片。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">def</span> <span class="title function_">slice</span>(<span class="params">input_,begin,size,name=<span class="literal">None</span></span>)	</span><br><span class="line"></span><br><span class="line">input_:		类型为一个tensor，表示的是输入的tensor，也就是被切的那个.</span><br><span class="line">begin:		是一个int32或int64类型的tensor，表示的是每一个维度的起始位置.</span><br><span class="line">size:		是一个int32或int64类型的tensor，表示的是每个维度要拿的元素数.</span><br><span class="line">name:		操作的名称，可写可不写.</span><br></pre></td></tr></table></figure>
+
+<p>通过切片实现简单的ROI（Region of interest）提取</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> tensorflow <span class="keyword">as</span> tf</span><br><span class="line"><span class="keyword">import</span> cv2 <span class="keyword">as</span> cv</span><br><span class="line"></span><br><span class="line">src = cv.imread(<span class="string">&quot;F:/Software/opencv-python-image/image/camera.jpg&quot;</span>)</span><br><span class="line">cv.imshow(<span class="string">&quot;input&quot;</span>, src)</span><br><span class="line">image = tf.placeholder(shape=[<span class="literal">None</span>, <span class="literal">None</span>, <span class="number">3</span>], dtype=tf.uint8, name=<span class="string">&quot;image&quot;</span>)</span><br><span class="line">roi_image = tf.<span class="built_in">slice</span>(image, [<span class="number">35</span>,<span class="number">20</span>, <span class="number">0</span>], [<span class="number">180</span>, <span class="number">180</span>, -<span class="number">1</span>]) <span class="comment"># -1自动计算总通道数 若改为1则为灰度图像</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">with</span> tf.Session() <span class="keyword">as</span> sess: </span><br><span class="line">    <span class="built_in">slice</span> = sess.run(roi_image, feed_dict=&#123;image:src&#125;)</span><br><span class="line">    <span class="built_in">print</span>(roi_image)</span><br><span class="line">    cv.imshow(<span class="string">&quot;roi&quot;</span>, <span class="built_in">slice</span>)</span><br><span class="line">    cv.waitKey(<span class="number">0</span>)</span><br><span class="line">    cv.destroyAllWindows()</span><br></pre></td></tr></table></figure>
+
+
+
+
+
+<p><strong>参考资料</strong></p>
+<blockquote>
+<p>[1] <a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/45476929">TensorFlow 中的几个关键概念：Tensor，Operation，Graph，Session - 知乎 (zhihu.com)</a></p>
+<p>[2] <a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/40462507">序列化理解起来很简单 - 知乎 (zhihu.com)</a></p>
+</blockquote>
+</article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta">文章作者: </span><span class="post-copyright-info"><a href="http://example.com">Obito</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta">文章链接: </span><span class="post-copyright-info"><a href="http://example.com/2023/03/28/TensorFlow%20%E7%AC%94%E8%AE%B01/">http://example.com/2023/03/28/TensorFlow%20%E7%AC%94%E8%AE%B01/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta">版权声明: </span><span class="post-copyright-info">本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">CC BY-NC-SA 4.0</a> 许可协议。转载请注明来自 <a href="http://example.com" target="_blank">Obito Blog</a>！</span></div></div><div class="tag_share"><div class="post-meta__tag-list"></div><div class="post_share"><div class="social-share" data-image="https://raw.githubusercontent.com/OBITOoaoa/picture_bed/master/scenery_02.jpg" data-sites="facebook,twitter,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/butterfly-extsrc/sharejs/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc/sharejs/dist/js/social-share.min.js" defer></script></div></div><nav class="pagination-post" id="pagination"><div class="prev-post pull-full"><a href="/2023/03/29/TensorFlow%20%E7%AC%94%E8%AE%B02/" title="TensorFlow 笔记2"><img class="cover" src="https://raw.githubusercontent.com/OBITOoaoa/picture_bed/master/scenery_03.jpg" onerror="onerror=null;src='/img/404.jpg'" alt="cover of previous post"><div class="pagination-info"><div class="label">上一篇</div><div class="prev_info">TensorFlow 笔记2</div></div></a></div></nav></div><div class="aside-content" id="aside-content"><div class="card-widget card-info"><div class="is-center"><div class="avatar-img"><img src="https://i.loli.net/2021/02/24/5O1day2nriDzjSu.png" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="author-info__name">Obito</div><div class="author-info__description">!!!!</div></div><div class="card-info-data site-data is-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">14</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">0</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">1</div></a></div><a id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/xxxxxx"><i class="fab fa-github"></i><span>Follow Me</span></a></div><div class="card-widget card-announcement"><div class="item-headline"><i class="fas fa-bullhorn fa-shake"></i><span>公告</span></div><div class="announcement_content">This is my Blog</div></div><div class="sticky_layout"><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>最新文章</span></div><div class="aside-list"><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2023/08/03/hello-world/" title="Hello World">Hello World</a><time datetime="2023-08-03T10:00:58.677Z" title="发表于 2023-08-03 18:00:58">2023-08-03</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2023/08/01/%E5%9F%BA%E4%BA%8Eopencv%E7%9A%84%E8%BD%A6%E9%81%93%E7%BA%BF%E6%A3%80%E6%B5%8B/" title="基于opencv的车道线检测"><img src="https://raw.githubusercontent.com/OBITOoaoa/picture_bed/master/scenery_07.jpg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="基于opencv的车道线检测"/></a><div class="content"><a class="title" href="/2023/08/01/%E5%9F%BA%E4%BA%8Eopencv%E7%9A%84%E8%BD%A6%E9%81%93%E7%BA%BF%E6%A3%80%E6%B5%8B/" title="基于opencv的车道线检测">基于opencv的车道线检测</a><time datetime="2023-08-01T10:16:53.000Z" title="发表于 2023-08-01 18:16:53">2023-08-01</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2023/08/01/%E7%A5%9E%E4%B9%8B%E7%9C%BC/" title="神之眼">神之眼</a><time datetime="2023-08-01T10:16:26.000Z" title="发表于 2023-08-01 18:16:26">2023-08-01</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2023/05/21/%E7%A7%BB%E6%A4%8Du8g2%E5%BA%93%E5%88%B0stm32/" title="移植u8g2库到stm32">移植u8g2库到stm32</a><time datetime="2023-05-21T05:48:01.000Z" title="发表于 2023-05-21 13:48:01">2023-05-21</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2023/05/19/%E5%B5%8C%E5%85%A5%E5%BC%8F%E5%AE%9E%E4%B9%A0/" title="嵌入式实践实习知识"><img src="https://raw.githubusercontent.com/OBITOoaoa/picture_bed/master/scenery_11.jpg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="嵌入式实践实习知识"/></a><div class="content"><a class="title" href="/2023/05/19/%E5%B5%8C%E5%85%A5%E5%BC%8F%E5%AE%9E%E4%B9%A0/" title="嵌入式实践实习知识">嵌入式实践实习知识</a><time datetime="2023-05-19T09:25:01.000Z" title="发表于 2023-05-19 17:25:01">2023-05-19</time></div></div></div></div></div></div></main><footer id="footer"><div id="footer-wrap"><div class="copyright">&copy;2020 - 2023 By Obito</div><div class="framework-info"><span>框架 </span><a target="_blank" rel="noopener" href="https://hexo.io">Hexo</a><span class="footer-separator">|</span><span>主题 </span><a target="_blank" rel="noopener" href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly</a></div><div class="footer_custom_text">I wish you to become your own sun, no need to rely on who's light.</div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="阅读模式"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="浅色和深色模式转换"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="单栏和双栏切换"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside_config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button><button id="go-up" type="button" title="回到顶部"><span class="scroll-percent"></span><i class="fas fa-arrow-up"></i></button></div></div><div><script src="/js/utils.js"></script><script src="/js/main.js"></script><script src="https://cdn.jsdelivr.net/npm/@fancyapps/ui/dist/fancybox/fancybox.umd.min.js"></script><div class="js-pjax"></div><script defer="defer" id="ribbon" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc/dist/canvas-ribbon.min.js" size="150" alpha="0.6" zIndex="-1" mobile="false" data-click="false"></script><script id="click-heart" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc/dist/click-heart.min.js" async="async" mobile="false"></script><script src="https://cdn.jsdelivr.net/npm/pjax/pjax.min.js"></script><script>let pjaxSelectors = ["head > title","#config-diff","#body-wrap","#rightside-config-hide","#rightside-config-show",".js-pjax"]
+
+var pjax = new Pjax({
+  elements: 'a:not([target="_blank"])',
+  selectors: pjaxSelectors,
+  cacheBust: false,
+  analytics: false,
+  scrollRestoration: false
+})
+
+document.addEventListener('pjax:send', function () {
+
+  // removeEventListener scroll 
+  window.tocScrollFn && window.removeEventListener('scroll', window.tocScrollFn)
+  window.scrollCollect && window.removeEventListener('scroll', scrollCollect)
+
+  document.getElementById('rightside').style.cssText = "opacity: ''; transform: ''"
+  
+  if (window.aplayers) {
+    for (let i = 0; i < window.aplayers.length; i++) {
+      if (!window.aplayers[i].options.fixed) {
+        window.aplayers[i].destroy()
+      }
+    }
+  }
+
+  typeof typed === 'object' && typed.destroy()
+
+  //reset readmode
+  const $bodyClassList = document.body.classList
+  $bodyClassList.contains('read-mode') && $bodyClassList.remove('read-mode')
+
+  typeof disqusjs === 'object' && disqusjs.destroy()
+})
+
+document.addEventListener('pjax:complete', function () {
+  window.refreshFn()
+
+  document.querySelectorAll('script[data-pjax]').forEach(item => {
+    const newScript = document.createElement('script')
+    const content = item.text || item.textContent || item.innerHTML || ""
+    Array.from(item.attributes).forEach(attr => newScript.setAttribute(attr.name, attr.value))
+    newScript.appendChild(document.createTextNode(content))
+    item.parentNode.replaceChild(newScript, item)
+  })
+
+  GLOBAL_CONFIG.islazyload && window.lazyLoadInstance.update()
+
+  typeof panguInit === 'function' && panguInit()
+
+  // google analytics
+  typeof gtag === 'function' && gtag('config', '', {'page_path': window.location.pathname});
+
+  // baidu analytics
+  typeof _hmt === 'object' && _hmt.push(['_trackPageview',window.location.pathname]);
+
+  typeof loadMeting === 'function' && document.getElementsByClassName('aplayer').length && loadMeting()
+
+  // prismjs
+  typeof Prism === 'object' && Prism.highlightAll()
+})
+
+document.addEventListener('pjax:error', (e) => {
+  if (e.request.status === 404) {
+    pjax.loadUrl('/404.html')
+  }
+})</script><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script></div></body></html>

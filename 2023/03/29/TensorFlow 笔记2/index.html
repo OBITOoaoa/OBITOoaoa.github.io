@@ -1,0 +1,364 @@
+<!DOCTYPE html><html lang="zh-CN" data-theme="dark"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0,viewport-fit=cover"><title>TensorFlow 笔记2 | Obito Blog</title><meta name="author" content="Obito"><meta name="copyright" content="Obito"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#0d0d0d"><meta name="description" content="数据读取处理1. 文件读取以下用到的队列都为tf.train.QueueRunner对象，每个 QueueRunner 都负责一个阶段，tf.train.start_queue_runners()函数会要求图中的每个 QueueRunner 启动它的运行队列操作的线程。因此需要在会话中进行线程操作（结束后需回收线程）。 tf.train.Coordinator()线程协调器，通过它来对线程进行管理">
+<meta property="og:type" content="article">
+<meta property="og:title" content="TensorFlow 笔记2">
+<meta property="og:url" content="http://example.com/2023/03/29/TensorFlow%20%E7%AC%94%E8%AE%B02/index.html">
+<meta property="og:site_name" content="Obito Blog">
+<meta property="og:description" content="数据读取处理1. 文件读取以下用到的队列都为tf.train.QueueRunner对象，每个 QueueRunner 都负责一个阶段，tf.train.start_queue_runners()函数会要求图中的每个 QueueRunner 启动它的运行队列操作的线程。因此需要在会话中进行线程操作（结束后需回收线程）。 tf.train.Coordinator()线程协调器，通过它来对线程进行管理">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://raw.githubusercontent.com/OBITOoaoa/picture_bed/master/scenery_03.jpg">
+<meta property="article:published_time" content="2023-03-29T15:29:38.000Z">
+<meta property="article:modified_time" content="2023-08-03T14:06:30.025Z">
+<meta property="article:author" content="Obito">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://raw.githubusercontent.com/OBITOoaoa/picture_bed/master/scenery_03.jpg"><link rel="shortcut icon" href="/img/favicon.png"><link rel="canonical" href="http://example.com/2023/03/29/TensorFlow%20%E7%AC%94%E8%AE%B02/index.html"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="stylesheet" href="/css/index.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free/css/all.min.css" media="print" onload="this.media='all'"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/ui/dist/fancybox/fancybox.min.css" media="print" onload="this.media='all'"><script>const GLOBAL_CONFIG = {
+  root: '/',
+  algolia: undefined,
+  localSearch: undefined,
+  translate: undefined,
+  noticeOutdate: {"limitDay":500,"position":"top","messagePrev":"It has been","messageNext":"days since the last update, the content of the article may be outdated."},
+  highlight: {"plugin":"highlighjs","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":false},
+  copy: {
+    success: '复制成功',
+    error: '复制错误',
+    noSupport: '浏览器不支持'
+  },
+  relativeDate: {
+    homepage: true,
+    post: true
+  },
+  runtime: '',
+  dateSuffix: {
+    just: '刚刚',
+    min: '分钟前',
+    hour: '小时前',
+    day: '天前',
+    month: '个月前'
+  },
+  copyright: undefined,
+  lightbox: 'fancybox',
+  Snackbar: undefined,
+  source: {
+    justifiedGallery: {
+      js: 'https://cdn.jsdelivr.net/npm/flickr-justified-gallery/dist/fjGallery.min.js',
+      css: 'https://cdn.jsdelivr.net/npm/flickr-justified-gallery/dist/fjGallery.min.css'
+    }
+  },
+  isPhotoFigcaption: false,
+  islazyload: false,
+  isAnchor: false,
+  percent: {
+    toc: true,
+    rightside: false,
+  },
+  autoDarkmode: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: 'TensorFlow 笔记2',
+  isPost: true,
+  isHome: false,
+  isHighlightShrink: true,
+  isToc: true,
+  postUpdate: '2023-08-03 22:06:30'
+}</script><noscript><style type="text/css">
+  #nav {
+    opacity: 1
+  }
+  .justified-gallery img {
+    opacity: 1
+  }
+
+  #recent-posts time,
+  #post-meta time {
+    display: inline !important
+  }
+</style></noscript><script>(win=>{
+    win.saveToLocal = {
+      set: function setWithExpiry(key, value, ttl) {
+        if (ttl === 0) return
+        const now = new Date()
+        const expiryDay = ttl * 86400000
+        const item = {
+          value: value,
+          expiry: now.getTime() + expiryDay,
+        }
+        localStorage.setItem(key, JSON.stringify(item))
+      },
+
+      get: function getWithExpiry(key) {
+        const itemStr = localStorage.getItem(key)
+
+        if (!itemStr) {
+          return undefined
+        }
+        const item = JSON.parse(itemStr)
+        const now = new Date()
+
+        if (now.getTime() > item.expiry) {
+          localStorage.removeItem(key)
+          return undefined
+        }
+        return item.value
+      }
+    }
+  
+    win.getScript = url => new Promise((resolve, reject) => {
+      const script = document.createElement('script')
+      script.src = url
+      script.async = true
+      script.onerror = reject
+      script.onload = script.onreadystatechange = function() {
+        const loadState = this.readyState
+        if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
+        script.onload = script.onreadystatechange = null
+        resolve()
+      }
+      document.head.appendChild(script)
+    })
+  
+    win.getCSS = (url,id = false) => new Promise((resolve, reject) => {
+      const link = document.createElement('link')
+      link.rel = 'stylesheet'
+      link.href = url
+      if (id) link.id = id
+      link.onerror = reject
+      link.onload = link.onreadystatechange = function() {
+        const loadState = this.readyState
+        if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
+        link.onload = link.onreadystatechange = null
+        resolve()
+      }
+      document.head.appendChild(link)
+    })
+  
+      win.activateDarkMode = function () {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      win.activateLightMode = function () {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+        }
+      }
+      const t = saveToLocal.get('theme')
+    
+          if (t === 'dark') activateDarkMode()
+          else if (t === 'light') activateLightMode()
+        
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        if (asideStatus === 'hide') {
+          document.documentElement.classList.add('hide-aside')
+        } else {
+          document.documentElement.classList.remove('hide-aside')
+        }
+      }
+    
+    const detectApple = () => {
+      if(/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)){
+        document.documentElement.classList.add('apple')
+      }
+    }
+    detectApple()
+    })(window)</script><meta name="generator" content="Hexo 6.3.0"></head><body><div id="loading-box"><div class="loading-left-bg"></div><div class="loading-right-bg"></div><div class="spinner-box"><div class="configure-border-1"><div class="configure-core"></div></div><div class="configure-border-2"><div class="configure-core"></div></div><div class="loading-word">加载中...</div></div></div><script>(()=>{
+  const $loadingBox = document.getElementById('loading-box')
+  const $body = document.body
+  const preloader = {
+    endLoading: () => {
+      $body.style.overflow = ''
+      $loadingBox.classList.add('loaded')
+    },
+    initLoading: () => {
+      $body.style.overflow = 'hidden'
+      $loadingBox.classList.remove('loaded')
+    }
+  }
+
+  preloader.initLoading()
+  window.addEventListener('load',() => { preloader.endLoading() })
+
+  if (true) {
+    document.addEventListener('pjax:send', () => { preloader.initLoading() })
+    document.addEventListener('pjax:complete', () => { preloader.endLoading() })
+  }
+})()</script><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img is-center"><img src="https://i.loli.net/2021/02/24/5O1day2nriDzjSu.png" onerror="onerror=null;src='/img/friend_404.gif'" alt="avatar"/></div><div class="sidebar-site-data site-data is-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">14</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">0</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">1</div></a></div><hr class="custom-hr"/><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> Home</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> Archives</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> Tags</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> Categories</span></a></div><div class="menus_item"><a class="site-page group" href="javascript:void(0);"><i class="fa-fw fas fa-list"></i><span> List</span><i class="fas fa-chevron-down"></i></a><ul class="menus_item_child"><li><a class="site-page child" href="/music/"><i class="fa-fw fas fa-music"></i><span> Music</span></a></li><li><a class="site-page child" href="/movies/"><i class="fa-fw fas fa-video"></i><span> Movie</span></a></li></ul></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fas fa-link"></i><span> Link</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> About</span></a></div></div></div></div><div class="post" id="body-wrap"><header class="post-bg" id="page-header" style="background-image: url('https://raw.githubusercontent.com/OBITOoaoa/picture_bed/master/scenery_03.jpg')"><nav id="nav"><span id="blog-info"><a href="/" title="Obito Blog"><span class="site-name">Obito Blog</span></a></span><div id="menus"><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> Home</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> Archives</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> Tags</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> Categories</span></a></div><div class="menus_item"><a class="site-page group" href="javascript:void(0);"><i class="fa-fw fas fa-list"></i><span> List</span><i class="fas fa-chevron-down"></i></a><ul class="menus_item_child"><li><a class="site-page child" href="/music/"><i class="fa-fw fas fa-music"></i><span> Music</span></a></li><li><a class="site-page child" href="/movies/"><i class="fa-fw fas fa-video"></i><span> Movie</span></a></li></ul></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fas fa-link"></i><span> Link</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> About</span></a></div></div><div id="toggle-menu"><a class="site-page" href="javascript:void(0);"><i class="fas fa-bars fa-fw"></i></a></div></div></nav><div id="post-info"><h1 class="post-title">TensorFlow 笔记2</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">发表于</span><time class="post-meta-date-created" datetime="2023-03-29T15:29:38.000Z" title="发表于 2023-03-29 23:29:38">2023-03-29</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">更新于</span><time class="post-meta-date-updated" datetime="2023-08-03T14:06:30.025Z" title="更新于 2023-08-03 22:06:30">2023-08-03</time></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-wordcount"><i class="far fa-file-word fa-fw post-meta-icon"></i><span class="post-meta-label">字数总计:</span><span class="word-count">3.3k</span><span class="post-meta-separator">|</span><i class="far fa-clock fa-fw post-meta-icon"></i><span class="post-meta-label">阅读时长:</span><span>13分钟</span></span><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title="TensorFlow 笔记2"><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">阅读量:</span><span id="busuanzi_value_page_pv"><i class="fa-solid fa-spinner fa-spin"></i></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="post-content" id="article-container"><h2 id="数据读取处理"><a href="#数据读取处理" class="headerlink" title="数据读取处理"></a><strong>数据读取处理</strong></h2><h3 id="1-文件读取"><a href="#1-文件读取" class="headerlink" title="1. 文件读取"></a>1. 文件读取</h3><p>以下用到的队列都为<code>tf.train.QueueRunner</code>对象，每个 QueueRunner 都负责一个阶段，<code>tf.train.start_queue_runners()</code>函数会要求图中的每个 QueueRunner 启动它的运行队列操作的线程。因此需要在会话中进行<strong>线程操作</strong>（<strong>结束后需回收线程</strong>）。</p>
+<p><code>tf.train.Coordinator()</code><strong>线程协调器</strong>，通过它来对线程进行管理和协调；创建一个线程协调器对象<code>coord = tf.train.Coordinator()</code>，<code>coord.request_stop()</code>：<strong>请求停止</strong>，<code>coord.join(threads= )</code>：<strong>回收线程</strong>。</p>
+<p><code>tf.train.start_queue_runners(sess=,coord=)</code>收集图中所有的队列线程，默认同时启动线程。sess:所在的会话，coord:线程协调器。</p>
+<h4 id="1-1-构造文件名队列"><a href="#1-1-构造文件名队列" class="headerlink" title="1.1 构造文件名队列"></a>1.1 构造文件名队列</h4><p>将需要读取的文件的文件名（一般为相对路径）放入文件队列。</p>
+<p><code>tf.train.string_input_producer(string_tensor,num_epochs=None,shuffle=True)</code></p>
+<ul>
+<li><p>string_tensor：相对路径的一阶张量，一般用<code>[相对路径]</code>传入即可。</p>
+</li>
+<li><p>num_epochs：表示迭代的次数，默认为 None 无限次遍历 tensor 列表。</p>
+</li>
+<li><p>shuffle：bool 类型，表示是否打乱样本的顺序,默认为 True 即生成的样本顺序被打乱了，在批处理的时候不需要再次打乱样本，使用 tf.train.batch函数就可以了；如果shuffle&#x3D;False，就需要在批处理时候使用 tf.train.shuffle_batch函数打乱样本。</p>
+</li>
+</ul>
+<p>将文件名列表交给<code>tf.train.string_input_producer</code>函数。string_input_producer来生成一个<strong>先入先出的队列</strong>，文件阅读器会需要它们来取数据。string_input_producer 提供的可配置参数来设置文件名乱序和最大的训练迭代数，QueueRunner会为每次迭代（epoch）将所有的文件名加入文件名队列中，如果shuffle&#x3D;True的话，会对文件名进行乱序处理。这一过程是比较均匀的，因此它可以产生均衡的文件名队列。</p>
+<p>这个<strong>QueueRunner工作线程是独立于文件阅读器的线程</strong>，因此乱序和将文件名推入到文件名队列这些过程不会阻塞文件阅读器运行。根据你的文件格式，选择对应的文件阅读器，然后将文件名队列提供给阅读器的read方法。阅读器的read方法会输出一个键来表征输入的文件和其中的数据，同时得到一个<strong>字符串标量</strong>，这个字符串标量可以被一个或多个解析器，或者<strong>转换操作将其解码为张量并且构造成为样本。</strong></p>
+<h4 id="1-2-读取与解码"><a href="#1-2-读取与解码" class="headerlink" title="1.2 读取与解码"></a>1.2 读取与解码</h4><h5 id="1-2-1-文件读取器"><a href="#1-2-1-文件读取器" class="headerlink" title="1.2.1 文件读取器"></a>1.2.1 文件读取器</h5><p>根据文件的内容格式选择相应的文件读取器</p>
+<p><code>tf.TextLineReader</code>：读取文本文件逗号分隔值(CSV)格式，默认一次读取一行。</p>
+<p><code>tf.WholeFileReader</code>：读取图片文件，默认一次读取一张图片。</p>
+<p><code>tf.FixedLengthRecordReader(record_bytes)</code>：读取二进制文件（每个记录是固定数量字节的二进制文件），<code>record_bytes</code>指定每次读取一个样本的字节数。</p>
+<p><code>tf.TFRecordReader</code>：读取TFRecords文件。</p>
+<h5 id="1-2-2文件内容解码器"><a href="#1-2-2文件内容解码器" class="headerlink" title="1.2.2文件内容解码器"></a>1.2.2文件内容解码器</h5><p>针对不同格式的内容进行相对应的解码操作，解码为统一Tensor格式。</p>
+<p><code>tf.decode_csv()</code>: 解码文本文件内容，将CSV转换为张量，与<code>tf.TextLineReader</code>搭配使用。<br><code>tf.image.decode_jpeg </code>and<code>tf.image.decode_png</code>(contents即样本)<br>将JPEG编码（PNG编码）的图像解码为uint8张量，3-D形状:[height, width, channels]，与<code>tf.WholeFileReader</code>搭配使用。<br><code>tf.decode_raw()</code>︰解码二进制文件内容,与<code>tf.FixedLengthRecordReader</code>搭配使用，二进制读取为uint8类型。</p>
+<p>解码阶段默认所有内容都解码为unit8类型，uint8保存节省空间，若想提高计算精度则可通过<code>tf.cast()</code>进行类型转换为float32。</p>
+<h4 id="1-3-批处理"><a href="#1-3-批处理" class="headerlink" title="1.3 批处理"></a>1.3 批处理</h4><p><code>tf.train.batch(tensors, batch_size, num_threads = 1, capacity = 32,name=None)</code></p>
+<p>读取指定大小（个数）的张量， 单张图片 [height width channels] 多张图片 [batch height width channels]。</p>
+<ul>
+<li>tensors：可以是包含张量的列表，批处理的内容放到列表当中。</li>
+<li>batch_size：从队列中读取的批处理大小。</li>
+<li>num_threads：进入队列的线程数。</li>
+<li>capacity：整数，队列中元素的最大数量。</li>
+</ul>
+<p><code>tf.train.shuffle_batch(tensors,batch_size,capacity,min_after_dequeue,num_threads=1) </code>： 乱序读取指定大小（个数）的张量。</p>
+<h3 id="2-图片读取"><a href="#2-图片读取" class="headerlink" title="2. 图片读取"></a>2. 图片读取</h3><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> os</span><br><span class="line">os.environ[<span class="string">&#x27;TF_CPP_MIN_LOG_LEVEL&#x27;</span>] = <span class="string">&#x27;2&#x27;</span></span><br><span class="line"><span class="keyword">import</span> tensorflow <span class="keyword">as</span> tf</span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">picture_read</span>(<span class="params">file_list</span>):</span><br><span class="line">    <span class="comment"># 1. 构建文件名队列</span></span><br><span class="line">    file_queue = tf.train.string_input_producer(file_list)</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&#x27;file_queue:&#x27;</span>,file_queue)</span><br><span class="line">    <span class="comment"># 2. 文件读取与解码</span></span><br><span class="line">    reader = tf.WholeFileReader()  <span class="comment"># 图片读取器</span></span><br><span class="line">    <span class="comment"># key为文件名，value为一张图片的原始编码形式</span></span><br><span class="line">    key, value = reader.read(file_queue)</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&#x27;key&#x27;</span>, key)</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&#x27;value&#x27;</span>, value)</span><br><span class="line">    image = tf.image.decode_jpeg(value)  <span class="comment"># 读取的是什么格式，就decode什么格式</span></span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&#x27;image:&#x27;</span>,image)  <span class="comment"># 形状不定</span></span><br><span class="line">    <span class="comment"># 图片形状、类型修改</span></span><br><span class="line">    image_resize = tf.image.resize_images(image, [<span class="number">200</span>, <span class="number">200</span>])</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&#x27;image_resize:&#x27;</span>,image_resize)</span><br><span class="line">    image_resize.set_shape(shape=[<span class="number">200</span>, <span class="number">200</span>, <span class="number">3</span>])</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&#x27;image_resize&#x27;</span>,image_resize)</span><br><span class="line"></span><br><span class="line">    <span class="comment"># 3. 批处理</span></span><br><span class="line">    image_batch = tf.train.batch([image_resize], batch_size=<span class="number">100</span>, num_threads=<span class="number">1</span>, capacity=<span class="number">100</span>)</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&#x27;image_batch:&#x27;</span>,image_batch)</span><br><span class="line"></span><br><span class="line">    <span class="keyword">with</span> tf.Session() <span class="keyword">as</span> sess:</span><br><span class="line">        <span class="comment"># 创建线程协调员</span></span><br><span class="line">        coord = tf.train.Coordinator()</span><br><span class="line">        <span class="comment"># 开启线程</span></span><br><span class="line">        threads = tf.train.start_queue_runners(sess=sess, coord=coord)</span><br><span class="line">        key_new,value_new,image_new,image_resize_new,image_batch_new = sess.run([key,value,image,image_resize,image_batch])</span><br><span class="line">        <span class="built_in">print</span>(<span class="string">&#x27;key_new:\n&#x27;</span>,key_new)</span><br><span class="line">        <span class="built_in">print</span>(<span class="string">&#x27;value_new:\n&#x27;</span>,value_new)</span><br><span class="line">        <span class="built_in">print</span>(<span class="string">&#x27;image_new:\n&#x27;</span>,image_new)</span><br><span class="line">        <span class="built_in">print</span>(<span class="string">&#x27;image_resize_new:\n&#x27;</span>,image_resize_new)</span><br><span class="line">        <span class="built_in">print</span>(<span class="string">&#x27;image_batch_new:\n&#x27;</span>,image_batch_new)</span><br><span class="line"></span><br><span class="line">        <span class="comment"># 停止线程 回收线程</span></span><br><span class="line">        coord.request_stop()</span><br><span class="line">        coord.join(threads)</span><br><span class="line">        <span class="keyword">return</span> <span class="literal">None</span></span><br><span class="line">    </span><br><span class="line"><span class="keyword">if</span> __name__ == <span class="string">&#x27;__main__&#x27;</span>:</span><br><span class="line">    file_name = os.listdir(<span class="string">&#x27;./dog&#x27;</span>)  <span class="comment"># 返回指定路径下的文件和文件夹列表</span></span><br><span class="line">    <span class="comment"># 路径 + 文件名 形成列表</span></span><br><span class="line">    file_list = [os.path.join(<span class="string">&#x27;./dog&#x27;</span>, file) <span class="keyword">for</span> file <span class="keyword">in</span> file_name]</span><br><span class="line">    <span class="comment"># print(file_name)</span></span><br><span class="line">    <span class="comment"># print(file_list)</span></span><br><span class="line">    picture_read(file_list)</span><br></pre></td></tr></table></figure>
+
+<h3 id="3-CIFAR10二进制读取"><a href="#3-CIFAR10二进制读取" class="headerlink" title="3. CIFAR10二进制读取"></a>3. CIFAR10二进制读取</h3><blockquote>
+<p>CIFAR10数据集官网： <a target="_blank" rel="noopener" href="https://www.cs.toronto.edu/~kriz/cifar.html">https://www.cs.toronto.edu/~kriz/cifar.html</a></p>
+</blockquote>
+<p>数据集分为五个训练批次和一个测试批次，每个批次有 10000 张图像。测试批次恰好包含来自每个类别的 1000 个随机选择的图像。训练批次包含随机顺序的剩余图像，但一些训练批次可能包含来自一个类的图像多于另一个。在它们之间，训练批次恰好包含来自每个类别的 5000 张图像。</p>
+<p>这些文件中的每一个格式如下，数据中每个样本包含了特征值和目标值:</p>
+<p><strong>cifar10 的特征值是 image(3072Bytes) 目标值是 label 0-9 (1Bytes)。</strong></p>
+<p>&lt;1×标签&gt;&lt;3072×像素&gt;<br>                …<br>&lt;1×标签&gt;&lt;3072×像素&gt;<br><strong>第一个字节是第一个图像的标签，它是一个0-9范围内的数字。接下来的3072个字节是图像像素的值。前1024个字节是红色通道值，下1024个绿色，最后1024个蓝色。</strong>值以行优先顺序存储，因此前32个字节是图像第一行的红色通道值。每个文件都包含10000个这样的3073字节的“行”图像，但没有任何分隔行的限制。因此每个文件应该完全是30730000字节长。<br>即一个样本的形式为： 1+1024r+1024g+1024b&#x3D;3073个字节</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> os</span><br><span class="line">os.environ[<span class="string">&#x27;TF_CPP_MIN_LOG_LEVEL&#x27;</span>] = <span class="string">&#x27;2&#x27;</span></span><br><span class="line"><span class="keyword">import</span> tensorflow <span class="keyword">as</span> tf</span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">CIFAR10</span>():</span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">__init__</span>(<span class="params">self</span>):</span><br><span class="line">        <span class="comment"># 初始化操作</span></span><br><span class="line">        self.height = <span class="number">32</span></span><br><span class="line">        self.width = <span class="number">32</span></span><br><span class="line">        self.channels = <span class="number">3</span></span><br><span class="line">        <span class="comment"># 标签和像素 字节数</span></span><br><span class="line">        self.image_bytes = self.height * self.width * self.channels</span><br><span class="line">        self.label_bytes = <span class="number">1</span></span><br><span class="line">        self.all_bytes = self.label_bytes + self.image_bytes</span><br><span class="line"></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">read_and_decode</span>(<span class="params">self,file_list</span>):</span><br><span class="line">        <span class="comment"># 1. 构建文件名队列</span></span><br><span class="line">        file_queue = tf.train.string_input_producer(file_list)</span><br><span class="line">        <span class="comment"># 2. 读取与解码</span></span><br><span class="line">        reader = tf.FixedLengthRecordReader(self.all_bytes)</span><br><span class="line">        key,value = reader.read(file_queue)</span><br><span class="line">        <span class="built_in">print</span>(<span class="string">&#x27;key:&#x27;</span>,key)</span><br><span class="line">        <span class="built_in">print</span>(<span class="string">&#x27;value:&#x27;</span>,value)</span><br><span class="line">        decode = tf.decode_raw(value,tf.uint8)</span><br><span class="line">        <span class="built_in">print</span>(<span class="string">&#x27;decode:&#x27;</span>,decode) <span class="comment"># 解码后为一维 标签和通道并在一起（第一位标签）</span></span><br><span class="line"></span><br><span class="line">        <span class="comment"># 因此需要 将目标值（标签）和特征值（通道）切片分开</span></span><br><span class="line">        <span class="comment"># tf.slice( tensor , 初始索引 , 个数 )</span></span><br><span class="line">        label = tf.<span class="built_in">slice</span>(decode,[<span class="number">0</span>],[self.label_bytes])</span><br><span class="line">        image = tf.<span class="built_in">slice</span>(decode,[self.label_bytes],[self.image_bytes])</span><br><span class="line">        <span class="built_in">print</span>(<span class="string">&#x27;label:&#x27;</span>,label)</span><br><span class="line">        <span class="built_in">print</span>(<span class="string">&#x27;image:&#x27;</span>,image)</span><br><span class="line"></span><br><span class="line">        image_reshaped = tf.reshape(image,shape = [self.channels,self.height,self.width])</span><br><span class="line">        <span class="built_in">print</span>(<span class="string">&#x27;image_reshaped:&#x27;</span>,image_reshaped)</span><br><span class="line"></span><br><span class="line">        <span class="comment"># 解码图像由shape为[height, width, channels] 的3 - Duint8张量表示。</span></span><br><span class="line">        image_transposed = tf.transpose(image_reshaped,[<span class="number">1</span>,<span class="number">2</span>,<span class="number">0</span>])</span><br><span class="line">        <span class="built_in">print</span>(<span class="string">&#x27;image_transposed:&#x27;</span>,image_transposed)</span><br><span class="line"></span><br><span class="line">        <span class="comment"># uint8转为float32 提高精度</span></span><br><span class="line">        image_cast = tf.cast(image_transposed,tf.float32)</span><br><span class="line">        <span class="built_in">print</span>(<span class="string">&#x27;image_cast:&#x27;</span>,image_cast)</span><br><span class="line"></span><br><span class="line">        <span class="comment"># 3. 批处理</span></span><br><span class="line">        label_batch,image_batch = tf.train.batch([label,image_cast],batch_size = <span class="number">100</span>,num_threads = <span class="number">1</span>,capacity = <span class="number">100</span>)</span><br><span class="line">        <span class="built_in">print</span>(<span class="string">&#x27;label_batch:&#x27;</span>,label_batch)</span><br><span class="line">        <span class="built_in">print</span>(<span class="string">&#x27;image_batch:&#x27;</span>,image_batch)</span><br><span class="line"></span><br><span class="line">        <span class="keyword">with</span> tf.Session() <span class="keyword">as</span> sess:</span><br><span class="line">            coord = tf.train.Coordinator()</span><br><span class="line">            threads = tf.train.start_queue_runners(sess =sess,coord = coord)</span><br><span class="line">            key_new, value_new, decode_new, label_new, image_new, image_reshaped_new, image_transposed_new, label_batch_new, image_batch_new = sess.run([key, value, decode, label, image, image_reshaped, image_transposed, label_batch, image_batch])</span><br><span class="line">            <span class="built_in">print</span>(<span class="string">&#x27;key_new: &#x27;</span>, key_new)</span><br><span class="line">            <span class="built_in">print</span>(<span class="string">&#x27;value_new: &#x27;</span>, value_new)</span><br><span class="line">            <span class="built_in">print</span>(<span class="string">&#x27;decode_new&#x27;</span>, decode_new)</span><br><span class="line">            <span class="built_in">print</span>(<span class="string">&#x27;label_new&#x27;</span>, label_new)</span><br><span class="line">            <span class="built_in">print</span>(<span class="string">&#x27;image_new&#x27;</span>, image_new)</span><br><span class="line">            <span class="built_in">print</span>(<span class="string">&#x27;image_reshaped_new\n&#x27;</span>, image_reshaped_new)</span><br><span class="line">            <span class="built_in">print</span>(<span class="string">&#x27;image_transposed_new\n&#x27;</span>, image_transposed_new)</span><br><span class="line">            <span class="built_in">print</span>(<span class="string">&#x27;label_batch_new\n&#x27;</span>, label_batch_new)</span><br><span class="line">            <span class="built_in">print</span>(<span class="string">&#x27;image_batch_new\n&#x27;</span>, image_batch_new)</span><br><span class="line"></span><br><span class="line">            <span class="comment"># 停止线程 回收线程</span></span><br><span class="line">            coord.request_stop()</span><br><span class="line">            coord.join(threads)</span><br><span class="line"></span><br><span class="line">        <span class="keyword">return</span> label_batch_new,image_batch_new</span><br><span class="line">        </span><br><span class="line"><span class="keyword">if</span> __name__ == <span class="string">&#x27;__main__&#x27;</span>:</span><br><span class="line">    <span class="comment"># 返回指定路径下的文件和文件夹列表</span></span><br><span class="line">    file_name = os.listdir(<span class="string">&#x27;./cifar-10-batches-bin&#x27;</span>)</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&#x27;file_name:&#x27;</span>,file_name)</span><br><span class="line">    <span class="comment"># 路径 + 文件名  if file[-3:] == &#x27;bin&#x27;: 后缀bin的文件</span></span><br><span class="line">    file_list = [os.path.join(<span class="string">&#x27;./cifar-10-batches-bin&#x27;</span>,file) <span class="keyword">for</span> file <span class="keyword">in</span> file_name <span class="keyword">if</span> file[-<span class="number">3</span>:] == <span class="string">&#x27;bin&#x27;</span>]</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&#x27;file_list:&#x27;</span>,file_list)</span><br><span class="line"></span><br><span class="line">    CIFAR10 = CIFAR10()</span><br><span class="line">    label_batch,image_batch = CIFAR10.read_and_decode(file_list)  <span class="comment"># CIFAR10二进制数据读取        </span></span><br></pre></td></tr></table></figure>
+
+<h3 id="4-TFRecords"><a href="#4-TFRecords" class="headerlink" title="4. TFRecords"></a>4. TFRecords</h3><p>TFRecords 是 Tensorflow 设计的一种内置文件格式，是一种二进制文件，它能更好的利用内存，更方便复制和移动。将二进制数据和标签(训练的类别标签)数据存储在同一个文件中，即特征值和目标值是绑定在一起的。</p>
+<h4 id="4-1-TFRecords存储"><a href="#4-1-TFRecords存储" class="headerlink" title="4.1 TFRecords存储"></a>4.1 TFRecords存储</h4><ol>
+<li><p>建立TFRecord存储器：tf.python_io.TFRecordWriter(path)</p>
+<ul>
+<li>path: TFRecords文件的路径</li>
+<li>方法：<ul>
+<li>write(record):向文件中写入一个字符串记录</li>
+<li>close():关闭文件写入器(通常采用with文件管理器就无需close了)</li>
+</ul>
+</li>
+<li>注：字符串是一个序列化的Example：Example.SerializeToString()</li>
+<li><code>Example.SerializeToString()</code> 将 example 序列化到本地</li>
+</ul>
+</li>
+<li><p>构造每个样本的Example协议块</p>
+<ul>
+<li><p>tf.train.Example(features&#x3D;None)   	 写入tfrecords文件</p>
+<ul>
+<li>features：<strong>tf.train.Features 类型的特征实例</strong></li>
+<li>return：example格式协议块</li>
+</ul>
+</li>
+<li><p>tf.train.Features(feature&#x3D;None)          构建每个样本的信息键值对</p>
+<ul>
+<li>features:字典数据，key为要保存的名字，<strong>value为tf.train.Feature实例</strong></li>
+<li>return:Features类型</li>
+</ul>
+</li>
+<li><p>tf.train.Feature(**options)</p>
+<ul>
+<li><p>**options：例如：<br><code>bytes_list = tf.train. BytesList(value=[Bytes])</code>	     字节<br><code>int64_list = tf.train. Int64List(value=[Value])</code>		 整型</p>
+<p><code>float_list = tf.train.FloatList(value=[value])</code>		   浮点型</p>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><p>循环将数据填入Example协议内存块</p>
+</li>
+</ol>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> os</span><br><span class="line">os.environ[<span class="string">&#x27;TF_CPP_MIN_LOG_LEVEL&#x27;</span>] = <span class="string">&#x27;2&#x27;</span></span><br><span class="line"><span class="keyword">import</span> tensorflow <span class="keyword">as</span> tf </span><br><span class="line"></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">write_to_tfrecords</span>(<span class="params">self,label_batch,image_batch</span>):</span><br><span class="line">        <span class="comment"># 将样本的特征值和目标值写入tfrecords</span></span><br><span class="line">        <span class="comment"># print(label_batch.size) # 100</span></span><br><span class="line">        <span class="keyword">with</span> tf.python_io.TFRecordWriter(<span class="string">&#x27;./cifar10.tfrecords&#x27;</span>) <span class="keyword">as</span> writer:</span><br><span class="line">            <span class="comment"># 循环样本数 构造example对象 序列化写入文件</span></span><br><span class="line">            <span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(label_batch.size):</span><br><span class="line">                image = image_batch[i].tostring()   <span class="comment"># 图片序列化</span></span><br><span class="line">                label = label_batch[i][<span class="number">0</span>]           <span class="comment"># 取出一维数组的值</span></span><br><span class="line">                <span class="comment"># print(&#x27;image:&#x27;,image)</span></span><br><span class="line">                <span class="comment"># print(&#x27;label:&#x27;,label)</span></span><br><span class="line">                example = tf.train.Example(features = tf.train.Features(feature = &#123;</span><br><span class="line">                    <span class="string">&#x27;image&#x27;</span>: tf.train.Feature(bytes_list = tf.train.BytesList(value = [image])),</span><br><span class="line">                    <span class="string">&#x27;label&#x27;</span>: tf.train.Feature(int64_list = tf.train.Int64List(value = [label]))</span><br><span class="line">                &#125;))</span><br><span class="line">                <span class="comment"># 将序列化后的example 写入cifar10.tfrecords文件中</span></span><br><span class="line">                writer.write(example.SerializeToString())</span><br><span class="line"></span><br><span class="line">        <span class="keyword">return</span> <span class="literal">None</span></span><br><span class="line">    </span><br><span class="line"><span class="keyword">if</span> __name__ == <span class="string">&#x27;__main__&#x27;</span>:</span><br><span class="line">    <span class="comment"># 返回指定路径下的文件和文件夹列表</span></span><br><span class="line">    file_name = os.listdir(<span class="string">&#x27;./cifar-10-batches-bin&#x27;</span>)</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&#x27;file_name:&#x27;</span>,file_name)</span><br><span class="line">    <span class="comment"># 路径 + 文件名  if file[-3:] == &#x27;bin&#x27;: 后缀bin的文件</span></span><br><span class="line">    file_list = [os.path.join(<span class="string">&#x27;./cifar-10-batches-bin&#x27;</span>,file) <span class="keyword">for</span> file <span class="keyword">in</span> file_name <span class="keyword">if</span> file[-<span class="number">3</span>:] == <span class="string">&#x27;bin&#x27;</span>]</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&#x27;file_list:&#x27;</span>,file_list)</span><br><span class="line"></span><br><span class="line">    CIFAR10 = CIFAR10()</span><br><span class="line">    <span class="comment"># label_batch,image_batch = CIFAR10.read_and_decode(file_list)  # CIFAR10二进制数据读取</span></span><br><span class="line">    CIFAR10.write_to_tfrecords(label_batch,image_batch)   <span class="comment"># tfrecords文件存储</span></span><br></pre></td></tr></table></figure>
+
+
+
+<h4 id="4-2-TFRecords读取"><a href="#4-2-TFRecords读取" class="headerlink" title="4.2 TFRecords读取"></a>4.2 TFRecords读取</h4><p>读取方法跟文件读取流程基本相同，只是在读取和解码阶段时需要有个<strong>解析TFRecords的example协议内存块的过程</strong>。</p>
+<ul>
+<li>tf.parse_single_example(serialized,features&#x3D;None,name&#x3D;None)<ul>
+<li>解析一个单一的Example原型</li>
+<li>serialized：标量字符串Tensor，一个序列化的Example</li>
+<li>features：dict字典数据，键为读取的名字，<strong>值为FixedLenFeature</strong></li>
+<li>return:<strong>一个键值对组成的字典</strong>，键为读取的名字</li>
+</ul>
+</li>
+<li>tf.FixedLenFeature(shape,dtype)<ul>
+<li>shape：输入数据的形状，一般不指定,为空列表</li>
+<li>dtype：输入数据类型，与存储进文件的类型要一致，类型只能是float32,int64,string</li>
+</ul>
+</li>
+</ul>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> os</span><br><span class="line">os.environ[<span class="string">&#x27;TF_CPP_MIN_LOG_LEVEL&#x27;</span>] = <span class="string">&#x27;2&#x27;</span></span><br><span class="line"><span class="keyword">import</span> tensorflow <span class="keyword">as</span> tf</span><br><span class="line"></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">read_tfrecords</span>(<span class="params">self,file_list</span>):</span><br><span class="line">        <span class="comment"># 1. 构造文件名队列</span></span><br><span class="line">        file_queue = tf.train.string_input_producer(file_list)</span><br><span class="line"></span><br><span class="line">        <span class="comment"># 2. 读取与解码</span></span><br><span class="line">        reader = tf.TFRecordReader()</span><br><span class="line">        key,value = reader.read(file_queue)</span><br><span class="line">        <span class="comment"># 读取tfrecords文件 需要解析example</span></span><br><span class="line">        feature = tf.parse_single_example(value,features=&#123;</span><br><span class="line">            <span class="string">&#x27;image&#x27;</span>:tf.FixedLenFeature([],tf.string),</span><br><span class="line">            <span class="string">&#x27;label&#x27;</span>:tf.FixedLenFeature([],tf.int64)</span><br><span class="line">        &#125;)</span><br><span class="line">        <span class="comment"># 取出两个键值所对应的值</span></span><br><span class="line">        image = feature[<span class="string">&#x27;image&#x27;</span>]</span><br><span class="line">        label = feature[<span class="string">&#x27;label&#x27;</span>]</span><br><span class="line">        <span class="built_in">print</span>(<span class="string">&#x27;image:&#x27;</span>,image)</span><br><span class="line">        <span class="built_in">print</span>(<span class="string">&#x27;label:&#x27;</span>,label)</span><br><span class="line"></span><br><span class="line">        <span class="comment"># 解码</span></span><br><span class="line">        image_decoded = tf.decode_raw(image,tf.uint8)</span><br><span class="line">        <span class="built_in">print</span>(<span class="string">&#x27;image_decoded:&#x27;</span>,image_decoded)</span><br><span class="line">        <span class="comment"># print(image_decoded.shape)</span></span><br><span class="line">        <span class="comment"># 改变形状</span></span><br><span class="line">        image_reshaped = tf.reshape(image_decoded,shape = [<span class="number">64</span>,<span class="number">64</span>,self.channels])</span><br><span class="line">        <span class="built_in">print</span>(<span class="string">&#x27;image_reshaped:&#x27;</span>,image_reshaped)</span><br><span class="line"></span><br><span class="line">        <span class="comment"># 批处理</span></span><br><span class="line">        image_batch,label_batch = tf.train.batch([image_reshaped,label],batch_size = <span class="number">100</span>,num_threads = <span class="number">1</span>,capacity = <span class="number">100</span>)</span><br><span class="line">        <span class="built_in">print</span>(<span class="string">&#x27;image_batch:&#x27;</span>,image_batch)</span><br><span class="line">        <span class="built_in">print</span>(<span class="string">&#x27;label_batch:&#x27;</span>,label_batch)</span><br><span class="line">        <span class="keyword">with</span> tf.Session() <span class="keyword">as</span> sess:</span><br><span class="line">            <span class="comment"># 开启线程</span></span><br><span class="line">            coord = tf.train.Coordinator()</span><br><span class="line">            threads = tf.train.start_queue_runners(sess=sess,coord=coord)</span><br><span class="line"></span><br><span class="line">            image_new,label_new,image_decoded_new,image_reshaped_new,image_batch_new,label_batch_new= sess.run([image,label,image_decoded,image_reshaped,image_batch,label_batch])</span><br><span class="line">            <span class="built_in">print</span>(<span class="string">&#x27;image_new:&#x27;</span>,image_new)</span><br><span class="line">            <span class="built_in">print</span>(<span class="string">&#x27;label_new:&#x27;</span>,label_new)</span><br><span class="line">            <span class="built_in">print</span>(<span class="string">&#x27;image_decoded_new:&#x27;</span>,image_decoded_new)</span><br><span class="line">            <span class="built_in">print</span>(<span class="string">&#x27;image_reshaped_new:&#x27;</span>,image_reshaped_new)</span><br><span class="line">            <span class="built_in">print</span>(<span class="string">&#x27;image_batch_new:&#x27;</span>,image_batch_new)</span><br><span class="line">            <span class="built_in">print</span>(<span class="string">&#x27;label_batch_new:&#x27;</span>,label_batch_new)</span><br><span class="line"></span><br><span class="line">            <span class="comment"># 停止线程 回收线程</span></span><br><span class="line">            coord.request_stop()</span><br><span class="line">            coord.join(threads)</span><br><span class="line">            </span><br><span class="line">        <span class="keyword">return</span> <span class="literal">None</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> __name__ == <span class="string">&#x27;__main__&#x27;</span>:</span><br><span class="line">   <span class="comment"># # 返回指定路径下的文件和文件夹列表</span></span><br><span class="line">    <span class="comment"># file_name = os.listdir(&#x27;./cifar-10-batches-bin&#x27;)</span></span><br><span class="line">    <span class="comment"># print(&#x27;file_name:&#x27;,file_name)</span></span><br><span class="line">    <span class="comment"># # 路径 + 文件名  if file[-3:] == &#x27;bin&#x27;: 后缀bin的文件</span></span><br><span class="line">    <span class="comment"># file_list = [os.path.join(&#x27;./cifar-10-batches-bin&#x27;,file) for file in file_name if file[-3:] == &#x27;bin&#x27;]</span></span><br><span class="line">    <span class="comment"># print(&#x27;file_list:&#x27;,file_list)</span></span><br><span class="line"></span><br><span class="line">    CIFAR10 = CIFAR10()</span><br><span class="line">    <span class="comment"># label_batch,image_batch = CIFAR10.read_and_decode(file_list)  # CIFAR10二进制数据读取</span></span><br><span class="line">    <span class="comment"># CIFAR10.write_to_tfrecords(label_batch,image_batch)   # tfrecords文件存储</span></span><br><span class="line"></span><br><span class="line">    <span class="comment"># tfrecords文件读取</span></span><br><span class="line">    path = [<span class="string">&#x27;./cifar10.tfrecords&#x27;</span>]</span><br><span class="line">    CIFAR10.read_tfrecords(path)</span><br></pre></td></tr></table></figure>
+
+
+
+<p><strong>参考资料</strong></p>
+<blockquote>
+<p><a target="_blank" rel="noopener" href="https://blog.csdn.net/qq_44231797/article/details/125086565">(43条消息) 黑马程序员3天带你玩转Python深度学习TensorFlow框架学习笔记_wisdom_zhe的博客-CSDN博客</a></p>
+<p><a target="_blank" rel="noopener" href="https://www.cnblogs.com/coder-qi/p/10653419.html#%E7%8B%97%E5%9B%BE%E7%89%87%E8%AF%BB%E5%8F%96">【学习笔记】tensorflow图片读取 - coder-qi - 博客园 (cnblogs.com)</a></p>
+<p><a target="_blank" rel="noopener" href="https://www.cnblogs.com/coder-qi/p/10645332.html">【学习笔记】tensorflow文件读取 - coder-qi - 博客园 (cnblogs.com)</a></p>
+<p><a target="_blank" rel="noopener" href="https://www.cnblogs.com/coder-qi/p/10633464.html">【学习笔记】tensorflow队列和线程 - coder-qi - 博客园 (cnblogs.com)</a></p>
+</blockquote>
+</article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta">文章作者: </span><span class="post-copyright-info"><a href="http://example.com">Obito</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta">文章链接: </span><span class="post-copyright-info"><a href="http://example.com/2023/03/29/TensorFlow%20%E7%AC%94%E8%AE%B02/">http://example.com/2023/03/29/TensorFlow%20%E7%AC%94%E8%AE%B02/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta">版权声明: </span><span class="post-copyright-info">本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">CC BY-NC-SA 4.0</a> 许可协议。转载请注明来自 <a href="http://example.com" target="_blank">Obito Blog</a>！</span></div></div><div class="tag_share"><div class="post-meta__tag-list"></div><div class="post_share"><div class="social-share" data-image="https://raw.githubusercontent.com/OBITOoaoa/picture_bed/master/scenery_03.jpg" data-sites="facebook,twitter,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/butterfly-extsrc/sharejs/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc/sharejs/dist/js/social-share.min.js" defer></script></div></div><nav class="pagination-post" id="pagination"><div class="prev-post pull-left"><a href="/2023/04/15/%E6%BF%80%E6%B4%BB%E5%87%BD%E6%95%B0/" title="激活函数"><img class="cover" src="https://raw.githubusercontent.com/OBITOoaoa/picture_bed/master/scenery_04.jpg" onerror="onerror=null;src='/img/404.jpg'" alt="cover of previous post"><div class="pagination-info"><div class="label">上一篇</div><div class="prev_info">激活函数</div></div></a></div><div class="next-post pull-right"><a href="/2023/03/28/TensorFlow%20%E7%AC%94%E8%AE%B01/" title="TensorFlow 笔记1"><img class="cover" src="https://raw.githubusercontent.com/OBITOoaoa/picture_bed/master/scenery_02.jpg" onerror="onerror=null;src='/img/404.jpg'" alt="cover of next post"><div class="pagination-info"><div class="label">下一篇</div><div class="next_info">TensorFlow 笔记1</div></div></a></div></nav></div><div class="aside-content" id="aside-content"><div class="card-widget card-info"><div class="is-center"><div class="avatar-img"><img src="https://i.loli.net/2021/02/24/5O1day2nriDzjSu.png" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="author-info__name">Obito</div><div class="author-info__description">!!!!</div></div><div class="card-info-data site-data is-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">14</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">0</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">1</div></a></div><a id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/xxxxxx"><i class="fab fa-github"></i><span>Follow Me</span></a></div><div class="card-widget card-announcement"><div class="item-headline"><i class="fas fa-bullhorn fa-shake"></i><span>公告</span></div><div class="announcement_content">This is my Blog</div></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>目录</span><span class="toc-percentage"></span></div><div class="toc-content"><ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%95%B0%E6%8D%AE%E8%AF%BB%E5%8F%96%E5%A4%84%E7%90%86"><span class="toc-number">1.</span> <span class="toc-text">数据读取处理</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-%E6%96%87%E4%BB%B6%E8%AF%BB%E5%8F%96"><span class="toc-number">1.1.</span> <span class="toc-text">1. 文件读取</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#1-1-%E6%9E%84%E9%80%A0%E6%96%87%E4%BB%B6%E5%90%8D%E9%98%9F%E5%88%97"><span class="toc-number">1.1.1.</span> <span class="toc-text">1.1 构造文件名队列</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#1-2-%E8%AF%BB%E5%8F%96%E4%B8%8E%E8%A7%A3%E7%A0%81"><span class="toc-number">1.1.2.</span> <span class="toc-text">1.2 读取与解码</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#1-2-1-%E6%96%87%E4%BB%B6%E8%AF%BB%E5%8F%96%E5%99%A8"><span class="toc-number">1.1.2.1.</span> <span class="toc-text">1.2.1 文件读取器</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#1-2-2%E6%96%87%E4%BB%B6%E5%86%85%E5%AE%B9%E8%A7%A3%E7%A0%81%E5%99%A8"><span class="toc-number">1.1.2.2.</span> <span class="toc-text">1.2.2文件内容解码器</span></a></li></ol></li><li class="toc-item toc-level-4"><a class="toc-link" href="#1-3-%E6%89%B9%E5%A4%84%E7%90%86"><span class="toc-number">1.1.3.</span> <span class="toc-text">1.3 批处理</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-%E5%9B%BE%E7%89%87%E8%AF%BB%E5%8F%96"><span class="toc-number">1.2.</span> <span class="toc-text">2. 图片读取</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-CIFAR10%E4%BA%8C%E8%BF%9B%E5%88%B6%E8%AF%BB%E5%8F%96"><span class="toc-number">1.3.</span> <span class="toc-text">3. CIFAR10二进制读取</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#4-TFRecords"><span class="toc-number">1.4.</span> <span class="toc-text">4. TFRecords</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#4-1-TFRecords%E5%AD%98%E5%82%A8"><span class="toc-number">1.4.1.</span> <span class="toc-text">4.1 TFRecords存储</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#4-2-TFRecords%E8%AF%BB%E5%8F%96"><span class="toc-number">1.4.2.</span> <span class="toc-text">4.2 TFRecords读取</span></a></li></ol></li></ol></li></ol></div></div><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>最新文章</span></div><div class="aside-list"><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2023/08/03/hello-world/" title="Hello World">Hello World</a><time datetime="2023-08-03T10:00:58.677Z" title="发表于 2023-08-03 18:00:58">2023-08-03</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2023/08/01/%E5%9F%BA%E4%BA%8Eopencv%E7%9A%84%E8%BD%A6%E9%81%93%E7%BA%BF%E6%A3%80%E6%B5%8B/" title="基于opencv的车道线检测"><img src="https://raw.githubusercontent.com/OBITOoaoa/picture_bed/master/scenery_07.jpg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="基于opencv的车道线检测"/></a><div class="content"><a class="title" href="/2023/08/01/%E5%9F%BA%E4%BA%8Eopencv%E7%9A%84%E8%BD%A6%E9%81%93%E7%BA%BF%E6%A3%80%E6%B5%8B/" title="基于opencv的车道线检测">基于opencv的车道线检测</a><time datetime="2023-08-01T10:16:53.000Z" title="发表于 2023-08-01 18:16:53">2023-08-01</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2023/08/01/%E7%A5%9E%E4%B9%8B%E7%9C%BC/" title="神之眼">神之眼</a><time datetime="2023-08-01T10:16:26.000Z" title="发表于 2023-08-01 18:16:26">2023-08-01</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2023/05/21/%E7%A7%BB%E6%A4%8Du8g2%E5%BA%93%E5%88%B0stm32/" title="移植u8g2库到stm32">移植u8g2库到stm32</a><time datetime="2023-05-21T05:48:01.000Z" title="发表于 2023-05-21 13:48:01">2023-05-21</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2023/05/19/%E5%B5%8C%E5%85%A5%E5%BC%8F%E5%AE%9E%E4%B9%A0/" title="嵌入式实践实习知识"><img src="https://raw.githubusercontent.com/OBITOoaoa/picture_bed/master/scenery_11.jpg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="嵌入式实践实习知识"/></a><div class="content"><a class="title" href="/2023/05/19/%E5%B5%8C%E5%85%A5%E5%BC%8F%E5%AE%9E%E4%B9%A0/" title="嵌入式实践实习知识">嵌入式实践实习知识</a><time datetime="2023-05-19T09:25:01.000Z" title="发表于 2023-05-19 17:25:01">2023-05-19</time></div></div></div></div></div></div></main><footer id="footer"><div id="footer-wrap"><div class="copyright">&copy;2020 - 2023 By Obito</div><div class="framework-info"><span>框架 </span><a target="_blank" rel="noopener" href="https://hexo.io">Hexo</a><span class="footer-separator">|</span><span>主题 </span><a target="_blank" rel="noopener" href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly</a></div><div class="footer_custom_text">I wish you to become your own sun, no need to rely on who's light.</div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="阅读模式"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="浅色和深色模式转换"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="单栏和双栏切换"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside_config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="目录"><i class="fas fa-list-ul"></i></button><button id="go-up" type="button" title="回到顶部"><span class="scroll-percent"></span><i class="fas fa-arrow-up"></i></button></div></div><div><script src="/js/utils.js"></script><script src="/js/main.js"></script><script src="https://cdn.jsdelivr.net/npm/@fancyapps/ui/dist/fancybox/fancybox.umd.min.js"></script><div class="js-pjax"></div><script defer="defer" id="ribbon" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc/dist/canvas-ribbon.min.js" size="150" alpha="0.6" zIndex="-1" mobile="false" data-click="false"></script><script id="click-heart" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc/dist/click-heart.min.js" async="async" mobile="false"></script><script src="https://cdn.jsdelivr.net/npm/pjax/pjax.min.js"></script><script>let pjaxSelectors = ["head > title","#config-diff","#body-wrap","#rightside-config-hide","#rightside-config-show",".js-pjax"]
+
+var pjax = new Pjax({
+  elements: 'a:not([target="_blank"])',
+  selectors: pjaxSelectors,
+  cacheBust: false,
+  analytics: false,
+  scrollRestoration: false
+})
+
+document.addEventListener('pjax:send', function () {
+
+  // removeEventListener scroll 
+  window.tocScrollFn && window.removeEventListener('scroll', window.tocScrollFn)
+  window.scrollCollect && window.removeEventListener('scroll', scrollCollect)
+
+  document.getElementById('rightside').style.cssText = "opacity: ''; transform: ''"
+  
+  if (window.aplayers) {
+    for (let i = 0; i < window.aplayers.length; i++) {
+      if (!window.aplayers[i].options.fixed) {
+        window.aplayers[i].destroy()
+      }
+    }
+  }
+
+  typeof typed === 'object' && typed.destroy()
+
+  //reset readmode
+  const $bodyClassList = document.body.classList
+  $bodyClassList.contains('read-mode') && $bodyClassList.remove('read-mode')
+
+  typeof disqusjs === 'object' && disqusjs.destroy()
+})
+
+document.addEventListener('pjax:complete', function () {
+  window.refreshFn()
+
+  document.querySelectorAll('script[data-pjax]').forEach(item => {
+    const newScript = document.createElement('script')
+    const content = item.text || item.textContent || item.innerHTML || ""
+    Array.from(item.attributes).forEach(attr => newScript.setAttribute(attr.name, attr.value))
+    newScript.appendChild(document.createTextNode(content))
+    item.parentNode.replaceChild(newScript, item)
+  })
+
+  GLOBAL_CONFIG.islazyload && window.lazyLoadInstance.update()
+
+  typeof panguInit === 'function' && panguInit()
+
+  // google analytics
+  typeof gtag === 'function' && gtag('config', '', {'page_path': window.location.pathname});
+
+  // baidu analytics
+  typeof _hmt === 'object' && _hmt.push(['_trackPageview',window.location.pathname]);
+
+  typeof loadMeting === 'function' && document.getElementsByClassName('aplayer').length && loadMeting()
+
+  // prismjs
+  typeof Prism === 'object' && Prism.highlightAll()
+})
+
+document.addEventListener('pjax:error', (e) => {
+  if (e.request.status === 404) {
+    pjax.loadUrl('/404.html')
+  }
+})</script><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script></div></body></html>

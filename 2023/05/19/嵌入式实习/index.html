@@ -1,0 +1,634 @@
+<!DOCTYPE html><html lang="zh-CN" data-theme="dark"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0,viewport-fit=cover"><title>嵌入式实践实习知识 | Obito Blog</title><meta name="author" content="Obito"><meta name="copyright" content="Obito"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#0d0d0d"><meta name="description" content="嵌入式实践实习知识大二下时长一周半多半周的嵌入式实习，由粤嵌的工程师教授知识。 环境及工具：Ubuntu 18.04，arm-linux-gcc 5.4.0，粤嵌GEC6818开发板 以下是此次实习中get到的一下知识以及遇到的一些问题。 2023.05.09gcc : c语言编译器 g++ : c++编译器 gdb : c&#x2F;c++调试器 binutils : 二进制工具集 MinGW">
+<meta property="og:type" content="article">
+<meta property="og:title" content="嵌入式实践实习知识">
+<meta property="og:url" content="http://example.com/2023/05/19/%E5%B5%8C%E5%85%A5%E5%BC%8F%E5%AE%9E%E4%B9%A0/index.html">
+<meta property="og:site_name" content="Obito Blog">
+<meta property="og:description" content="嵌入式实践实习知识大二下时长一周半多半周的嵌入式实习，由粤嵌的工程师教授知识。 环境及工具：Ubuntu 18.04，arm-linux-gcc 5.4.0，粤嵌GEC6818开发板 以下是此次实习中get到的一下知识以及遇到的一些问题。 2023.05.09gcc : c语言编译器 g++ : c++编译器 gdb : c&#x2F;c++调试器 binutils : 二进制工具集 MinGW">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://raw.githubusercontent.com/OBITOoaoa/picture_bed/master/scenery_11.jpg">
+<meta property="article:published_time" content="2023-05-19T09:25:01.000Z">
+<meta property="article:modified_time" content="2023-08-03T14:16:19.341Z">
+<meta property="article:author" content="Obito">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://raw.githubusercontent.com/OBITOoaoa/picture_bed/master/scenery_11.jpg"><link rel="shortcut icon" href="/img/favicon.png"><link rel="canonical" href="http://example.com/2023/05/19/%E5%B5%8C%E5%85%A5%E5%BC%8F%E5%AE%9E%E4%B9%A0/index.html"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="stylesheet" href="/css/index.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free/css/all.min.css" media="print" onload="this.media='all'"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/ui/dist/fancybox/fancybox.min.css" media="print" onload="this.media='all'"><script>const GLOBAL_CONFIG = {
+  root: '/',
+  algolia: undefined,
+  localSearch: undefined,
+  translate: undefined,
+  noticeOutdate: {"limitDay":500,"position":"top","messagePrev":"It has been","messageNext":"days since the last update, the content of the article may be outdated."},
+  highlight: {"plugin":"highlighjs","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":false},
+  copy: {
+    success: '复制成功',
+    error: '复制错误',
+    noSupport: '浏览器不支持'
+  },
+  relativeDate: {
+    homepage: true,
+    post: true
+  },
+  runtime: '',
+  dateSuffix: {
+    just: '刚刚',
+    min: '分钟前',
+    hour: '小时前',
+    day: '天前',
+    month: '个月前'
+  },
+  copyright: undefined,
+  lightbox: 'fancybox',
+  Snackbar: undefined,
+  source: {
+    justifiedGallery: {
+      js: 'https://cdn.jsdelivr.net/npm/flickr-justified-gallery/dist/fjGallery.min.js',
+      css: 'https://cdn.jsdelivr.net/npm/flickr-justified-gallery/dist/fjGallery.min.css'
+    }
+  },
+  isPhotoFigcaption: false,
+  islazyload: false,
+  isAnchor: false,
+  percent: {
+    toc: true,
+    rightside: false,
+  },
+  autoDarkmode: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: '嵌入式实践实习知识',
+  isPost: true,
+  isHome: false,
+  isHighlightShrink: true,
+  isToc: true,
+  postUpdate: '2023-08-03 22:16:19'
+}</script><noscript><style type="text/css">
+  #nav {
+    opacity: 1
+  }
+  .justified-gallery img {
+    opacity: 1
+  }
+
+  #recent-posts time,
+  #post-meta time {
+    display: inline !important
+  }
+</style></noscript><script>(win=>{
+    win.saveToLocal = {
+      set: function setWithExpiry(key, value, ttl) {
+        if (ttl === 0) return
+        const now = new Date()
+        const expiryDay = ttl * 86400000
+        const item = {
+          value: value,
+          expiry: now.getTime() + expiryDay,
+        }
+        localStorage.setItem(key, JSON.stringify(item))
+      },
+
+      get: function getWithExpiry(key) {
+        const itemStr = localStorage.getItem(key)
+
+        if (!itemStr) {
+          return undefined
+        }
+        const item = JSON.parse(itemStr)
+        const now = new Date()
+
+        if (now.getTime() > item.expiry) {
+          localStorage.removeItem(key)
+          return undefined
+        }
+        return item.value
+      }
+    }
+  
+    win.getScript = url => new Promise((resolve, reject) => {
+      const script = document.createElement('script')
+      script.src = url
+      script.async = true
+      script.onerror = reject
+      script.onload = script.onreadystatechange = function() {
+        const loadState = this.readyState
+        if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
+        script.onload = script.onreadystatechange = null
+        resolve()
+      }
+      document.head.appendChild(script)
+    })
+  
+    win.getCSS = (url,id = false) => new Promise((resolve, reject) => {
+      const link = document.createElement('link')
+      link.rel = 'stylesheet'
+      link.href = url
+      if (id) link.id = id
+      link.onerror = reject
+      link.onload = link.onreadystatechange = function() {
+        const loadState = this.readyState
+        if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
+        link.onload = link.onreadystatechange = null
+        resolve()
+      }
+      document.head.appendChild(link)
+    })
+  
+      win.activateDarkMode = function () {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      win.activateLightMode = function () {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+        }
+      }
+      const t = saveToLocal.get('theme')
+    
+          if (t === 'dark') activateDarkMode()
+          else if (t === 'light') activateLightMode()
+        
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        if (asideStatus === 'hide') {
+          document.documentElement.classList.add('hide-aside')
+        } else {
+          document.documentElement.classList.remove('hide-aside')
+        }
+      }
+    
+    const detectApple = () => {
+      if(/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)){
+        document.documentElement.classList.add('apple')
+      }
+    }
+    detectApple()
+    })(window)</script><meta name="generator" content="Hexo 6.3.0"></head><body><div id="loading-box"><div class="loading-left-bg"></div><div class="loading-right-bg"></div><div class="spinner-box"><div class="configure-border-1"><div class="configure-core"></div></div><div class="configure-border-2"><div class="configure-core"></div></div><div class="loading-word">加载中...</div></div></div><script>(()=>{
+  const $loadingBox = document.getElementById('loading-box')
+  const $body = document.body
+  const preloader = {
+    endLoading: () => {
+      $body.style.overflow = ''
+      $loadingBox.classList.add('loaded')
+    },
+    initLoading: () => {
+      $body.style.overflow = 'hidden'
+      $loadingBox.classList.remove('loaded')
+    }
+  }
+
+  preloader.initLoading()
+  window.addEventListener('load',() => { preloader.endLoading() })
+
+  if (true) {
+    document.addEventListener('pjax:send', () => { preloader.initLoading() })
+    document.addEventListener('pjax:complete', () => { preloader.endLoading() })
+  }
+})()</script><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img is-center"><img src="https://i.loli.net/2021/02/24/5O1day2nriDzjSu.png" onerror="onerror=null;src='/img/friend_404.gif'" alt="avatar"/></div><div class="sidebar-site-data site-data is-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">14</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">0</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">1</div></a></div><hr class="custom-hr"/><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> Home</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> Archives</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> Tags</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> Categories</span></a></div><div class="menus_item"><a class="site-page group" href="javascript:void(0);"><i class="fa-fw fas fa-list"></i><span> List</span><i class="fas fa-chevron-down"></i></a><ul class="menus_item_child"><li><a class="site-page child" href="/music/"><i class="fa-fw fas fa-music"></i><span> Music</span></a></li><li><a class="site-page child" href="/movies/"><i class="fa-fw fas fa-video"></i><span> Movie</span></a></li></ul></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fas fa-link"></i><span> Link</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> About</span></a></div></div></div></div><div class="post" id="body-wrap"><header class="post-bg" id="page-header" style="background-image: url('https://raw.githubusercontent.com/OBITOoaoa/picture_bed/master/scenery_11.jpg')"><nav id="nav"><span id="blog-info"><a href="/" title="Obito Blog"><span class="site-name">Obito Blog</span></a></span><div id="menus"><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> Home</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> Archives</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> Tags</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> Categories</span></a></div><div class="menus_item"><a class="site-page group" href="javascript:void(0);"><i class="fa-fw fas fa-list"></i><span> List</span><i class="fas fa-chevron-down"></i></a><ul class="menus_item_child"><li><a class="site-page child" href="/music/"><i class="fa-fw fas fa-music"></i><span> Music</span></a></li><li><a class="site-page child" href="/movies/"><i class="fa-fw fas fa-video"></i><span> Movie</span></a></li></ul></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fas fa-link"></i><span> Link</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> About</span></a></div></div><div id="toggle-menu"><a class="site-page" href="javascript:void(0);"><i class="fas fa-bars fa-fw"></i></a></div></div></nav><div id="post-info"><h1 class="post-title">嵌入式实践实习知识</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">发表于</span><time class="post-meta-date-created" datetime="2023-05-19T09:25:01.000Z" title="发表于 2023-05-19 17:25:01">2023-05-19</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">更新于</span><time class="post-meta-date-updated" datetime="2023-08-03T14:16:19.341Z" title="更新于 2023-08-03 22:16:19">2023-08-03</time></span><span class="post-meta-categories"><span class="post-meta-separator">|</span><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/%E5%B5%8C%E5%85%A5%E5%BC%8F/">嵌入式</a></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-wordcount"><i class="far fa-file-word fa-fw post-meta-icon"></i><span class="post-meta-label">字数总计:</span><span class="word-count">5.3k</span><span class="post-meta-separator">|</span><i class="far fa-clock fa-fw post-meta-icon"></i><span class="post-meta-label">阅读时长:</span><span>19分钟</span></span><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title="嵌入式实践实习知识"><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">阅读量:</span><span id="busuanzi_value_page_pv"><i class="fa-solid fa-spinner fa-spin"></i></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="post-content" id="article-container"><h2 id="嵌入式实践实习知识"><a href="#嵌入式实践实习知识" class="headerlink" title="嵌入式实践实习知识"></a>嵌入式实践实习知识</h2><p>大二下时长一周半多半周的嵌入式实习，由粤嵌的工程师教授知识。</p>
+<p>环境及工具：Ubuntu 18.04，arm-linux-gcc 5.4.0，粤嵌GEC6818开发板</p>
+<p>以下是此次实习中get到的一下知识以及遇到的一些问题。</p>
+<h3 id="2023-05-09"><a href="#2023-05-09" class="headerlink" title="2023.05.09"></a>2023.05.09</h3><p><strong>gcc :</strong> c语言编译器</p>
+<p><strong>g++ :</strong> c++编译器</p>
+<p><strong>gdb :</strong> c&#x2F;c++调试器</p>
+<p><strong>binutils :</strong> 二进制工具集</p>
+<p><strong>MinGW :</strong> MinGW 是让Windows 用户可以用上 GNU 工具，比如GCC。</p>
+<p><strong>Cygwin :</strong> Cygwin 提供完整的类Unix 环境，Windows 用户不仅可以使用GNU 工具，理论上Linux 上的程序只要用Cygwin 重新编译，就可以在Windows 上运行。</p>
+<ul>
+<li>如果程序只用到C&#x2F;C++ 标准库，可以用MinGW 或Cygwin 编译。</li>
+<li>如果程序还用到了<strong>POSIX API</strong>，则只能用Cygwin 编译。</li>
+</ul>
+<p><strong>cmd  输入 sysdm.cpl 打开环境变量设置</strong></p>
+<p>cygwin64 和 MinGW 的 gcc 和 g++ 只能有一个能使用，不能同时使用。</p>
+<p>通过修改环境变量的优先级 顺序从上到下，这里使用 cygwin64 的 gcc 和 g++ 如下：</p>
+<p><img src="/2023/05/19/%E5%B5%8C%E5%85%A5%E5%BC%8F%E5%AE%9E%E4%B9%A0/md3.png" alt="md3"></p>
+<p><img src="/2023/05/19/%E5%B5%8C%E5%85%A5%E5%BC%8F%E5%AE%9E%E4%B9%A0/md01.png" alt="md01"></p>
+<p><img src="/2023/05/19/%E5%B5%8C%E5%85%A5%E5%BC%8F%E5%AE%9E%E4%B9%A0/md02.png" alt="md02"></p>
+<p>在Linux系统中，可执行文件没有统一的后缀，系统从文件的属性来区分可执行文件和不可执行文件。而gcc则通过后缀来区别输入文件的类别，下面介绍gcc所遵循的部分约定规则。</p>
+<p>.c 为后缀的文件，C语言源代码文件；<br>.a 为后缀的文件，是由目标文件构成的库文件；<br>.C .cc 或 .cxx 为后缀的文件，是C++源代码文件；<br>.h 为后缀的文件，是程序所包含的头文件；<br>.i 为后缀的文件，是已经预处理过的C源代码文件；<br>.m 为后缀的文件，是Objective-C源代码文件；<br>.o 为后缀的文件，是编译后的目标文件；<br>.s 为后缀的文件，是汇编语言源代码文件；<br>.S 为后缀的文件，是经过预编译的汇编语言源代码文件</p>
+<p><strong>sudo</strong>：super user do 超级用户执行 ；su：switch user 切换用户。</p>
+<p><strong>sudo su</strong>：当前用户暂时申请 root 权限，输入的是当前用户密码。</p>
+<p><strong>sudo -s</strong>：执行环境变数中的 SHELL 所指定的 shell ，或是 &#x2F;etc&#x2F;passwd 里所指定的 shell，输入当前用户的密码。</p>
+<p><strong>su 用户名</strong>:：用户名为空时默认为 root 用户，申请切换 root 用户，<strong>需要 root 用户的密码</strong>，ubuntu 中<strong>默认没有设置 root 用户的密码，第一次使用需要自行设置</strong>，sudo passwd root 设置 root 用户密码。</p>
+<p><strong>su -用户名</strong>： </p>
+<ul>
+<li><p>如果加入了 - 参数，那么是一种 login-shell 的方式，意思是说切换到另一个用户 <user_name> 之后，当前的 shell 会加载 <user_name> 对应的环境变量和各种设置；</p>
+</li>
+<li><p>如果没有加入 - 参数，那么是一种 <a target="_blank" rel="noopener" href="https://www.zhihu.com/search?q=non-login-shell&search_source=Entity&hybrid_search_source=Entity&hybrid_search_extra=%7B%22sourceType%22:%22answer%22,%22sourceId%22:2553370274%7D">non-login-shell</a> 的方式，意思是说我现在切换到了 <user_name>，但是当前的 shell 还是加载切换之前的那个用户的环境变量以及各种设置。</p>
+</li>
+</ul>
+<p>由下图可知，su 和 -su 都需要输入 root 用户的密码，<strong>su</strong> 执行后目录为<strong>当前用户的目录</strong>，**- su** 执行完后目录是<strong>根目录</strong>，两者都没有时间限制。</p>
+<p><img src="/2023/05/19/%E5%B5%8C%E5%85%A5%E5%BC%8F%E5%AE%9E%E4%B9%A0/md04.png" alt="md04"></p>
+<p>由下图可知，使用 sudo 时输入的密码为当前用户的密码，sudo -s 执行后不加载用户变量，目录为当前目录 ，sudo -i 执行完目录为根目录，sudo su 这种用法好像可以舍弃。。。。</p>
+<p><img src="/2023/05/19/%E5%B5%8C%E5%85%A5%E5%BC%8F%E5%AE%9E%E4%B9%A0/md05.png" alt="md05"></p>
+<p>另外，用户名的颜色即上面的绿色和灰色好像没什么作用，颜色可以通过命令修改。</p>
+<p><strong>gcc 编译的文件</strong> or <strong>gcc 编译的文件 -o 生产的文件名</strong></p>
+<p><strong>.&#x2F; 生成的文件名</strong> 即可输出信息。</p>
+<p><img src="/2023/05/19/%E5%B5%8C%E5%85%A5%E5%BC%8F%E5%AE%9E%E4%B9%A0/md06.png" alt="md06"></p>
+<p><strong>df -h</strong> 查看内存</p>
+<p><strong>ls -a</strong> 查看当前目录下的文件，相比直接 ls 还显示了隐藏文件。</p>
+<p><strong>ls -l</strong> 查看某一个目录会得到一个7个字段的列表。</p>
+<p><img src="/2023/05/19/%E5%B5%8C%E5%85%A5%E5%BC%8F%E5%AE%9E%E4%B9%A0/md09.png" alt="md09"></p>
+<p><strong>文件类型</strong></p>
+<ul>
+<li>-表示普通文件；</li>
+<li>d 表示目录；</li>
+<li>l 表示链接文件；</li>
+<li>p 表示管理文件；</li>
+<li>b 表示块设备文件；</li>
+<li>c 表示字符设备文件；</li>
+<li>s 表示套接字文件；</li>
+</ul>
+<p><strong>文件名称，字体颜色</strong></p>
+<ul>
+<li><p>如果是一个符号链接，那么会有一个 “-&gt;” 箭头符号，后面根一个它指向的文件名；</p>
+</li>
+<li><p>灰白色表示普通文件；</p>
+</li>
+<li><p>亮绿色表示可执行文件；</p>
+</li>
+<li><p>亮红色表示压缩文件；</p>
+</li>
+<li><p>灰蓝色表示目录；</p>
+</li>
+<li><p>亮蓝色表示链接文件；</p>
+</li>
+<li><p>亮黄色表示设备文件；</p>
+</li>
+</ul>
+<p><strong>chmod 权限值 文件名</strong>：设置用户对文件的权限。</p>
+<p>Linux&#x2F;Unix 的文件调用权限分为三级 : 文件所有者（Owner）、用户组（Group）、其它用户（Other Users）。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">[ugoa...][[+-=][rwxX]...][,...]</span><br></pre></td></tr></table></figure>
+
+<p><img src="/2023/05/19/%E5%B5%8C%E5%85%A5%E5%BC%8F%E5%AE%9E%E4%B9%A0/md08.jpg" alt="md08"></p>
+<p><strong>符号模式</strong></p>
+<table>
+<thead>
+<tr>
+<th align="center">who</th>
+<th align="center">用户类型</th>
+<th align="left">说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="center"><code>u</code></td>
+<td align="center">user</td>
+<td align="left">文件所有者</td>
+</tr>
+<tr>
+<td align="center"><code>g</code></td>
+<td align="center">group</td>
+<td align="left">文件所有者所在组</td>
+</tr>
+<tr>
+<td align="center"><code>o</code></td>
+<td align="center">others</td>
+<td align="left">所有其他用户</td>
+</tr>
+<tr>
+<td align="center"><code>a</code></td>
+<td align="center">all</td>
+<td align="left">所有用户, 相当于 <em>ugo</em></td>
+</tr>
+</tbody></table>
+<table>
+<thead>
+<tr>
+<th align="center">Operator</th>
+<th align="center">说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="center"><code>+</code></td>
+<td align="center">为指定的用户类型增加权限</td>
+</tr>
+<tr>
+<td align="center"><code>-</code></td>
+<td align="center">去除指定用户类型的权限</td>
+</tr>
+<tr>
+<td align="center"><code>=</code></td>
+<td align="center">设置指定用户权限的设置，即将用户类型的所有权限重新设置</td>
+</tr>
+</tbody></table>
+<table>
+<thead>
+<tr>
+<th align="center">模式</th>
+<th align="center">名字</th>
+<th align="center">说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="center"><code>r</code></td>
+<td align="center">读</td>
+<td align="center">设置为可读权限</td>
+</tr>
+<tr>
+<td align="center"><code>w</code></td>
+<td align="center">写</td>
+<td align="center">设置为可写权限</td>
+</tr>
+<tr>
+<td align="center"><code>x</code></td>
+<td align="center">执行权限</td>
+<td align="center">设置为可执行权限</td>
+</tr>
+<tr>
+<td align="center"><code>X</code></td>
+<td align="center">特殊执行权限</td>
+<td align="center">只有当文件为目录文件，或者其他类型的用户有可执行权限时，才将文件权限设置可执行</td>
+</tr>
+<tr>
+<td align="center"><code>s</code></td>
+<td align="center">setuid&#x2F;gid</td>
+<td align="center">当文件被执行时，根据who参数指定的用户类型设置文件的setuid或者setgid权限</td>
+</tr>
+<tr>
+<td align="center"><code>t</code></td>
+<td align="center">粘贴位</td>
+<td align="center">设置粘贴位，只有超级用户可以设置该位，只有文件所有者u可以使用该位</td>
+</tr>
+</tbody></table>
+<p><strong>八进制语法</strong></p>
+<p>文件或目录的权限位是由 9 个权限位来控制，每三位为一组。</p>
+<table>
+<thead>
+<tr>
+<th align="center">#</th>
+<th align="center">权限</th>
+<th align="center">rwx</th>
+<th align="center">二进制</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="center">7</td>
+<td align="center">读 + 写 + 执行</td>
+<td align="center">rwx</td>
+<td align="center">111</td>
+</tr>
+<tr>
+<td align="center">6</td>
+<td align="center">读 + 写</td>
+<td align="center">rw-</td>
+<td align="center">110</td>
+</tr>
+<tr>
+<td align="center">5</td>
+<td align="center">读 + 执行</td>
+<td align="center">r-x</td>
+<td align="center">101</td>
+</tr>
+<tr>
+<td align="center"><strong>4</strong></td>
+<td align="center"><strong>只读</strong></td>
+<td align="center"><strong>r–</strong></td>
+<td align="center">100</td>
+</tr>
+<tr>
+<td align="center">3</td>
+<td align="center">写 + 执行</td>
+<td align="center">-wx</td>
+<td align="center">011</td>
+</tr>
+<tr>
+<td align="center"><strong>2</strong></td>
+<td align="center"><strong>只写</strong></td>
+<td align="center"><strong>-w-</strong></td>
+<td align="center">010</td>
+</tr>
+<tr>
+<td align="center"><strong>1</strong></td>
+<td align="center"><strong>只执行</strong></td>
+<td align="center"><strong>–x</strong></td>
+<td align="center">001</td>
+</tr>
+<tr>
+<td align="center"><strong>0</strong></td>
+<td align="center"><strong>无</strong></td>
+<td align="center"><strong>—</strong></td>
+<td align="center">000</td>
+</tr>
+</tbody></table>
+<p>eg：765 表示所有者的权限为 rwx(4+2+1)，用户组的权限为 rw(4+2+0)，其他用户的权限为 rx(4+0+1)。</p>
+<p><img src="/2023/05/19/%E5%B5%8C%E5%85%A5%E5%BC%8F%E5%AE%9E%E4%B9%A0/md07.png" alt="md07"></p>
+<p><strong>tar -xvf xxx.tar.gz</strong> 文件目录 </p>
+<p><strong>tar -zcvf xxx.tar.gz a.txt b.txt c.txt</strong> 将 a.txt b.txt c.txt 打包压缩为一个名为 xxx.tar.gz 压缩包。</p>
+<p><strong>tar cvf xxx.tar xxx</strong>  打包一个tar</p>
+<p><strong>tar xvf xxx.tar xxx</strong>    解开一个tar</p>
+<p><strong>tar cvzf xxx.tar.gz xxx</strong> 打包压缩一个 tar</p>
+<p><strong>tar zxvf xxx.tar.gz</strong>  解压一个tar</p>
+<p><strong>tar -tf 误解压文件 | xargs rm -rf</strong>     </p>
+<p><strong>tar -tf 是列出该压缩文件中的文件列表，xargs rm -rf 则是根据前面的文件列表来删除文件。</strong></p>
+<p>在早期，Linux 和 Unix 系统用一种叫做 tar（Tape ARchive，磁带归档）的工具来打包文件。但它只能打包不能压缩。后来 gzip（GNU Zip）就出现了，通过将 tar 和 gzip 结合起来，形成 tar.gz 格式。</p>
+<p>tar 格式在保留文件权限、所有权和时间戳。</p>
+<h3 id="2023-5-10"><a href="#2023-5-10" class="headerlink" title="2023.5.10"></a>2023.5.10</h3><p>删除文件的骚操作：</p>
+<p><strong>rm 文件1 文件2 …. 删除多个文件</strong></p>
+<p>*<em>rm <em>.txt  删除 .txt 这一类文件</em></em></p>
+<p><em><em>rm xxx</em> 删除固定字母开头的文件</em>*</p>
+<p><strong>rm * -rf 删除文件夹下面所有文件</strong></p>
+<p>Activator 软件，连接开发板，传输在 Ubuntu 下交叉编译后生成的文件到开发板的系统下。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">输入: rx 文件名</span><br><span class="line">然后将文件拖进去</span><br><span class="line">选择 Xmodem</span><br></pre></td></tr></table></figure>
+
+<p><img src="/2023/05/19/%E5%B5%8C%E5%85%A5%E5%BC%8F%E5%AE%9E%E4%B9%A0/md14.png" alt="md14"></p>
+<p>执行文件时需要先查看文件是否可执行。执行以下命令让文件权限变为可读可写可执行文件</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">chmod 777 文件名</span><br></pre></td></tr></table></figure>
+
+
+
+<h3 id="2023-5-11"><a href="#2023-5-11" class="headerlink" title="2023.5.11"></a>2023.5.11</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">man man 查看所有手册</span><br><span class="line">man -f open 可查看 open 关键字出现在哪些手册中</span><br><span class="line">man 2 open 在第二手册中查询 open 关键字</span><br></pre></td></tr></table></figure>
+
+
+
+<p><strong>文件描述符本质</strong></p>
+<p>函数 open() 的返回值，是一个整型 int 数据。这个整型数据，实际上是内核中的一个称为 fd_array 的数组的下标：</p>
+<p><img src="/2023/05/19/%E5%B5%8C%E5%85%A5%E5%BC%8F%E5%AE%9E%E4%B9%A0/md16.jpg" alt="md16"></p>
+<p>打开文件时，内核产生一个指向 file{} 的指针，并将该指针放入一个位于 file_struct{} 中的数组fd_array[] 中，而该指针所在数组的下标，就被 open() 返回给用户，用户把这个数组下标称为文件描述符，如上图所示。</p>
+<p>结论：</p>
+<ul>
+<li>文件描述符从 0 开始，每打开一个文件，就产生一个新的文件描述符（一般是<strong>返回一个最小未使用的描述符</strong>）。</li>
+<li>可以<strong>重复打开</strong>同一个文件，每次打开文件都会使内核产生新结构体（每一个描述符拥有自己独立的资源互不影响），并<strong>得到不同</strong>的文件描述符。</li>
+<li>由于系统在每个进程开始运行时，都默认打开了一次键盘、两次屏幕，<strong>因此0、1、2描述符分别代表标准输入、标准输出和标准出错三个文件（两个硬件）</strong>。</li>
+</ul>
+<p><img src="/2023/05/19/%E5%B5%8C%E5%85%A5%E5%BC%8F%E5%AE%9E%E4%B9%A0/md17.jpg" alt="md17"></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line">int main()</span><br><span class="line">&#123;</span><br><span class="line">    // 1. 打开文件</span><br><span class="line">    // int open(const char *pathname, int flags);</span><br><span class="line">    int file_descriptor = open(&quot;test_open.txt&quot;, O_RDWR);</span><br><span class="line">    int file_descriptor1 = open(&quot;test_open.txt&quot;, O_RDWR);</span><br><span class="line">    // 1.1 判断是否打开成功</span><br><span class="line">    if (file_descriptor == -1)</span><br><span class="line">    &#123;</span><br><span class="line">        // printf(&quot;文件打开失败\n&quot;);</span><br><span class="line">        perror(&quot;文件打开失败\n&quot;);</span><br><span class="line">        return -1;</span><br><span class="line">    &#125;</span><br><span class="line">    if (file_descriptor1 == -1)</span><br><span class="line">    &#123;</span><br><span class="line">        // printf(&quot;文件打开失败\n&quot;);</span><br><span class="line">        perror(&quot;文件打开失败\n&quot;);</span><br><span class="line">        return -1;</span><br><span class="line">    &#125;</span><br><span class="line">    printf(&quot;文件打开成功\n&quot;);</span><br><span class="line">    printf(&quot;%d\n&quot;,file_descriptor); // 3</span><br><span class="line">    printf(&quot;%d\n&quot;,file_descriptor1); // 4</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>从上面可以得出虽然打开了同个文件，但是<strong>得到了不同</strong>文件描述。</p>
+<p>在 Ubuntu 下直接 gcc 编译文件跟 arm-linux-gcc 编译文件是不一样的，后者为交叉编译。</p>
+<p>GEC6818开发板屏幕的色深是 32 位的，32 位色深的屏幕一般被称为真彩屏，或 1600万色屏。色深决定了一个像素点所能表达的颜色的丰富程度，色深越大，色彩表现力越强。</p>
+<p>虽然LCD设备本质上也可以看作是一个文件，在文件系统中有其对应的设备节点，可以像普通文件一样对其进行读写操作（read&#x2F;write），但由于对字符设备的读写操作是以字节流的方式进行的，因此除非操作的图像尺寸刚好与屏幕尺寸完全一致，如下图所示，图片的宽高与LCD的宽高完全一致，否则将会画面会乱。</p>
+<p><img src="/2023/05/19/%E5%B5%8C%E5%85%A5%E5%BC%8F%E5%AE%9E%E4%B9%A0/md15.png" alt="md15"></p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;stdio.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;sys/types.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;sys/stat.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;fcntl.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;unistd.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="type">int</span> <span class="title function_">main</span><span class="params">()</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="comment">// 1. 打开文件</span></span><br><span class="line">    <span class="comment">// int open(const char *pathname, int flags);</span></span><br><span class="line">    <span class="type">int</span> file_descriptor = open(<span class="string">&quot;/dev/fb0&quot;</span>, O_RDWR);</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 1.1 判断是否打开成功</span></span><br><span class="line">    <span class="keyword">if</span> (file_descriptor == <span class="number">-1</span>)</span><br><span class="line">    &#123;</span><br><span class="line">        perror(<span class="string">&quot;文件打开失败\n&quot;</span>);</span><br><span class="line">        <span class="keyword">return</span> <span class="number">-1</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="built_in">printf</span>(<span class="string">&quot;文件打开成功\n&quot;</span>);</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 2. 配置颜色值 ARGB 每个通道占 1 字节 则总需要 4 个字节 用 int 类型刚好</span></span><br><span class="line">    <span class="type">int</span> color = <span class="number">0x00CC99FF</span>;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 3. 将颜色数据直接线性灌入LCD设备节点</span></span><br><span class="line">    <span class="keyword">for</span> (<span class="type">int</span> i =<span class="number">0</span>; i &lt; <span class="number">800</span> * <span class="number">480</span>; i++)</span><br><span class="line">    &#123;</span><br><span class="line">        write(file_descriptor, &amp;color, <span class="keyword">sizeof</span>(<span class="type">int</span>));</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="built_in">printf</span>(<span class="string">&quot;lcd文件写入完毕\n&quot;</span>);</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">    <span class="comment">// 4. 关闭文件</span></span><br><span class="line">    <span class="type">int</span> ret = close (file_descriptor);</span><br><span class="line">    <span class="keyword">if</span> (ret == <span class="number">-1</span>)</span><br><span class="line">    &#123;</span><br><span class="line">        perror(<span class="string">&quot;文件关闭失败\n&quot;</span>);</span><br><span class="line">        <span class="keyword">return</span> <span class="number">-1</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="built_in">printf</span>(<span class="string">&quot;文件关闭成功\n&quot;</span>);</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>像上述代码这样，直接将数据通过设备节点 &#x2F;dev&#x2F;fb0 写入的话，这些数据会自动地从LCD映射内存的入口处（对应LCD屏幕的左上角）开始呈现，并且会以线性的字节流形式逐个字节往后填充，除非图像尺寸与显示器刚好完全一致，否则显示是失败的。</p>
+<p>一般而言，图像的尺寸大小是随机的，因此更方便的做法是为LCD做<strong>内存映射</strong>，将屏幕的每一个像素点跟映射内存一一对应，而映射内存可以是二维数组，因此就可以非常方便地通过操作二维数组中的任意元素，来操作屏幕中的任意像素点了。这里的<strong>映射内存</strong>，有时被称为<strong>显存</strong>。</p>
+<p><img src="/2023/05/19/%E5%B5%8C%E5%85%A5%E5%BC%8F%E5%AE%9E%E4%B9%A0/md16.png" alt="md16"></p>
+<p>如上图所示，将一块内存与LCD的像素一一对应：</p>
+<ul>
+<li>LCD上面显示的图像色彩，由其对应的内存的数据决定</li>
+<li>映射内存的大小大于等于LCD的真实尺寸大小</li>
+<li>映射内存的大小可以大于LCD的真实尺寸，有利于优化动态画面（视频）体验</li>
+</ul>
+<p>将原来代码修改如下：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 3. 映射内存来进行LCD屏幕显示</span></span><br><span class="line"><span class="type">char</span> *p = mmap(<span class="literal">NULL</span>, <span class="number">800</span> * <span class="number">480</span> * <span class="number">4</span>, PROT_WRITE | PROT_READ, MAP_SHARED, file_descriptor, <span class="number">0</span>);</span><br><span class="line"><span class="keyword">if</span> (p == <span class="literal">NULL</span>)</span><br><span class="line">&#123;</span><br><span class="line">    perror(<span class="string">&quot;mmap error&quot;</span>);</span><br><span class="line">    <span class="keyword">return</span> <span class="number">-1</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">for</span> (<span class="type">int</span> i = <span class="number">0</span>; i &lt; <span class="number">800</span> * <span class="number">480</span>; i++)</span><br><span class="line">&#123;</span><br><span class="line">    <span class="comment">// memcpy(p + i * 4, &amp;color, sizeof(int));</span></span><br><span class="line">    *(p + i) = color;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="built_in">printf</span>(<span class="string">&quot;lcd文件写入完毕\n&quot;</span>);</span><br><span class="line">munmap(p, <span class="number">800</span> * <span class="number">480</span> * <span class="number">4</span>);   <span class="comment">// 解除映射</span></span><br></pre></td></tr></table></figure>
+
+
+
+<h3 id="2023-5-12"><a href="#2023-5-12" class="headerlink" title="2023.5.12"></a>2023.5.12</h3><p><strong>实战项目：</strong></p>
+<p>要求：使用C语言代码编写菜单选项并实现其对应的功能<br>例：</p>
+<p>——–欢迎使用…操作系统——-（使用switch语句）<br>1.德国国旗<br>2.法国国旗<br>3.瑞士国旗<br>4.日本国旗(公式:(x-x0)<em>(x-x0) + (y-y0)</em>(y-y0) &#x3D; r*r)<br>5.土耳其国旗（星星可以不用显示，选做加分）<br>6.各国国旗幻灯片形式播放（1s）<br>7.退出（break&#x2F;return）</p>
+<h3 id="2023-5-13"><a href="#2023-5-13" class="headerlink" title="2023.5.13"></a>2023.5.13</h3><p>图片深度，一般有8bit、16bit、24bit 和 32bit等。</p>
+<p>8bit：<br>$$<br>2^8 &#x3D; 2^2(B)*2^3(G)*2^3(R)&#x3D;256<br>$$<br>取值范围：0~255，总共可显示 256 种颜色。</p>
+<p>16bit：<br>$$<br>2^{16} &#x3D; 2^5(B)*2^6(G)*2^5(R)&#x3D;65536<br>$$<br>24bit：<br>$$<br>2^{24} &#x3D; 2^8(B)*2^8(G)*2^8(R)&#x3D;16777215<br>$$<br>32bit：Alpha透明度 + 24 bit，ARGB。</p>
+<p>为什么不使用常见的 jpg文件呢，因为 jpg文件为了便于能在网络上传播，经过了压缩处理，直接读取数据的话是<strong>读不到</strong>颜色数据的，需要经过<strong>解码</strong>才可以读出颜色数据；而 BMP文件是微软公司推出的一种图片数据格式，这种文件<strong>未经过压缩处理</strong>，读取颜色数据的时候<strong>无需进行解码</strong>，因此它的文件大小一般也很大。</p>
+<p>BMP位图格式</p>
+<p><strong>位图的文件头 Bitmap File Header (14 bytes)：</strong></p>
+<p><img src="/2023/05/19/%E5%B5%8C%E5%85%A5%E5%BC%8F%E5%AE%9E%E4%B9%A0/md26.webp" alt="md26"></p>
+<p>因此检查前两个字节即可得知此文件是否为 bmp文件，第一个字节为 0x42，第二个字节为 0x4D。</p>
+<p><strong>位图信息数据头 DIB Header (54 bytes)：</strong></p>
+<p><img src="/2023/05/19/%E5%B5%8C%E5%85%A5%E5%BC%8F%E5%AE%9E%E4%B9%A0/md27.webp" alt="md27"></p>
+<p>bmp文件存储的数据为高位在前低位在后，这就是为什么前面第一个字节反而是 0x42，第二个字节为 0x4D，内容42 4D 对应了ASCII表的 ”BM“两个字母。</p>
+<p>如一张 10 * 10的bmp图像</p>
+<p><img src="/2023/05/19/%E5%B5%8C%E5%85%A5%E5%BC%8F%E5%AE%9E%E4%B9%A0/md28.webp" alt="md28"></p>
+<p>在文件中数据顺序如下：另外 <strong>bmp存储颜色数据为 BGR 顺序。</strong>如下列红色画出 0000 ff表示的是红色。 </p>
+<p><img src="/2023/05/19/%E5%B5%8C%E5%85%A5%E5%BC%8F%E5%AE%9E%E4%B9%A0/md29.webp" alt="md29"></p>
+<p><strong>因此在读取 bmp文件的 颜色数据后需要将 BGR通道转为 ARGB通道显示在 lcd屏幕(32bit)；若为 24bit的 lcd屏幕，则转为 RGB通道即可；另外由于 bmp文件数据是高位在前低位在后，直接读取转换显示完图像是倒置的，需要将颜色数据从尾开始读取才可正常显示。</strong></p>
+<h3 id="2023-5-15"><a href="#2023-5-15" class="headerlink" title="2023.5.15"></a>2023.5.15</h3><p><strong>使用U盘为开发板传输文件：</strong></p>
+<p>如果 U盘是 <strong>fat32</strong>文件系统格式的，U盘可以直接挂载(mount)到到开发板。</p>
+<ul>
+<li>在开发板系统中进入中 <strong>&#x2F;mnt&#x2F;udisk</strong> 可看到插入U盘的信息；</li>
+</ul>
+<p>如果 U盘是 <strong>NTFS</strong>格式的，系统不会自动完成挂载，可以通过<strong>手动挂载</strong>，将 U盘挂载到 <strong>&#x2F;mnt&#x2F;udisk&#x2F;</strong> 目录下，然后通过该目录找到U盘。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">输入命令：</span><br><span class="line">mount -t ntfs /dev/sda1 /mnt/udisk</span><br></pre></td></tr></table></figure>
+
+
+
+<h3 id="2023-5-16"><a href="#2023-5-16" class="headerlink" title="2023.5.16"></a>2023.5.16</h3><p><strong>播放音乐和视频</strong></p>
+<p>音频或视频都通过某一个规则进行压缩和解码，我们的程序可以通过调用播放器来实现压缩和解码的过程，我们的程序主要用于控制播放、暂停、快进、快退等的一些操作即可。<br>开发板中默认有一个播放器 <strong>madplay</strong> 但是它<strong>只能用于播放音频文件MP3</strong>，不可以播放视频文件。因此可以从外部移植一个 mplayer 到开发板中，<strong>mplayer 则可以进行播放音频、视频文件</strong><br>1.检查开发板中是否已经存在播放器 ( &#x2F;bin&#x2F; &#x2F;usr&#x2F;bin&#x2F;) which madplay &#x2F; find -name madplaya如果不存在则手动移植 (复制)进去下载到mplayer程序文件到开发板后需要给它赋予可执行权限</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">chmod 111 mplayer</span><br><span class="line">mplayer xxx.avi	mplayer 文件名可以是视频文件，也可以是音频文件</span><br></pre></td></tr></table></figure>
+
+<p>在虚拟机里面输入命令 kill -l 可以查看当前系统可以用的信号</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line">$ kill -l </span><br><span class="line"> 1) SIGHUP       2) SIGINT       3) SIGQUIT      4) SIGILL       5) SIGTRAP</span><br><span class="line"> 6) SIGABRT      7) SIGBUS       8) SIGFPE       9) SIGKILL     10) SIGUSR1</span><br><span class="line">11) SIGSEGV     12) SIGUSR2     13) SIGPIPE     14) SIGALRM     15) SIGTERM</span><br><span class="line">16) SIGSTKFLT   17) SIGCHLD     18) SIGCONT     19) SIGSTOP     20) SIGTSTP</span><br><span class="line">21) SIGTTIN     22) SIGTTOU     23) SIGURG      24) SIGXCPU     25) SIGXFSZ</span><br><span class="line">26) SIGVTALRM   27) SIGPROF     28) SIGWINCH    29) SIGIO       30) SIGPWR</span><br><span class="line">31) SIGSYS      34) SIGRTMIN    35) SIGRTMIN+1  36) SIGRTMIN+2  37) SIGRTMIN+3</span><br><span class="line">38) SIGRTMIN+4  39) SIGRTMIN+5  40) SIGRTMIN+6  41) SIGRTMIN+7  42) SIGRTMIN+8</span><br><span class="line">43) SIGRTMIN+9  44) SIGRTMIN+10 45) SIGRTMIN+11 46) SIGRTMIN+12 47) SIGRTMIN+13</span><br><span class="line">48) SIGRTMIN+14 49) SIGRTMIN+15 50) SIGRTMAX-14 51) SIGRTMAX-13 52) SIGRTMAX-12</span><br><span class="line">53) SIGRTMAX-11 54) SIGRTMAX-10 55) SIGRTMAX-9  56) SIGRTMAX-8  57) SIGRTMAX-7</span><br><span class="line">58) SIGRTMAX-6  59) SIGRTMAX-5  60) SIGRTMAX-4  61) SIGRTMAX-3  62) SIGRTMAX-2</span><br><span class="line">31) SIGSYS      34) SIGRTMIN    35) SIGRTMIN+1  36) SIGRTMIN+2  37) SIGRTMIN+3</span><br><span class="line">38) SIGRTMIN+4  39) SIGRTMIN+5  40) SIGRTMIN+6  41) SIGRTMIN+7  42) SIGRTMIN+8</span><br><span class="line">43) SIGRTMIN+9  44) SIGRTMIN+10 45) SIGRTMIN+11 46) SIGRTMIN+12 47) SIGRTMIN+13</span><br><span class="line">48) SIGRTMIN+14 49) SIGRTMIN+15 50) SIGRTMAX-14 51) SIGRTMAX-13 52) SIGRTMAX-12</span><br><span class="line">53) SIGRTMAX-11 54) SIGRTMAX-10 55) SIGRTMAX-9  56) SIGRTMAX-8  57) SIGRTMAX-7</span><br><span class="line">58) SIGRTMAX-6  59) SIGRTMAX-5  60) SIGRTMAX-4  61) SIGRTMAX-3  62) SIGRTMAX-2</span><br><span class="line">63) SIGRTMAX-1  64) SIGRTMAX</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"> 9) SIGKILL    杀死某一个进程</span><br><span class="line">18) SIGCONT     给某一个进程发送继续运行的信号</span><br><span class="line">19) SIGSTOP   给某一个进程发送暂停运行的信号</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">注意:两个不同的播放器</span><br><span class="line"></span><br><span class="line">killall -9 mplayer  // 给当前系统中所有进程名为 mplayer 的进程发送 9号信号 （杀死）</span><br><span class="line">system(&quot;killall  -19 mplayer&quot;);  // 暂停播放</span><br><span class="line">system(&quot;killall  -18 mplayer&quot;);  // 继续播放</span><br><span class="line">system(&quot;killall  -9 mplayer&quot;);  // 结束播放器</span><br><span class="line"></span><br><span class="line">killall -9 madplay  // 给当前系统中所有进程名为 madplay 的进程发送 9号信号 （杀死）</span><br><span class="line">system(&quot;killall  -19 madplay&quot;);  // 暂停播放</span><br><span class="line">system(&quot;killall  -18 madplay&quot;);  // 继续播放</span><br><span class="line">system(&quot;killall  -9 madplay&quot;);  // 结束播放器</span><br></pre></td></tr></table></figure>
+
+
+
+<p>视频：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><span class="line">void send_cmd(int fifo_fd,char *cmd)  //发送指令</span><br><span class="line">&#123;</span><br><span class="line">	//写入管道文件</span><br><span class="line">	write(fifo_fd, cmd, strlen(cmd));</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">//mplayer初始化</span><br><span class="line">//判断是否存在管道文件，不存在才创建</span><br><span class="line">if(access(&quot;/fifo&quot;,F_OK))  //默认管道文件创建在根目录，F_OK判断是否存在</span><br><span class="line">&#123;</span><br><span class="line">//条件成立，不存在管道文件</span><br><span class="line">mkfifo(&quot;/fifo&quot;,777);  //创建管道文件</span><br><span class="line">&#125;</span><br><span class="line">//打开管道文件</span><br><span class="line">int fifo_fd = open(&quot;/fifo&quot;,O_RDWR); </span><br><span class="line">if(fifo_fd == -1)</span><br><span class="line">&#123;</span><br><span class="line">printf(&quot;管道文件打开失败\n&quot;);</span><br><span class="line">return -1;</span><br><span class="line">&#125;	</span><br><span class="line"></span><br><span class="line">// 一开始的视频播放</span><br><span class="line">system(&quot;mplayer -slave -quiet -geometry 0:0 -zoom -x 800 -y 400./Test_bmp/Test1.avi&quot;);   </span><br><span class="line">//发送暂停(广义的暂停，即若视频正在播放则暂停播放；若视频暂停播放则开始播放)指令</span><br><span class="line">send_cmd(fifo_fd,&quot;pause\n&quot;); </span><br><span class="line">//音量＋</span><br><span class="line">send_cmd(fifo_fd,&quot;volume -10\n&quot;);</span><br><span class="line">//音量－</span><br><span class="line">send_cmd(fifo_fd,&quot;volume +10\n&quot;);</span><br><span class="line">//kill　mplayer播放器</span><br><span class="line">system(&quot;killall  -9 mplayer&quot;);</span><br></pre></td></tr></table></figure>
+
+
+
+<h3 id="2023-5-17-2023-5-18"><a href="#2023-5-17-2023-5-18" class="headerlink" title="2023.5.17-2023.5.18"></a>2023.5.17-2023.5.18</h3><p>项目整合模块</p>
+<p><strong>主界面：包含四个模块</strong></p>
+<ul>
+<li><p>电子相册V3</p>
+</li>
+<li><p>音乐播放器</p>
+</li>
+<li><p>视频播放器</p>
+</li>
+<li><p>游戏</p>
+</li>
+</ul>
+<p>选择第一个模块可以进入电子相册界面。进入程序的界面需要点击两次右上角才可退回主界面</p>
+<p><strong>电子相册界面包括：</strong></p>
+<ul>
+<li>手动播放：水平滑动和垂直滑动切换图片</li>
+<li>循环播放：循环 2 次，循环后自动返回到电子相册界面；时间原因还未设置手动退出选项。</li>
+</ul>
+<p><strong>音乐播放器界面包括：</strong></p>
+<ul>
+<li>播放音乐</li>
+<li>暂停音乐</li>
+<li>上一首音乐</li>
+<li>下一首音乐</li>
+</ul>
+<p><strong>视频播放器界面包括：</strong></p>
+<ul>
+<li>开始</li>
+<li>暂停</li>
+<li>继续</li>
+<li>调高音量</li>
+<li>调低音量</li>
+</ul>
+<p><strong>游戏界面 ：雷霆战机</strong></p>
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><ul>
+<li>项目分模块写的时候需要考虑项目的耦合性，尽量封装成一个函数便于他人可直接调用；</li>
+<li>编写代码时尽量少用全局变量，过多使用全局变量一方面会增加程序运行的内存，也会降低代码的耦合性，加大项目整合模块的难度；</li>
+<li>若声明了全局变量，切忌在函数中再次声明定义同个变量，否则会导致不必要的麻烦；</li>
+<li>目前的编程能力太弱了，有待提高，使用的代码都是很低级的并且重复性很高，后续应当通过许多编程小项目提高自己的编程能力。</li>
+</ul>
+<blockquote>
+<p><a target="_blank" rel="noopener" href="https://www.cnblogs.com/wzk-0000/p/11083008.html">sudo -i和sudo -s - 乌瑟尔 - 博客园 (cnblogs.com)</a></p>
+<p><a target="_blank" rel="noopener" href="https://blog.csdn.net/vincent040/article/details/116301614">(49条消息) Linux-FrameBuffer双缓冲机制显示图像_fb双缓冲_干燥剂007860的博客-CSDN博客</a></p>
+<p><a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/25119530">浅谈图像格式 .bmp - 知乎 (zhihu.com)</a></p>
+<p><a target="_blank" rel="noopener" href="https://blog.csdn.net/m0_57266121/article/details/118979056">https://blog.csdn.net/m0_57266121/article/details/118979056</a></p>
+<p><a target="_blank" rel="noopener" href="https://blog.csdn.net/weixin_50722786/article/details/126572958">(50条消息) 利用GEC6818屏幕 显示一张bmp图片_read(bmp_fd,&amp;bpp,2);_三目条件的博客-CSDN博客</a></p>
+</blockquote>
+</article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta">文章作者: </span><span class="post-copyright-info"><a href="http://example.com">Obito</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta">文章链接: </span><span class="post-copyright-info"><a href="http://example.com/2023/05/19/%E5%B5%8C%E5%85%A5%E5%BC%8F%E5%AE%9E%E4%B9%A0/">http://example.com/2023/05/19/%E5%B5%8C%E5%85%A5%E5%BC%8F%E5%AE%9E%E4%B9%A0/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta">版权声明: </span><span class="post-copyright-info">本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">CC BY-NC-SA 4.0</a> 许可协议。转载请注明来自 <a href="http://example.com" target="_blank">Obito Blog</a>！</span></div></div><div class="tag_share"><div class="post-meta__tag-list"></div><div class="post_share"><div class="social-share" data-image="https://raw.githubusercontent.com/OBITOoaoa/picture_bed/master/scenery_11.jpg" data-sites="facebook,twitter,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/butterfly-extsrc/sharejs/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc/sharejs/dist/js/social-share.min.js" defer></script></div></div><nav class="pagination-post" id="pagination"><div class="prev-post pull-left"><a href="/2023/05/21/%E7%A7%BB%E6%A4%8Du8g2%E5%BA%93%E5%88%B0stm32/" title="移植u8g2库到stm32"><div class="cover" style="background: var(--default-bg-color)"></div><div class="pagination-info"><div class="label">上一篇</div><div class="prev_info">移植u8g2库到stm32</div></div></a></div><div class="next-post pull-right"><a href="/2023/05/10/Ubuntu%E5%85%B1%E4%BA%AB%E6%96%87%E4%BB%B6%E5%A4%B9%E9%97%AE%E9%A2%98/" title="Ubuntu共享文件夹问题"><img class="cover" src="https://raw.githubusercontent.com/OBITOoaoa/picture_bed/master/scenery_10.jpg" onerror="onerror=null;src='/img/404.jpg'" alt="cover of next post"><div class="pagination-info"><div class="label">下一篇</div><div class="next_info">Ubuntu共享文件夹问题</div></div></a></div></nav></div><div class="aside-content" id="aside-content"><div class="card-widget card-info"><div class="is-center"><div class="avatar-img"><img src="https://i.loli.net/2021/02/24/5O1day2nriDzjSu.png" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="author-info__name">Obito</div><div class="author-info__description">!!!!</div></div><div class="card-info-data site-data is-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">14</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">0</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">1</div></a></div><a id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/xxxxxx"><i class="fab fa-github"></i><span>Follow Me</span></a></div><div class="card-widget card-announcement"><div class="item-headline"><i class="fas fa-bullhorn fa-shake"></i><span>公告</span></div><div class="announcement_content">This is my Blog</div></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>目录</span><span class="toc-percentage"></span></div><div class="toc-content"><ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%B5%8C%E5%85%A5%E5%BC%8F%E5%AE%9E%E8%B7%B5%E5%AE%9E%E4%B9%A0%E7%9F%A5%E8%AF%86"><span class="toc-number">1.</span> <span class="toc-text">嵌入式实践实习知识</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#2023-05-09"><span class="toc-number">1.1.</span> <span class="toc-text">2023.05.09</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2023-5-10"><span class="toc-number">1.2.</span> <span class="toc-text">2023.5.10</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2023-5-11"><span class="toc-number">1.3.</span> <span class="toc-text">2023.5.11</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2023-5-12"><span class="toc-number">1.4.</span> <span class="toc-text">2023.5.12</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2023-5-13"><span class="toc-number">1.5.</span> <span class="toc-text">2023.5.13</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2023-5-15"><span class="toc-number">1.6.</span> <span class="toc-text">2023.5.15</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2023-5-16"><span class="toc-number">1.7.</span> <span class="toc-text">2023.5.16</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2023-5-17-2023-5-18"><span class="toc-number">1.8.</span> <span class="toc-text">2023.5.17-2023.5.18</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%80%BB%E7%BB%93"><span class="toc-number">2.</span> <span class="toc-text">总结</span></a></li></ol></div></div><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>最新文章</span></div><div class="aside-list"><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2023/08/03/hello-world/" title="Hello World">Hello World</a><time datetime="2023-08-03T10:00:58.677Z" title="发表于 2023-08-03 18:00:58">2023-08-03</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2023/08/01/%E5%9F%BA%E4%BA%8Eopencv%E7%9A%84%E8%BD%A6%E9%81%93%E7%BA%BF%E6%A3%80%E6%B5%8B/" title="基于opencv的车道线检测"><img src="https://raw.githubusercontent.com/OBITOoaoa/picture_bed/master/scenery_07.jpg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="基于opencv的车道线检测"/></a><div class="content"><a class="title" href="/2023/08/01/%E5%9F%BA%E4%BA%8Eopencv%E7%9A%84%E8%BD%A6%E9%81%93%E7%BA%BF%E6%A3%80%E6%B5%8B/" title="基于opencv的车道线检测">基于opencv的车道线检测</a><time datetime="2023-08-01T10:16:53.000Z" title="发表于 2023-08-01 18:16:53">2023-08-01</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2023/08/01/%E7%A5%9E%E4%B9%8B%E7%9C%BC/" title="神之眼">神之眼</a><time datetime="2023-08-01T10:16:26.000Z" title="发表于 2023-08-01 18:16:26">2023-08-01</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2023/05/21/%E7%A7%BB%E6%A4%8Du8g2%E5%BA%93%E5%88%B0stm32/" title="移植u8g2库到stm32">移植u8g2库到stm32</a><time datetime="2023-05-21T05:48:01.000Z" title="发表于 2023-05-21 13:48:01">2023-05-21</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2023/05/19/%E5%B5%8C%E5%85%A5%E5%BC%8F%E5%AE%9E%E4%B9%A0/" title="嵌入式实践实习知识"><img src="https://raw.githubusercontent.com/OBITOoaoa/picture_bed/master/scenery_11.jpg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="嵌入式实践实习知识"/></a><div class="content"><a class="title" href="/2023/05/19/%E5%B5%8C%E5%85%A5%E5%BC%8F%E5%AE%9E%E4%B9%A0/" title="嵌入式实践实习知识">嵌入式实践实习知识</a><time datetime="2023-05-19T09:25:01.000Z" title="发表于 2023-05-19 17:25:01">2023-05-19</time></div></div></div></div></div></div></main><footer id="footer"><div id="footer-wrap"><div class="copyright">&copy;2020 - 2023 By Obito</div><div class="framework-info"><span>框架 </span><a target="_blank" rel="noopener" href="https://hexo.io">Hexo</a><span class="footer-separator">|</span><span>主题 </span><a target="_blank" rel="noopener" href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly</a></div><div class="footer_custom_text">I wish you to become your own sun, no need to rely on who's light.</div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="阅读模式"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="浅色和深色模式转换"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="单栏和双栏切换"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside_config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="目录"><i class="fas fa-list-ul"></i></button><button id="go-up" type="button" title="回到顶部"><span class="scroll-percent"></span><i class="fas fa-arrow-up"></i></button></div></div><div><script src="/js/utils.js"></script><script src="/js/main.js"></script><script src="https://cdn.jsdelivr.net/npm/@fancyapps/ui/dist/fancybox/fancybox.umd.min.js"></script><div class="js-pjax"></div><script defer="defer" id="ribbon" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc/dist/canvas-ribbon.min.js" size="150" alpha="0.6" zIndex="-1" mobile="false" data-click="false"></script><script id="click-heart" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc/dist/click-heart.min.js" async="async" mobile="false"></script><script src="https://cdn.jsdelivr.net/npm/pjax/pjax.min.js"></script><script>let pjaxSelectors = ["head > title","#config-diff","#body-wrap","#rightside-config-hide","#rightside-config-show",".js-pjax"]
+
+var pjax = new Pjax({
+  elements: 'a:not([target="_blank"])',
+  selectors: pjaxSelectors,
+  cacheBust: false,
+  analytics: false,
+  scrollRestoration: false
+})
+
+document.addEventListener('pjax:send', function () {
+
+  // removeEventListener scroll 
+  window.tocScrollFn && window.removeEventListener('scroll', window.tocScrollFn)
+  window.scrollCollect && window.removeEventListener('scroll', scrollCollect)
+
+  document.getElementById('rightside').style.cssText = "opacity: ''; transform: ''"
+  
+  if (window.aplayers) {
+    for (let i = 0; i < window.aplayers.length; i++) {
+      if (!window.aplayers[i].options.fixed) {
+        window.aplayers[i].destroy()
+      }
+    }
+  }
+
+  typeof typed === 'object' && typed.destroy()
+
+  //reset readmode
+  const $bodyClassList = document.body.classList
+  $bodyClassList.contains('read-mode') && $bodyClassList.remove('read-mode')
+
+  typeof disqusjs === 'object' && disqusjs.destroy()
+})
+
+document.addEventListener('pjax:complete', function () {
+  window.refreshFn()
+
+  document.querySelectorAll('script[data-pjax]').forEach(item => {
+    const newScript = document.createElement('script')
+    const content = item.text || item.textContent || item.innerHTML || ""
+    Array.from(item.attributes).forEach(attr => newScript.setAttribute(attr.name, attr.value))
+    newScript.appendChild(document.createTextNode(content))
+    item.parentNode.replaceChild(newScript, item)
+  })
+
+  GLOBAL_CONFIG.islazyload && window.lazyLoadInstance.update()
+
+  typeof panguInit === 'function' && panguInit()
+
+  // google analytics
+  typeof gtag === 'function' && gtag('config', '', {'page_path': window.location.pathname});
+
+  // baidu analytics
+  typeof _hmt === 'object' && _hmt.push(['_trackPageview',window.location.pathname]);
+
+  typeof loadMeting === 'function' && document.getElementsByClassName('aplayer').length && loadMeting()
+
+  // prismjs
+  typeof Prism === 'object' && Prism.highlightAll()
+})
+
+document.addEventListener('pjax:error', (e) => {
+  if (e.request.status === 404) {
+    pjax.loadUrl('/404.html')
+  }
+})</script><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script></div></body></html>

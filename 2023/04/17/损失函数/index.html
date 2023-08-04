@@ -1,0 +1,312 @@
+<!DOCTYPE html><html lang="zh-CN" data-theme="dark"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0,viewport-fit=cover"><title>损失函数 | Obito Blog</title><meta name="author" content="Obito"><meta name="copyright" content="Obito"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#0d0d0d"><meta name="description" content="何为损失函数常见的损失函数均方差（MSE）损失（Mean Squared Error Loss）均方差（MSE）损失是机器学习、深度学习回归任务中最常用的一种损失函数，也称为L2 Loss，它是模型预测值 $\hat y$ 与真实样本值 $y$ 之间差值的平方和。$$L_2(x)&#x3D;(y-\hat y)^2$$ $$J_{MSE}&#x3D;\frac{1}{N}\sum_{i&#x3D;">
+<meta property="og:type" content="article">
+<meta property="og:title" content="损失函数">
+<meta property="og:url" content="http://example.com/2023/04/17/%E6%8D%9F%E5%A4%B1%E5%87%BD%E6%95%B0/index.html">
+<meta property="og:site_name" content="Obito Blog">
+<meta property="og:description" content="何为损失函数常见的损失函数均方差（MSE）损失（Mean Squared Error Loss）均方差（MSE）损失是机器学习、深度学习回归任务中最常用的一种损失函数，也称为L2 Loss，它是模型预测值 $\hat y$ 与真实样本值 $y$ 之间差值的平方和。$$L_2(x)&#x3D;(y-\hat y)^2$$ $$J_{MSE}&#x3D;\frac{1}{N}\sum_{i&#x3D;">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://raw.githubusercontent.com/OBITOoaoa/picture_bed/master/scenery_05.jpg">
+<meta property="article:published_time" content="2023-04-17T13:46:37.000Z">
+<meta property="article:modified_time" content="2023-08-03T14:06:24.541Z">
+<meta property="article:author" content="Obito">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://raw.githubusercontent.com/OBITOoaoa/picture_bed/master/scenery_05.jpg"><link rel="shortcut icon" href="/img/favicon.png"><link rel="canonical" href="http://example.com/2023/04/17/%E6%8D%9F%E5%A4%B1%E5%87%BD%E6%95%B0/index.html"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="stylesheet" href="/css/index.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free/css/all.min.css" media="print" onload="this.media='all'"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/ui/dist/fancybox/fancybox.min.css" media="print" onload="this.media='all'"><script>const GLOBAL_CONFIG = {
+  root: '/',
+  algolia: undefined,
+  localSearch: undefined,
+  translate: undefined,
+  noticeOutdate: {"limitDay":500,"position":"top","messagePrev":"It has been","messageNext":"days since the last update, the content of the article may be outdated."},
+  highlight: {"plugin":"highlighjs","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":false},
+  copy: {
+    success: '复制成功',
+    error: '复制错误',
+    noSupport: '浏览器不支持'
+  },
+  relativeDate: {
+    homepage: true,
+    post: true
+  },
+  runtime: '',
+  dateSuffix: {
+    just: '刚刚',
+    min: '分钟前',
+    hour: '小时前',
+    day: '天前',
+    month: '个月前'
+  },
+  copyright: undefined,
+  lightbox: 'fancybox',
+  Snackbar: undefined,
+  source: {
+    justifiedGallery: {
+      js: 'https://cdn.jsdelivr.net/npm/flickr-justified-gallery/dist/fjGallery.min.js',
+      css: 'https://cdn.jsdelivr.net/npm/flickr-justified-gallery/dist/fjGallery.min.css'
+    }
+  },
+  isPhotoFigcaption: false,
+  islazyload: false,
+  isAnchor: false,
+  percent: {
+    toc: true,
+    rightside: false,
+  },
+  autoDarkmode: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: '损失函数',
+  isPost: true,
+  isHome: false,
+  isHighlightShrink: true,
+  isToc: true,
+  postUpdate: '2023-08-03 22:06:24'
+}</script><noscript><style type="text/css">
+  #nav {
+    opacity: 1
+  }
+  .justified-gallery img {
+    opacity: 1
+  }
+
+  #recent-posts time,
+  #post-meta time {
+    display: inline !important
+  }
+</style></noscript><script>(win=>{
+    win.saveToLocal = {
+      set: function setWithExpiry(key, value, ttl) {
+        if (ttl === 0) return
+        const now = new Date()
+        const expiryDay = ttl * 86400000
+        const item = {
+          value: value,
+          expiry: now.getTime() + expiryDay,
+        }
+        localStorage.setItem(key, JSON.stringify(item))
+      },
+
+      get: function getWithExpiry(key) {
+        const itemStr = localStorage.getItem(key)
+
+        if (!itemStr) {
+          return undefined
+        }
+        const item = JSON.parse(itemStr)
+        const now = new Date()
+
+        if (now.getTime() > item.expiry) {
+          localStorage.removeItem(key)
+          return undefined
+        }
+        return item.value
+      }
+    }
+  
+    win.getScript = url => new Promise((resolve, reject) => {
+      const script = document.createElement('script')
+      script.src = url
+      script.async = true
+      script.onerror = reject
+      script.onload = script.onreadystatechange = function() {
+        const loadState = this.readyState
+        if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
+        script.onload = script.onreadystatechange = null
+        resolve()
+      }
+      document.head.appendChild(script)
+    })
+  
+    win.getCSS = (url,id = false) => new Promise((resolve, reject) => {
+      const link = document.createElement('link')
+      link.rel = 'stylesheet'
+      link.href = url
+      if (id) link.id = id
+      link.onerror = reject
+      link.onload = link.onreadystatechange = function() {
+        const loadState = this.readyState
+        if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
+        link.onload = link.onreadystatechange = null
+        resolve()
+      }
+      document.head.appendChild(link)
+    })
+  
+      win.activateDarkMode = function () {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      win.activateLightMode = function () {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+        }
+      }
+      const t = saveToLocal.get('theme')
+    
+          if (t === 'dark') activateDarkMode()
+          else if (t === 'light') activateLightMode()
+        
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        if (asideStatus === 'hide') {
+          document.documentElement.classList.add('hide-aside')
+        } else {
+          document.documentElement.classList.remove('hide-aside')
+        }
+      }
+    
+    const detectApple = () => {
+      if(/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)){
+        document.documentElement.classList.add('apple')
+      }
+    }
+    detectApple()
+    })(window)</script><meta name="generator" content="Hexo 6.3.0"></head><body><div id="loading-box"><div class="loading-left-bg"></div><div class="loading-right-bg"></div><div class="spinner-box"><div class="configure-border-1"><div class="configure-core"></div></div><div class="configure-border-2"><div class="configure-core"></div></div><div class="loading-word">加载中...</div></div></div><script>(()=>{
+  const $loadingBox = document.getElementById('loading-box')
+  const $body = document.body
+  const preloader = {
+    endLoading: () => {
+      $body.style.overflow = ''
+      $loadingBox.classList.add('loaded')
+    },
+    initLoading: () => {
+      $body.style.overflow = 'hidden'
+      $loadingBox.classList.remove('loaded')
+    }
+  }
+
+  preloader.initLoading()
+  window.addEventListener('load',() => { preloader.endLoading() })
+
+  if (true) {
+    document.addEventListener('pjax:send', () => { preloader.initLoading() })
+    document.addEventListener('pjax:complete', () => { preloader.endLoading() })
+  }
+})()</script><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img is-center"><img src="https://i.loli.net/2021/02/24/5O1day2nriDzjSu.png" onerror="onerror=null;src='/img/friend_404.gif'" alt="avatar"/></div><div class="sidebar-site-data site-data is-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">14</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">0</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">1</div></a></div><hr class="custom-hr"/><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> Home</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> Archives</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> Tags</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> Categories</span></a></div><div class="menus_item"><a class="site-page group" href="javascript:void(0);"><i class="fa-fw fas fa-list"></i><span> List</span><i class="fas fa-chevron-down"></i></a><ul class="menus_item_child"><li><a class="site-page child" href="/music/"><i class="fa-fw fas fa-music"></i><span> Music</span></a></li><li><a class="site-page child" href="/movies/"><i class="fa-fw fas fa-video"></i><span> Movie</span></a></li></ul></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fas fa-link"></i><span> Link</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> About</span></a></div></div></div></div><div class="post" id="body-wrap"><header class="post-bg" id="page-header" style="background-image: url('https://raw.githubusercontent.com/OBITOoaoa/picture_bed/master/scenery_05.jpg')"><nav id="nav"><span id="blog-info"><a href="/" title="Obito Blog"><span class="site-name">Obito Blog</span></a></span><div id="menus"><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> Home</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> Archives</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> Tags</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> Categories</span></a></div><div class="menus_item"><a class="site-page group" href="javascript:void(0);"><i class="fa-fw fas fa-list"></i><span> List</span><i class="fas fa-chevron-down"></i></a><ul class="menus_item_child"><li><a class="site-page child" href="/music/"><i class="fa-fw fas fa-music"></i><span> Music</span></a></li><li><a class="site-page child" href="/movies/"><i class="fa-fw fas fa-video"></i><span> Movie</span></a></li></ul></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fas fa-link"></i><span> Link</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> About</span></a></div></div><div id="toggle-menu"><a class="site-page" href="javascript:void(0);"><i class="fas fa-bars fa-fw"></i></a></div></div></nav><div id="post-info"><h1 class="post-title">损失函数</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">发表于</span><time class="post-meta-date-created" datetime="2023-04-17T13:46:37.000Z" title="发表于 2023-04-17 21:46:37">2023-04-17</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">更新于</span><time class="post-meta-date-updated" datetime="2023-08-03T14:06:24.541Z" title="更新于 2023-08-03 22:06:24">2023-08-03</time></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-wordcount"><i class="far fa-file-word fa-fw post-meta-icon"></i><span class="post-meta-label">字数总计:</span><span class="word-count">2.3k</span><span class="post-meta-separator">|</span><i class="far fa-clock fa-fw post-meta-icon"></i><span class="post-meta-label">阅读时长:</span><span>8分钟</span></span><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title="损失函数"><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">阅读量:</span><span id="busuanzi_value_page_pv"><i class="fa-solid fa-spinner fa-spin"></i></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="post-content" id="article-container"><h2 id="何为损失函数"><a href="#何为损失函数" class="headerlink" title="何为损失函数"></a>何为损失函数</h2><h2 id="常见的损失函数"><a href="#常见的损失函数" class="headerlink" title="常见的损失函数"></a>常见的损失函数</h2><h3 id="均方差（MSE）损失（Mean-Squared-Error-Loss）"><a href="#均方差（MSE）损失（Mean-Squared-Error-Loss）" class="headerlink" title="均方差（MSE）损失（Mean Squared Error Loss）"></a>均方差（MSE）损失（Mean Squared Error Loss）</h3><p>均方差（MSE）损失是机器学习、深度学习回归任务中最常用的一种损失函数，也称为L2 Loss，它是模型预测值 $\hat y$ 与真实样本值 $y$ 之间差值的平方和。<br>$$<br>L_2(x)&#x3D;(y-\hat y)^2<br>$$</p>
+<p>$$<br>J_{MSE}&#x3D;\frac{1}{N}\sum_{i&#x3D;1}^{N}(y_i-\hat y_i)^2<br>$$<br>令 n&#x3D;1，以$y-\hat y$为横轴，MSE值为纵轴，得函数图形如下：</p>
+<p>可见MSE函数曲线光滑连续且处处可导，便于使用梯度下降算法，并且随着误差的减小，梯度也在减小，有利于收敛。</p>
+<p>由平方项可知，当 $y-\hat y &lt; 1$，MSE给予较小的惩罚，缩小误差；当 $y-\hat y &gt; 1$，MSE给予较大的惩罚，放大误差；可知MSE对离群点比较敏感，受其影响较大。</p>
+<p>如果样本中存在离群点，MSE会给离群点更高的权重放大误差，这就会牺牲其他正常点数据的预测效果，最终降低整体的模型性能。如图：</p>
+<h3 id="平均绝对误差（MAE）损失（Mean-Absolute-Error-Loss）"><a href="#平均绝对误差（MAE）损失（Mean-Absolute-Error-Loss）" class="headerlink" title="平均绝对误差（MAE）损失（Mean Absolute Error Loss）"></a>平均绝对误差（MAE）损失（Mean Absolute Error Loss）</h3><p>平均绝对误差（MAE）是另一种常用的回归损失函数，它是模型预测值 $\hat y$ 与真实样本值 $y$ 之差绝对值的和，表示了预测值的平均误差幅度，而不需要考虑误差的方向，范围是0到∞，其公式如下所示：<br>$$<br>L_2(x)&#x3D;\vert y-\hat y \vert<br>$$</p>
+<p>$$<br>J_{MAE}&#x3D;\frac{1}{N}\sum_{i&#x3D;1}^{N}\vert y_i-\hat y_i \vert<br>$$<br>令 n&#x3D;1，以$y-\hat y$为横轴，MAE值为纵轴，得函数图形如下：</p>
+<p>可见MAE函数曲线连续呈线性增长，但是在$y-\hat y &#x3D; 0$ 处不可导，其他地方梯度值为常数，具有一定的稳定性，不会导致梯度爆炸问题，具有较为稳健性的解。</p>
+<p>MAE 对于不同的差值惩罚是固定的，因此对离群点不太敏感，受离群点的影响小。如图：</p>
+<p><strong>MSE和MAE的选择</strong></p>
+<ul>
+<li>从梯度的求解以及收敛上，MSE 是优于 MAE 的。MSE处处可导，而且梯度值也是动态变化的，能够快速的收敛；而 MAE 在 0 点处不可导，且其梯度保持不变。对于很小的损失值其梯度也很大，在深度学习中，需要使用变化的学习率，在损失值很小时降低学习率。</li>
+<li>对离群点需要处理时，MAE 优于 MSE。</li>
+</ul>
+<table>
+<thead>
+<tr>
+<th align="center">L1 Loss</th>
+<th align="center">L2 Loss</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="center">鲁棒性好</td>
+<td align="center">鲁棒性差</td>
+</tr>
+<tr>
+<td align="center">不稳定解</td>
+<td align="center">稳定解</td>
+</tr>
+<tr>
+<td align="center">可能多个解</td>
+<td align="center">唯一解</td>
+</tr>
+</tbody></table>
+<p>（1）鲁棒性<br>L1 Loss 之所以是鲁棒的，是因为它能<strong>处理数据中的异常值</strong>。这或许在那些异常值可能被安全地和有效地忽略的研究中很有用。如果需要考虑任一或全部的异常值，那么 L1 Loss 是更好的选择。<br>L2 Loss将误差平方化（误差大于1，会放大误差；误差小于1，会缩小误差），因此如果某个样本为异常值，模型就需要调整以适应某个的异常值，这会牺牲许多原来正常的样本，因为这些正常样本的误差比这个异常值的误差小得多。</p>
+<p>（2）稳定性<br>L1 Loss 的不稳定性意味着对于数据集的一个小的水平方向的波动，回归线也许会跳跃很大（如，在转折点处求导）。在一些数据结构上，该方法有许多连续解；但是，对数据集的一个微小移动，就会跳过某个数据结构在一定区域内的许多连续解。在跳过这个区域内的解后，最小绝对值偏差线可能会比之前的线有更大的倾斜。<br>相反地，L2 Loss 的解是稳定的，因为对于一个数据点的任何微小波动，回归线总是只会发生轻微移动；也就说，回归参数是数据集的连续函数。</p>
+<h3 id="Smooth-L1-Loss"><a href="#Smooth-L1-Loss" class="headerlink" title="Smooth L1 Loss"></a>Smooth L1 Loss</h3><p>Smooth L1 Loss 将 L1 原来的折点附近处进行光滑，在Faster R-CNN以及SSD中对边框的回归使用的损失函数都是Smooth L1。<br>$$<br>SmoothL_1(x)&#x3D;\begin{cases}<br>            0.5x^2 &amp; \vert x \vert &lt;1 \[2ex]<br>            \vert x \vert -0.5 &amp; otherwise<br>                \end{cases}<br>$$<br>$ x&#x3D;y-\hat y$ 为真实样本值 $y$ 与模型预测值 $\hat y$ 之差</p>
+<p>smooth L1损失函数曲线如下图所示，作者这样设置的目的是想让loss对于离群点更加鲁棒，相比于L2损失函数，其对离群点（指的是距离中心较远的点）、异常值（outlier）不敏感，可控制梯度的量级使训练时不容易跑飞。</p>
+<p><strong>损失函数对x求导</strong></p>
+<p>其中 x 为预测框与ground truth之间的差异：</p>
+<p>$$<br>L_2(x)&#x3D;x^2<br>\[2ex]<br>\frac{\partial L_2(x)}{\partial x}&#x3D;2x<br>$$<br>当 x 增大时，L2 Loss的损失也增大， 这就导致在训练初期，预测值与 groud truth 差异过于大时，损失函数对预测值的梯度十分大。</p>
+<p>$$<br>L_1(x)&#x3D;\vert x \vert<br>\[2ex]<br>\frac{\partial L_1(x)}{\partial x}&#x3D;\begin{cases}1 &amp; x&gt;0<br>\[2ex]<br>-1 &amp; otherwise<br>\end{cases}<br>$$</p>
+<p>L1 Loss 对 x 的导数为常数，在训练的后期，预测值与ground truth差异很小时，L1 Loss 的导数的绝对值仍然为1，而 learning rate 如果不变，损失函数将在稳定值附近波动，难以继续收敛以达到更高精度。</p>
+<p>$$<br>\frac{\partial SmoothL_1(x)}{\partial x}&#x3D;\begin{cases}<br>            x &amp; \vert x \vert &lt;1 \[2ex]<br>            \pm 1 &amp; otherwise<br>                \end{cases}<br>$$<br>Smooth L1，在 $\vert x \vert &lt;1$ 时，梯度随着 $\vert x \vert$ 变小而变小。 而当$\vert x \vert &gt; 1$ 时，对 $x$ 的梯度的上限为1，也不会太大以至于破坏网络参数。Smooth L1 完美的避开了 L1 Loss 和L2 Loss 作为损失函数的缺陷。</p>
+<h3 id="Huber-Loss"><a href="#Huber-Loss" class="headerlink" title="Huber  Loss"></a>Huber  Loss</h3><p>$$<br>L_{\delta}(y,f(x))&#x3D;\begin{cases}\frac{1}{2}(y-f(x))^2 &amp; \vert y-f(x) \vert \leq \delta<br>\[2ex]<br>\delta \vert y-f(x) \vert -\frac{1}{2} \delta^2 &amp;\vert y-f(x) \vert &gt; \delta<br>\end{cases}<br>$$</p>
+<p>Huber Loss 是 L1 Loss 和 L2 Loss 两者的结合，在误差很小的时候采用平方误差，误差很大的时候采用绝对误差，这个分界点由超参数 $\delta$ 来控制。</p>
+<p>误差损失在 $[0-\delta,0+\delta]$ 之间时，Huber 等价为 MSE；误差损失在 $(-\infty,\delta)和(\delta,+\infty)$ 之间时 Huber 等价为 MAE；这样，当误差较大时，使用MAE对离群点不那么敏感；在误差较小时使用MSE，能够快速的收敛；</p>
+<p>Smooth L1其实就是Huber Loss 的特殊情况，可以看作超参数 $\delta&#x3D;1$ 的Huber函数。。</p>
+<h3 id="Log-Cosh-Loss"><a href="#Log-Cosh-Loss" class="headerlink" title="Log-Cosh Loss"></a>Log-Cosh Loss</h3><p>$$<br>L(y,\hat y)&#x3D;\sum_{i&#x3D;1}^{n}log(cosh(\hat y_i-y_i))<br>$$</p>
+<p>Log-Cosh Loss 是比 L2 Loss 更光滑的损失函数，是误差值的双曲余弦的对数。</p>
+<p>对于较小的误差 $\vert y-f(x) \vert $ ，其近似于MSE，收敛下降较快；对于较大的误差$\vert y-f(x) \vert $其近似等于$\vert y-f(x) \vert -log(2)$,类似于MAE，不会受到离群点的影响。 Log-Cosh具有Huber 损失的所有有点，且不需要设定超参数。</p>
+<p>相比于 Huber，Log-Cosh 求导比较复杂，计算量较大，在深度学习中使用不多。不过，Log-Cosh处处二阶可微，这在一些机器学习模型中，还是很有用的。例如 XGBoost，就是采用牛顿法来寻找最优点。而牛顿法就需要求解二阶导数（Hessian）。因此对于诸如 XGBoost 这类机器学习框架，损失函数的二阶可微是很有必要的。但 Log-cosh 损失也并非完美，其仍存在某些问题。比如误差很大的话，一阶梯度和 Hessian 会变成定值，这就导致 XGBoost 出现缺少分裂点的情况。</p>
+<h3 id="Quantile-Loss-分位数损失"><a href="#Quantile-Loss-分位数损失" class="headerlink" title="Quantile Loss 分位数损失"></a>Quantile Loss 分位数损失</h3><p>$$<br>L_\gamma(y,\hat y)&#x3D;\sum_{i:y_i&lt;\hat y_i}(1-\gamma) \vert y_i-\hat y_i \vert<br>+\sum_{i:y_i \geq \hat y_i}\gamma \vert y_i-\hat y_i \vert<br>$$</p>
+<p>该函数是一个分段函数，$\gamma$ 为分位数系数，$y$ 为真实值，$\hat y$ 为预测值。根据预测值和真实值的大小，分两种情况来开考虑。$\hat y &gt; y$ 为高估，预测值比真实值大；$\hat y &lt; y$ 为低估，预测值比真实值小，<strong>使用不同系数来控制高估和低估在整个损失值的权重，进而实现分位数回归</strong> 。</p>
+<p>特别的，当$\gamma&#x3D;0.5$  时，分位数损失退化为平均绝对误差 MAE，也可以将 MAE 看成是分位数损失的一个特例：中位数损失。下图是取不同的中位点[0.25,0.5,0.7][0.25,0.5,0.7] 得到不同的分位数损失函数的曲线，也可以看出0.5时就是MAE。</p>
+<blockquote>
+<p><a target="_blank" rel="noopener" href="https://www.cnblogs.com/wangguchangqing/p/12021638.html">回归损失函数1：L1 loss, L2 loss以及Smooth L1 Loss的对比 - Brook_icv - 博客园 (cnblogs.com)</a></p>
+<p><a target="_blank" rel="noopener" href="https://blog.csdn.net/weixin_41940752/article/details/93159710">(44条消息) L1、L2、smooth L1三类损失函数_happy1yao的博客-CSDN博客</a></p>
+<p><a target="_blank" rel="noopener" href="https://cloud.tencent.com/developer/article/1950150">六个深度学习常用损失函数总览：基本形式、原理、特点 - 腾讯云开发者社区-腾讯云 (tencent.com)</a></p>
+<p><a target="_blank" rel="noopener" href="https://www.cnblogs.com/wangguchangqing/p/12054772.html">回归损失函数2 ： HUber loss,Log Cosh Loss,以及 Quantile Loss - Brook_icv - 博客园 (cnblogs.com)</a></p>
+</blockquote>
+</article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta">文章作者: </span><span class="post-copyright-info"><a href="http://example.com">Obito</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta">文章链接: </span><span class="post-copyright-info"><a href="http://example.com/2023/04/17/%E6%8D%9F%E5%A4%B1%E5%87%BD%E6%95%B0/">http://example.com/2023/04/17/%E6%8D%9F%E5%A4%B1%E5%87%BD%E6%95%B0/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta">版权声明: </span><span class="post-copyright-info">本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">CC BY-NC-SA 4.0</a> 许可协议。转载请注明来自 <a href="http://example.com" target="_blank">Obito Blog</a>！</span></div></div><div class="tag_share"><div class="post-meta__tag-list"></div><div class="post_share"><div class="social-share" data-image="https://raw.githubusercontent.com/OBITOoaoa/picture_bed/master/scenery_05.jpg" data-sites="facebook,twitter,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/butterfly-extsrc/sharejs/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc/sharejs/dist/js/social-share.min.js" defer></script></div></div><nav class="pagination-post" id="pagination"><div class="prev-post pull-left"><a href="/2023/04/25/%E6%9D%83%E9%87%8D%E5%88%9D%E5%A7%8B%E5%8C%96/" title="权重初始化"><img class="cover" src="https://raw.githubusercontent.com/OBITOoaoa/picture_bed/master/scenery_06.jpg" onerror="onerror=null;src='/img/404.jpg'" alt="cover of previous post"><div class="pagination-info"><div class="label">上一篇</div><div class="prev_info">权重初始化</div></div></a></div><div class="next-post pull-right"><a href="/2023/04/15/%E6%BF%80%E6%B4%BB%E5%87%BD%E6%95%B0/" title="激活函数"><img class="cover" src="https://raw.githubusercontent.com/OBITOoaoa/picture_bed/master/scenery_04.jpg" onerror="onerror=null;src='/img/404.jpg'" alt="cover of next post"><div class="pagination-info"><div class="label">下一篇</div><div class="next_info">激活函数</div></div></a></div></nav></div><div class="aside-content" id="aside-content"><div class="card-widget card-info"><div class="is-center"><div class="avatar-img"><img src="https://i.loli.net/2021/02/24/5O1day2nriDzjSu.png" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="author-info__name">Obito</div><div class="author-info__description">!!!!</div></div><div class="card-info-data site-data is-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">14</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">0</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">1</div></a></div><a id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/xxxxxx"><i class="fab fa-github"></i><span>Follow Me</span></a></div><div class="card-widget card-announcement"><div class="item-headline"><i class="fas fa-bullhorn fa-shake"></i><span>公告</span></div><div class="announcement_content">This is my Blog</div></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>目录</span><span class="toc-percentage"></span></div><div class="toc-content"><ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BD%95%E4%B8%BA%E6%8D%9F%E5%A4%B1%E5%87%BD%E6%95%B0"><span class="toc-number">1.</span> <span class="toc-text">何为损失函数</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%B8%B8%E8%A7%81%E7%9A%84%E6%8D%9F%E5%A4%B1%E5%87%BD%E6%95%B0"><span class="toc-number">2.</span> <span class="toc-text">常见的损失函数</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%9D%87%E6%96%B9%E5%B7%AE%EF%BC%88MSE%EF%BC%89%E6%8D%9F%E5%A4%B1%EF%BC%88Mean-Squared-Error-Loss%EF%BC%89"><span class="toc-number">2.1.</span> <span class="toc-text">均方差（MSE）损失（Mean Squared Error Loss）</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%B9%B3%E5%9D%87%E7%BB%9D%E5%AF%B9%E8%AF%AF%E5%B7%AE%EF%BC%88MAE%EF%BC%89%E6%8D%9F%E5%A4%B1%EF%BC%88Mean-Absolute-Error-Loss%EF%BC%89"><span class="toc-number">2.2.</span> <span class="toc-text">平均绝对误差（MAE）损失（Mean Absolute Error Loss）</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Smooth-L1-Loss"><span class="toc-number">2.3.</span> <span class="toc-text">Smooth L1 Loss</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Huber-Loss"><span class="toc-number">2.4.</span> <span class="toc-text">Huber  Loss</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Log-Cosh-Loss"><span class="toc-number">2.5.</span> <span class="toc-text">Log-Cosh Loss</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Quantile-Loss-%E5%88%86%E4%BD%8D%E6%95%B0%E6%8D%9F%E5%A4%B1"><span class="toc-number">2.6.</span> <span class="toc-text">Quantile Loss 分位数损失</span></a></li></ol></li></ol></div></div><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>最新文章</span></div><div class="aside-list"><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2023/08/03/hello-world/" title="Hello World">Hello World</a><time datetime="2023-08-03T10:00:58.677Z" title="发表于 2023-08-03 18:00:58">2023-08-03</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2023/08/01/%E5%9F%BA%E4%BA%8Eopencv%E7%9A%84%E8%BD%A6%E9%81%93%E7%BA%BF%E6%A3%80%E6%B5%8B/" title="基于opencv的车道线检测"><img src="https://raw.githubusercontent.com/OBITOoaoa/picture_bed/master/scenery_07.jpg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="基于opencv的车道线检测"/></a><div class="content"><a class="title" href="/2023/08/01/%E5%9F%BA%E4%BA%8Eopencv%E7%9A%84%E8%BD%A6%E9%81%93%E7%BA%BF%E6%A3%80%E6%B5%8B/" title="基于opencv的车道线检测">基于opencv的车道线检测</a><time datetime="2023-08-01T10:16:53.000Z" title="发表于 2023-08-01 18:16:53">2023-08-01</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2023/08/01/%E7%A5%9E%E4%B9%8B%E7%9C%BC/" title="神之眼">神之眼</a><time datetime="2023-08-01T10:16:26.000Z" title="发表于 2023-08-01 18:16:26">2023-08-01</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2023/05/21/%E7%A7%BB%E6%A4%8Du8g2%E5%BA%93%E5%88%B0stm32/" title="移植u8g2库到stm32">移植u8g2库到stm32</a><time datetime="2023-05-21T05:48:01.000Z" title="发表于 2023-05-21 13:48:01">2023-05-21</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2023/05/19/%E5%B5%8C%E5%85%A5%E5%BC%8F%E5%AE%9E%E4%B9%A0/" title="嵌入式实践实习知识"><img src="https://raw.githubusercontent.com/OBITOoaoa/picture_bed/master/scenery_11.jpg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="嵌入式实践实习知识"/></a><div class="content"><a class="title" href="/2023/05/19/%E5%B5%8C%E5%85%A5%E5%BC%8F%E5%AE%9E%E4%B9%A0/" title="嵌入式实践实习知识">嵌入式实践实习知识</a><time datetime="2023-05-19T09:25:01.000Z" title="发表于 2023-05-19 17:25:01">2023-05-19</time></div></div></div></div></div></div></main><footer id="footer"><div id="footer-wrap"><div class="copyright">&copy;2020 - 2023 By Obito</div><div class="framework-info"><span>框架 </span><a target="_blank" rel="noopener" href="https://hexo.io">Hexo</a><span class="footer-separator">|</span><span>主题 </span><a target="_blank" rel="noopener" href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly</a></div><div class="footer_custom_text">I wish you to become your own sun, no need to rely on who's light.</div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="阅读模式"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="浅色和深色模式转换"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="单栏和双栏切换"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside_config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="目录"><i class="fas fa-list-ul"></i></button><button id="go-up" type="button" title="回到顶部"><span class="scroll-percent"></span><i class="fas fa-arrow-up"></i></button></div></div><div><script src="/js/utils.js"></script><script src="/js/main.js"></script><script src="https://cdn.jsdelivr.net/npm/@fancyapps/ui/dist/fancybox/fancybox.umd.min.js"></script><div class="js-pjax"></div><script defer="defer" id="ribbon" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc/dist/canvas-ribbon.min.js" size="150" alpha="0.6" zIndex="-1" mobile="false" data-click="false"></script><script id="click-heart" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc/dist/click-heart.min.js" async="async" mobile="false"></script><script src="https://cdn.jsdelivr.net/npm/pjax/pjax.min.js"></script><script>let pjaxSelectors = ["head > title","#config-diff","#body-wrap","#rightside-config-hide","#rightside-config-show",".js-pjax"]
+
+var pjax = new Pjax({
+  elements: 'a:not([target="_blank"])',
+  selectors: pjaxSelectors,
+  cacheBust: false,
+  analytics: false,
+  scrollRestoration: false
+})
+
+document.addEventListener('pjax:send', function () {
+
+  // removeEventListener scroll 
+  window.tocScrollFn && window.removeEventListener('scroll', window.tocScrollFn)
+  window.scrollCollect && window.removeEventListener('scroll', scrollCollect)
+
+  document.getElementById('rightside').style.cssText = "opacity: ''; transform: ''"
+  
+  if (window.aplayers) {
+    for (let i = 0; i < window.aplayers.length; i++) {
+      if (!window.aplayers[i].options.fixed) {
+        window.aplayers[i].destroy()
+      }
+    }
+  }
+
+  typeof typed === 'object' && typed.destroy()
+
+  //reset readmode
+  const $bodyClassList = document.body.classList
+  $bodyClassList.contains('read-mode') && $bodyClassList.remove('read-mode')
+
+  typeof disqusjs === 'object' && disqusjs.destroy()
+})
+
+document.addEventListener('pjax:complete', function () {
+  window.refreshFn()
+
+  document.querySelectorAll('script[data-pjax]').forEach(item => {
+    const newScript = document.createElement('script')
+    const content = item.text || item.textContent || item.innerHTML || ""
+    Array.from(item.attributes).forEach(attr => newScript.setAttribute(attr.name, attr.value))
+    newScript.appendChild(document.createTextNode(content))
+    item.parentNode.replaceChild(newScript, item)
+  })
+
+  GLOBAL_CONFIG.islazyload && window.lazyLoadInstance.update()
+
+  typeof panguInit === 'function' && panguInit()
+
+  // google analytics
+  typeof gtag === 'function' && gtag('config', '', {'page_path': window.location.pathname});
+
+  // baidu analytics
+  typeof _hmt === 'object' && _hmt.push(['_trackPageview',window.location.pathname]);
+
+  typeof loadMeting === 'function' && document.getElementsByClassName('aplayer').length && loadMeting()
+
+  // prismjs
+  typeof Prism === 'object' && Prism.highlightAll()
+})
+
+document.addEventListener('pjax:error', (e) => {
+  if (e.request.status === 404) {
+    pjax.loadUrl('/404.html')
+  }
+})</script><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script></div></body></html>
