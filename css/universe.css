@@ -1,0 +1,21 @@
+/* 夜间模式下背景宇宙星光 */
+#universe {  
+  display: block;
+  position: fixed;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  outline: 0;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 1;
+}
+/* 亮色模式下隐藏 */
+[data-theme='light'] #universe {
+  display: none;
+}
+/* 作者: 百里飞洋 Barry-Flynn
+链接: https://blog.meta-code.top/2021/09/30/2021-7/ */
