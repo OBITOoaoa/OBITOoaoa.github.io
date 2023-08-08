@@ -1,3 +1,4 @@
+http://example.com/link/index.html
 http://example.com/about-me/index.html
 http://example.com/about-website/index.html
 http://example.com/categories/index.html
@@ -27,8 +28,8 @@ http://example.com/tags/esp32/
 http://example.com/tags/stm32/
 http://example.com/categories/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0/
 http://example.com/categories/Linux/
-http://example.com/categories/%E7%94%9F%E6%B4%BB/
 http://example.com/categories/%E5%9B%BE%E5%83%8F%E5%A4%84%E7%90%86/
+http://example.com/categories/%E7%94%9F%E6%B4%BB/
 http://example.com/categories/%E5%B5%8C%E5%85%A5%E5%BC%8F/
 http://example.com/categories/%E5%9B%BE%E5%83%8F%E5%A4%84%E7%90%86/opencv/
 http://example.com/categories/%E7%A1%AC%E4%BB%B6/
