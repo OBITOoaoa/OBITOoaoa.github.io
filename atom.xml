@@ -2,12 +2,12 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
   <title>Obito Blog</title>
   
-  <subtitle>Weclome to my blog</subtitle>
-  <link href="http://example.com/atom.xml" rel="self"/>
   
-  <link href="http://example.com/"/>
+  <link href="http://www.obito.top/atom.xml" rel="self"/>
+  
+  <link href="http://www.obito.top/"/>
   <updated>2023-08-07T12:42:37.176Z</updated>
-  <id>http://example.com/</id>
+  <id>http://www.obito.top/</id>
   
   <author>
     <name>Obito</name>
@@ -18,8 +18,8 @@
   
   <entry>
     <title>华为开发者大会2023</title>
-    <link href="http://example.com/2023/08/06/%E5%8D%8E%E4%B8%BA%E5%BC%80%E5%8F%91%E8%80%85%E5%A4%A7%E4%BC%9A2023/"/>
-    <id>http://example.com/2023/08/06/%E5%8D%8E%E4%B8%BA%E5%BC%80%E5%8F%91%E8%80%85%E5%A4%A7%E4%BC%9A2023/</id>
+    <link href="http://www.obito.top/2023/08/06/%E5%8D%8E%E4%B8%BA%E5%BC%80%E5%8F%91%E8%80%85%E5%A4%A7%E4%BC%9A2023/"/>
+    <id>http://www.obito.top/2023/08/06/%E5%8D%8E%E4%B8%BA%E5%BC%80%E5%8F%91%E8%80%85%E5%A4%A7%E4%BC%9A2023/</id>
     <published>2023-08-06T10:02:16.000Z</published>
     <updated>2023-08-07T12:42:37.176Z</updated>
     
@@ -35,15 +35,15 @@
     
     
     
-    <category term="生活" scheme="http://example.com/categories/%E7%94%9F%E6%B4%BB/"/>
+    <category term="生活" scheme="http://www.obito.top/categories/%E7%94%9F%E6%B4%BB/"/>
     
     
   </entry>
   
   <entry>
     <title>基于opencv的车道线检测</title>
-    <link href="http://example.com/2023/08/01/%E5%9F%BA%E4%BA%8Eopencv%E7%9A%84%E8%BD%A6%E9%81%93%E7%BA%BF%E6%A3%80%E6%B5%8B/"/>
-    <id>http://example.com/2023/08/01/%E5%9F%BA%E4%BA%8Eopencv%E7%9A%84%E8%BD%A6%E9%81%93%E7%BA%BF%E6%A3%80%E6%B5%8B/</id>
+    <link href="http://www.obito.top/2023/08/01/%E5%9F%BA%E4%BA%8Eopencv%E7%9A%84%E8%BD%A6%E9%81%93%E7%BA%BF%E6%A3%80%E6%B5%8B/"/>
+    <id>http://www.obito.top/2023/08/01/%E5%9F%BA%E4%BA%8Eopencv%E7%9A%84%E8%BD%A6%E9%81%93%E7%BA%BF%E6%A3%80%E6%B5%8B/</id>
     <published>2023-08-01T10:16:53.000Z</published>
     <updated>2023-08-07T10:01:19.125Z</updated>
     
@@ -59,40 +59,40 @@
     
     
     
-    <category term="图像处理" scheme="http://example.com/categories/%E5%9B%BE%E5%83%8F%E5%A4%84%E7%90%86/"/>
+    <category term="图像处理" scheme="http://www.obito.top/categories/%E5%9B%BE%E5%83%8F%E5%A4%84%E7%90%86/"/>
     
-    <category term="opencv" scheme="http://example.com/categories/%E5%9B%BE%E5%83%8F%E5%A4%84%E7%90%86/opencv/"/>
+    <category term="opencv" scheme="http://www.obito.top/categories/%E5%9B%BE%E5%83%8F%E5%A4%84%E7%90%86/opencv/"/>
     
     
-    <category term="opencv" scheme="http://example.com/tags/opencv/"/>
+    <category term="opencv" scheme="http://www.obito.top/tags/opencv/"/>
     
   </entry>
   
   <entry>
     <title>神之眼</title>
-    <link href="http://example.com/2023/08/01/%E7%A5%9E%E4%B9%8B%E7%9C%BC/"/>
-    <id>http://example.com/2023/08/01/%E7%A5%9E%E4%B9%8B%E7%9C%BC/</id>
+    <link href="http://www.obito.top/2023/08/01/%E7%A5%9E%E4%B9%8B%E7%9C%BC/"/>
+    <id>http://www.obito.top/2023/08/01/%E7%A5%9E%E4%B9%8B%E7%9C%BC/</id>
     <published>2023-08-01T10:16:26.000Z</published>
     <updated>2023-08-07T10:00:50.633Z</updated>
     
     
     
     
-    <category term="硬件" scheme="http://example.com/categories/%E7%A1%AC%E4%BB%B6/"/>
+    <category term="硬件" scheme="http://www.obito.top/categories/%E7%A1%AC%E4%BB%B6/"/>
     
-    <category term="焊接" scheme="http://example.com/categories/%E7%A1%AC%E4%BB%B6/%E7%84%8A%E6%8E%A5/"/>
+    <category term="焊接" scheme="http://www.obito.top/categories/%E7%A1%AC%E4%BB%B6/%E7%84%8A%E6%8E%A5/"/>
     
     
-    <category term="esp" scheme="http://example.com/tags/esp/"/>
+    <category term="esp" scheme="http://www.obito.top/tags/esp/"/>
     
-    <category term="esp32" scheme="http://example.com/tags/esp32/"/>
+    <category term="esp32" scheme="http://www.obito.top/tags/esp32/"/>
     
   </entry>
   
   <entry>
     <title>移植u8g2库到stm32</title>
-    <link href="http://example.com/2023/05/21/%E7%A7%BB%E6%A4%8Du8g2%E5%BA%93%E5%88%B0stm32/"/>
-    <id>http://example.com/2023/05/21/%E7%A7%BB%E6%A4%8Du8g2%E5%BA%93%E5%88%B0stm32/</id>
+    <link href="http://www.obito.top/2023/05/21/%E7%A7%BB%E6%A4%8Du8g2%E5%BA%93%E5%88%B0stm32/"/>
+    <id>http://www.obito.top/2023/05/21/%E7%A7%BB%E6%A4%8Du8g2%E5%BA%93%E5%88%B0stm32/</id>
     <published>2023-05-21T05:48:01.000Z</published>
     <updated>2023-08-07T09:57:59.714Z</updated>
     
@@ -110,19 +110,19 @@
     
     
     
-    <category term="嵌入式" scheme="http://example.com/categories/%E5%B5%8C%E5%85%A5%E5%BC%8F/"/>
+    <category term="嵌入式" scheme="http://www.obito.top/categories/%E5%B5%8C%E5%85%A5%E5%BC%8F/"/>
     
-    <category term="stm32" scheme="http://example.com/categories/%E5%B5%8C%E5%85%A5%E5%BC%8F/stm32/"/>
+    <category term="stm32" scheme="http://www.obito.top/categories/%E5%B5%8C%E5%85%A5%E5%BC%8F/stm32/"/>
     
     
-    <category term="stm32" scheme="http://example.com/tags/stm32/"/>
+    <category term="stm32" scheme="http://www.obito.top/tags/stm32/"/>
     
   </entry>
   
   <entry>
     <title>嵌入式实践实习知识</title>
-    <link href="http://example.com/2023/05/19/%E5%B5%8C%E5%85%A5%E5%BC%8F%E5%AE%9E%E4%B9%A0/"/>
-    <id>http://example.com/2023/05/19/%E5%B5%8C%E5%85%A5%E5%BC%8F%E5%AE%9E%E4%B9%A0/</id>
+    <link href="http://www.obito.top/2023/05/19/%E5%B5%8C%E5%85%A5%E5%BC%8F%E5%AE%9E%E4%B9%A0/"/>
+    <id>http://www.obito.top/2023/05/19/%E5%B5%8C%E5%85%A5%E5%BC%8F%E5%AE%9E%E4%B9%A0/</id>
     <published>2023-05-19T09:25:01.000Z</published>
     <updated>2023-08-07T09:49:54.068Z</updated>
     
@@ -139,15 +139,15 @@
     
     
     
-    <category term="嵌入式" scheme="http://example.com/categories/%E5%B5%8C%E5%85%A5%E5%BC%8F/"/>
+    <category term="嵌入式" scheme="http://www.obito.top/categories/%E5%B5%8C%E5%85%A5%E5%BC%8F/"/>
     
     
   </entry>
   
   <entry>
     <title>Ubuntu共享文件夹问题</title>
-    <link href="http://example.com/2023/05/10/Ubuntu%E5%85%B1%E4%BA%AB%E6%96%87%E4%BB%B6%E5%A4%B9%E9%97%AE%E9%A2%98/"/>
-    <id>http://example.com/2023/05/10/Ubuntu%E5%85%B1%E4%BA%AB%E6%96%87%E4%BB%B6%E5%A4%B9%E9%97%AE%E9%A2%98/</id>
+    <link href="http://www.obito.top/2023/05/10/Ubuntu%E5%85%B1%E4%BA%AB%E6%96%87%E4%BB%B6%E5%A4%B9%E9%97%AE%E9%A2%98/"/>
+    <id>http://www.obito.top/2023/05/10/Ubuntu%E5%85%B1%E4%BA%AB%E6%96%87%E4%BB%B6%E5%A4%B9%E9%97%AE%E9%A2%98/</id>
     <published>2023-05-10T04:12:18.000Z</published>
     <updated>2023-08-07T09:58:56.010Z</updated>
     
@@ -163,19 +163,19 @@
     
     
     
-    <category term="Linux" scheme="http://example.com/categories/Linux/"/>
+    <category term="Linux" scheme="http://www.obito.top/categories/Linux/"/>
     
     
-    <category term="虚拟机" scheme="http://example.com/tags/%E8%99%9A%E6%8B%9F%E6%9C%BA/"/>
+    <category term="虚拟机" scheme="http://www.obito.top/tags/%E8%99%9A%E6%8B%9F%E6%9C%BA/"/>
     
-    <category term="Ubuntu" scheme="http://example.com/tags/Ubuntu/"/>
+    <category term="Ubuntu" scheme="http://www.obito.top/tags/Ubuntu/"/>
     
   </entry>
   
   <entry>
     <title>硬件通讯协议</title>
-    <link href="http://example.com/2023/05/08/%E7%A1%AC%E4%BB%B6%E9%80%9A%E8%AE%AF%E5%8D%8F%E8%AE%AE/"/>
-    <id>http://example.com/2023/05/08/%E7%A1%AC%E4%BB%B6%E9%80%9A%E8%AE%AF%E5%8D%8F%E8%AE%AE/</id>
+    <link href="http://www.obito.top/2023/05/08/%E7%A1%AC%E4%BB%B6%E9%80%9A%E8%AE%AF%E5%8D%8F%E8%AE%AE/"/>
+    <id>http://www.obito.top/2023/05/08/%E7%A1%AC%E4%BB%B6%E9%80%9A%E8%AE%AF%E5%8D%8F%E8%AE%AE/</id>
     <published>2023-05-08T13:33:49.000Z</published>
     <updated>2023-08-07T09:51:46.928Z</updated>
     
@@ -191,17 +191,17 @@
     
     
     
-    <category term="嵌入式" scheme="http://example.com/categories/%E5%B5%8C%E5%85%A5%E5%BC%8F/"/>
+    <category term="嵌入式" scheme="http://www.obito.top/categories/%E5%B5%8C%E5%85%A5%E5%BC%8F/"/>
     
     
-    <category term="嵌入式" scheme="http://example.com/tags/%E5%B5%8C%E5%85%A5%E5%BC%8F/"/>
+    <category term="嵌入式" scheme="http://www.obito.top/tags/%E5%B5%8C%E5%85%A5%E5%BC%8F/"/>
     
   </entry>
   
   <entry>
     <title>梯度下降法</title>
-    <link href="http://example.com/2023/04/25/%E6%A2%AF%E5%BA%A6%E4%B8%8B%E9%99%8D%E6%B3%95/"/>
-    <id>http://example.com/2023/04/25/%E6%A2%AF%E5%BA%A6%E4%B8%8B%E9%99%8D%E6%B3%95/</id>
+    <link href="http://www.obito.top/2023/04/25/%E6%A2%AF%E5%BA%A6%E4%B8%8B%E9%99%8D%E6%B3%95/"/>
+    <id>http://www.obito.top/2023/04/25/%E6%A2%AF%E5%BA%A6%E4%B8%8B%E9%99%8D%E6%B3%95/</id>
     <published>2023-04-25T09:09:10.000Z</published>
     <updated>2023-08-07T09:53:27.480Z</updated>
     
@@ -217,15 +217,15 @@
     
     
     
-    <category term="深度学习" scheme="http://example.com/categories/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0/"/>
+    <category term="深度学习" scheme="http://www.obito.top/categories/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0/"/>
     
     
   </entry>
   
   <entry>
     <title>正则化方法</title>
-    <link href="http://example.com/2023/04/25/%E6%AD%A3%E5%88%99%E5%8C%96%E6%96%B9%E6%B3%95/"/>
-    <id>http://example.com/2023/04/25/%E6%AD%A3%E5%88%99%E5%8C%96%E6%96%B9%E6%B3%95/</id>
+    <link href="http://www.obito.top/2023/04/25/%E6%AD%A3%E5%88%99%E5%8C%96%E6%96%B9%E6%B3%95/"/>
+    <id>http://www.obito.top/2023/04/25/%E6%AD%A3%E5%88%99%E5%8C%96%E6%96%B9%E6%B3%95/</id>
     <published>2023-04-25T09:08:36.000Z</published>
     <updated>2023-08-07T09:52:23.355Z</updated>
     
@@ -240,15 +240,15 @@
     
     
     
-    <category term="深度学习" scheme="http://example.com/categories/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0/"/>
+    <category term="深度学习" scheme="http://www.obito.top/categories/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0/"/>
     
     
   </entry>
   
   <entry>
     <title>权重初始化</title>
-    <link href="http://example.com/2023/04/25/%E6%9D%83%E9%87%8D%E5%88%9D%E5%A7%8B%E5%8C%96/"/>
-    <id>http://example.com/2023/04/25/%E6%9D%83%E9%87%8D%E5%88%9D%E5%A7%8B%E5%8C%96/</id>
+    <link href="http://www.obito.top/2023/04/25/%E6%9D%83%E9%87%8D%E5%88%9D%E5%A7%8B%E5%8C%96/"/>
+    <id>http://www.obito.top/2023/04/25/%E6%9D%83%E9%87%8D%E5%88%9D%E5%A7%8B%E5%8C%96/</id>
     <published>2023-04-25T09:07:22.000Z</published>
     <updated>2023-08-07T09:53:02.973Z</updated>
     
@@ -265,15 +265,15 @@
     
     
     
-    <category term="深度学习" scheme="http://example.com/categories/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0/"/>
+    <category term="深度学习" scheme="http://www.obito.top/categories/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0/"/>
     
     
   </entry>
   
   <entry>
     <title>损失函数</title>
-    <link href="http://example.com/2023/04/17/%E6%8D%9F%E5%A4%B1%E5%87%BD%E6%95%B0/"/>
-    <id>http://example.com/2023/04/17/%E6%8D%9F%E5%A4%B1%E5%87%BD%E6%95%B0/</id>
+    <link href="http://www.obito.top/2023/04/17/%E6%8D%9F%E5%A4%B1%E5%87%BD%E6%95%B0/"/>
+    <id>http://www.obito.top/2023/04/17/%E6%8D%9F%E5%A4%B1%E5%87%BD%E6%95%B0/</id>
     <published>2023-04-17T13:46:37.000Z</published>
     <updated>2023-08-07T09:53:33.502Z</updated>
     
@@ -289,15 +289,15 @@
     
     
     
-    <category term="深度学习" scheme="http://example.com/categories/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0/"/>
+    <category term="深度学习" scheme="http://www.obito.top/categories/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0/"/>
     
     
   </entry>
   
   <entry>
     <title>激活函数</title>
-    <link href="http://example.com/2023/04/15/%E6%BF%80%E6%B4%BB%E5%87%BD%E6%95%B0/"/>
-    <id>http://example.com/2023/04/15/%E6%BF%80%E6%B4%BB%E5%87%BD%E6%95%B0/</id>
+    <link href="http://www.obito.top/2023/04/15/%E6%BF%80%E6%B4%BB%E5%87%BD%E6%95%B0/"/>
+    <id>http://www.obito.top/2023/04/15/%E6%BF%80%E6%B4%BB%E5%87%BD%E6%95%B0/</id>
     <published>2023-04-15T13:46:37.000Z</published>
     <updated>2023-08-07T16:15:57.722Z</updated>
     
@@ -312,15 +312,15 @@
     
     
     
-    <category term="深度学习" scheme="http://example.com/categories/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0/"/>
+    <category term="深度学习" scheme="http://www.obito.top/categories/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0/"/>
     
     
   </entry>
   
   <entry>
     <title>TensorFlow 笔记2</title>
-    <link href="http://example.com/2023/03/29/TensorFlow%20%E7%AC%94%E8%AE%B02/"/>
-    <id>http://example.com/2023/03/29/TensorFlow%20%E7%AC%94%E8%AE%B02/</id>
+    <link href="http://www.obito.top/2023/03/29/TensorFlow%20%E7%AC%94%E8%AE%B02/"/>
+    <id>http://www.obito.top/2023/03/29/TensorFlow%20%E7%AC%94%E8%AE%B02/</id>
     <published>2023-03-29T15:29:38.000Z</published>
     <updated>2023-08-07T09:53:45.827Z</updated>
     
@@ -336,15 +336,15 @@
     
     
     
-    <category term="深度学习" scheme="http://example.com/categories/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0/"/>
+    <category term="深度学习" scheme="http://www.obito.top/categories/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0/"/>
     
     
   </entry>
   
   <entry>
     <title>TensorFlow 笔记1</title>
-    <link href="http://example.com/2023/03/28/TensorFlow%20%E7%AC%94%E8%AE%B01/"/>
-    <id>http://example.com/2023/03/28/TensorFlow%20%E7%AC%94%E8%AE%B01/</id>
+    <link href="http://www.obito.top/2023/03/28/TensorFlow%20%E7%AC%94%E8%AE%B01/"/>
+    <id>http://www.obito.top/2023/03/28/TensorFlow%20%E7%AC%94%E8%AE%B01/</id>
     <published>2023-03-28T15:29:38.000Z</published>
     <updated>2023-08-07T09:53:43.033Z</updated>
     
@@ -359,15 +359,15 @@
     
     
     
-    <category term="深度学习" scheme="http://example.com/categories/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0/"/>
+    <category term="深度学习" scheme="http://www.obito.top/categories/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0/"/>
     
     
   </entry>
   
   <entry>
     <title>Hello World</title>
-    <link href="http://example.com/2023/03/25/hello-world/"/>
-    <id>http://example.com/2023/03/25/hello-world/</id>
+    <link href="http://www.obito.top/2023/03/25/hello-world/"/>
+    <id>http://www.obito.top/2023/03/25/hello-world/</id>
     <published>2023-03-25T12:30:00.000Z</published>
     <updated>2023-08-04T13:51:27.248Z</updated>
     
