@@ -6,7 +6,7 @@
   <link href="http://www.obito.top/atom.xml" rel="self"/>
   
   <link href="http://www.obito.top/"/>
-  <updated>2023-08-12T16:25:51.414Z</updated>
+  <updated>2023-08-14T10:09:37.053Z</updated>
   <id>http://www.obito.top/</id>
   
   <author>
@@ -15,6 +15,38 @@
   </author>
   
   <generator uri="https://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>基于Opencv的手势识别</title>
+    <link href="http://www.obito.top/2023/08/14/%E5%9F%BA%E4%BA%8EOpencv%E7%9A%84%E6%89%8B%E5%8A%BF%E8%AF%86%E5%88%AB/"/>
+    <id>http://www.obito.top/2023/08/14/%E5%9F%BA%E4%BA%8EOpencv%E7%9A%84%E6%89%8B%E5%8A%BF%E8%AF%86%E5%88%AB/</id>
+    <published>2023-08-14T08:18:04.000Z</published>
+    <updated>2023-08-14T10:09:37.053Z</updated>
+    
+    <content type="html"><![CDATA[<h2 id="前言">前言</h2><p>检测手部外轮廓</p><p>找出面积最大的轮廓最外层的轮廓</p><p>计算傅里叶描述子</p><p>对傅里叶描述子进行归一化（具有平移、旋转、尺度不变性）</p><p>保存归一化后的傅里叶描述子</p><h2 id="傅里叶描述子">傅里叶描述子</h2><h2 id="代码">代码</h2><h2 id="参考资料">参考资料</h2>]]></content>
+    
+    
+      
+      
+    <summary type="html">&lt;h2 id=&quot;前言&quot;&gt;前言&lt;/h2&gt;
+&lt;p&gt;检测手部外轮廓&lt;/p&gt;
+&lt;p&gt;找出面积最大的轮廓最外层的轮廓&lt;/p&gt;
+&lt;p&gt;计算傅里叶描述子&lt;/p&gt;
+&lt;p&gt;对傅里叶描述子进行归一化（具有平移、旋转、尺度不变性）&lt;/p&gt;
+&lt;p&gt;保存归一化后的傅里叶描述子&lt;/p&gt;
+&lt;h2 id=&quot;傅里</summary>
+      
+    
+    
+    
+    <category term="图像处理" scheme="http://www.obito.top/categories/%E5%9B%BE%E5%83%8F%E5%A4%84%E7%90%86/"/>
+    
+    <category term="opencv" scheme="http://www.obito.top/categories/%E5%9B%BE%E5%83%8F%E5%A4%84%E7%90%86/opencv/"/>
+    
+    
+    <category term="opencv" scheme="http://www.obito.top/tags/opencv/"/>
+    
+  </entry>
   
   <entry>
     <title>基于Opencv的人体肤色检测</title>
