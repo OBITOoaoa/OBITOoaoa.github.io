@@ -44,11 +44,11 @@
     <category term="Openwrt" scheme="http://www.obito.top/categories/%E8%B7%AF%E7%94%B1%E5%99%A8/Openwrt/"/>
     
     
-    <category term="Linux" scheme="http://www.obito.top/tags/Linux/"/>
-    
     <category term="路由器" scheme="http://www.obito.top/tags/%E8%B7%AF%E7%94%B1%E5%99%A8/"/>
     
     <category term="Openwrt" scheme="http://www.obito.top/tags/Openwrt/"/>
+    
+    <category term="Linux" scheme="http://www.obito.top/tags/Linux/"/>
     
   </entry>
   
