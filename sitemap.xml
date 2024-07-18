@@ -2,6 +2,69 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   
   <url>
+    <loc>http://www.obito.top/2024/07/17/IMX6ULL-%E4%BA%A4%E5%8F%89%E7%BC%96%E8%AF%91Mplayer/</loc>
+    
+    <lastmod>2024-07-18</lastmod>
+    
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>http://www.obito.top/2024/07/18/Linux-%E9%9F%B3%E9%A2%91%E9%A9%B1%E5%8A%A8/</loc>
+    
+    <lastmod>2024-07-18</lastmod>
+    
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>http://www.obito.top/2024/07/18/autotools%E8%87%AA%E5%8A%A8%E7%94%9F%E6%88%90Makefile/</loc>
+    
+    <lastmod>2024-07-18</lastmod>
+    
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>http://www.obito.top/2024/07/07/Linux-%E8%A7%A6%E6%91%B8%E5%B1%8F%E9%A9%B1%E5%8A%A8/</loc>
+    
+    <lastmod>2024-07-17</lastmod>
+    
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>http://www.obito.top/2024/06/30/Linux%E7%B3%BB%E7%BB%9F%E7%A7%BB%E6%A4%8D/</loc>
+    
+    <lastmod>2024-07-17</lastmod>
+    
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>http://www.obito.top/2024/06/28/Linux-SPI-ICM20608/</loc>
+    
+    <lastmod>2024-07-16</lastmod>
+    
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>http://www.obito.top/2024/06/27/Linux-I2C-AP3216C/</loc>
+    
+    <lastmod>2024-07-15</lastmod>
+    
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
     <loc>http://www.obito.top/2024/07/13/modprobe%E5%8A%A0%E8%BD%BD%E9%A9%B1%E5%8A%A8%E9%97%AE%E9%A2%98/</loc>
     
     <lastmod>2024-07-13</lastmod>
@@ -20,43 +83,7 @@
   </url>
   
   <url>
-    <loc>http://www.obito.top/2024/07/07/Linux-%E8%A7%A6%E6%91%B8%E5%B1%8F%E9%A9%B1%E5%8A%A8/</loc>
-    
-    <lastmod>2024-07-12</lastmod>
-    
-    <changefreq>monthly</changefreq>
-    <priority>0.6</priority>
-  </url>
-  
-  <url>
-    <loc>http://www.obito.top/2024/06/30/Linux%E7%B3%BB%E7%BB%9F%E7%A7%BB%E6%A4%8D/</loc>
-    
-    <lastmod>2024-07-09</lastmod>
-    
-    <changefreq>monthly</changefreq>
-    <priority>0.6</priority>
-  </url>
-  
-  <url>
-    <loc>http://www.obito.top/2024/06/28/Linux-SPI-ICM20608/</loc>
-    
-    <lastmod>2024-07-01</lastmod>
-    
-    <changefreq>monthly</changefreq>
-    <priority>0.6</priority>
-  </url>
-  
-  <url>
     <loc>http://www.obito.top/2024/06/27/Linux-SPI%E9%A9%B1%E5%8A%A8/</loc>
-    
-    <lastmod>2024-07-01</lastmod>
-    
-    <changefreq>monthly</changefreq>
-    <priority>0.6</priority>
-  </url>
-  
-  <url>
-    <loc>http://www.obito.top/2024/06/27/Linux-I2C-AP3216C/</loc>
     
     <lastmod>2024-07-01</lastmod>
     
@@ -373,7 +400,7 @@
 
   <url>
     <loc>http://www.obito.top/</loc>
-    <lastmod>2024-07-13</lastmod>
+    <lastmod>2024-07-18</lastmod>
     <changefreq>daily</changefreq>
     <priority>1.0</priority>
   </url>
@@ -381,91 +408,91 @@
   
   <url>
     <loc>http://www.obito.top/tags/Linux/</loc>
-    <lastmod>2024-07-13</lastmod>
+    <lastmod>2024-07-18</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
   </url>
   
   <url>
     <loc>http://www.obito.top/tags/%E5%B5%8C%E5%85%A5%E5%BC%8F/</loc>
-    <lastmod>2024-07-13</lastmod>
+    <lastmod>2024-07-18</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
   </url>
   
   <url>
     <loc>http://www.obito.top/tags/Linux-%E5%B5%8C%E5%85%A5%E5%BC%8F/</loc>
-    <lastmod>2024-07-13</lastmod>
+    <lastmod>2024-07-18</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
   </url>
   
   <url>
     <loc>http://www.obito.top/tags/%E8%99%9A%E6%8B%9F%E6%9C%BA/</loc>
-    <lastmod>2024-07-13</lastmod>
+    <lastmod>2024-07-18</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
   </url>
   
   <url>
     <loc>http://www.obito.top/tags/Ubuntu/</loc>
-    <lastmod>2024-07-13</lastmod>
+    <lastmod>2024-07-18</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
   </url>
   
   <url>
     <loc>http://www.obito.top/tags/Docker/</loc>
-    <lastmod>2024-07-13</lastmod>
+    <lastmod>2024-07-18</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
   </url>
   
   <url>
     <loc>http://www.obito.top/tags/STM32/</loc>
-    <lastmod>2024-07-13</lastmod>
+    <lastmod>2024-07-18</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
   </url>
   
   <url>
     <loc>http://www.obito.top/tags/%E8%B7%AF%E7%94%B1%E5%99%A8/</loc>
-    <lastmod>2024-07-13</lastmod>
+    <lastmod>2024-07-18</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
   </url>
   
   <url>
     <loc>http://www.obito.top/tags/Openwrt/</loc>
-    <lastmod>2024-07-13</lastmod>
+    <lastmod>2024-07-18</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
   </url>
   
   <url>
     <loc>http://www.obito.top/tags/opencv/</loc>
-    <lastmod>2024-07-13</lastmod>
+    <lastmod>2024-07-18</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
   </url>
   
   <url>
     <loc>http://www.obito.top/tags/esp/</loc>
-    <lastmod>2024-07-13</lastmod>
+    <lastmod>2024-07-18</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
   </url>
   
   <url>
     <loc>http://www.obito.top/tags/esp32/</loc>
-    <lastmod>2024-07-13</lastmod>
+    <lastmod>2024-07-18</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
   </url>
   
   <url>
     <loc>http://www.obito.top/tags/stm32/</loc>
-    <lastmod>2024-07-13</lastmod>
+    <lastmod>2024-07-18</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
   </url>
@@ -474,91 +501,91 @@
   
   <url>
     <loc>http://www.obito.top/categories/%E5%B5%8C%E5%85%A5%E5%BC%8F/</loc>
-    <lastmod>2024-07-13</lastmod>
+    <lastmod>2024-07-18</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
   </url>
   
   <url>
     <loc>http://www.obito.top/categories/%E5%B5%8C%E5%85%A5%E5%BC%8F/Linux/</loc>
-    <lastmod>2024-07-13</lastmod>
+    <lastmod>2024-07-18</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
   </url>
   
   <url>
     <loc>http://www.obito.top/categories/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0/</loc>
-    <lastmod>2024-07-13</lastmod>
+    <lastmod>2024-07-18</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
   </url>
   
   <url>
     <loc>http://www.obito.top/categories/Linux/</loc>
-    <lastmod>2024-07-13</lastmod>
+    <lastmod>2024-07-18</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
   </url>
   
   <url>
     <loc>http://www.obito.top/categories/Docker/</loc>
-    <lastmod>2024-07-13</lastmod>
+    <lastmod>2024-07-18</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
   </url>
   
   <url>
     <loc>http://www.obito.top/categories/%E8%B7%AF%E7%94%B1%E5%99%A8/</loc>
-    <lastmod>2024-07-13</lastmod>
+    <lastmod>2024-07-18</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
   </url>
   
   <url>
     <loc>http://www.obito.top/categories/%E7%94%9F%E6%B4%BB/</loc>
-    <lastmod>2024-07-13</lastmod>
+    <lastmod>2024-07-18</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
   </url>
   
   <url>
     <loc>http://www.obito.top/categories/%E5%9B%BE%E5%83%8F%E5%A4%84%E7%90%86/</loc>
-    <lastmod>2024-07-13</lastmod>
+    <lastmod>2024-07-18</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
   </url>
   
   <url>
     <loc>http://www.obito.top/categories/%E8%B7%AF%E7%94%B1%E5%99%A8/Openwrt/</loc>
-    <lastmod>2024-07-13</lastmod>
+    <lastmod>2024-07-18</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
   </url>
   
   <url>
     <loc>http://www.obito.top/categories/%E5%9B%BE%E5%83%8F%E5%A4%84%E7%90%86/opencv/</loc>
-    <lastmod>2024-07-13</lastmod>
+    <lastmod>2024-07-18</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
   </url>
   
   <url>
     <loc>http://www.obito.top/categories/%E7%A1%AC%E4%BB%B6/</loc>
-    <lastmod>2024-07-13</lastmod>
+    <lastmod>2024-07-18</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
   </url>
   
   <url>
     <loc>http://www.obito.top/categories/%E5%B5%8C%E5%85%A5%E5%BC%8F/stm32/</loc>
-    <lastmod>2024-07-13</lastmod>
+    <lastmod>2024-07-18</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
   </url>
   
   <url>
     <loc>http://www.obito.top/categories/%E7%A1%AC%E4%BB%B6/%E7%84%8A%E6%8E%A5/</loc>
-    <lastmod>2024-07-13</lastmod>
+    <lastmod>2024-07-18</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
   </url>
