@@ -6,7 +6,7 @@
   <link href="http://www.obito.top/atom.xml" rel="self"/>
   
   <link href="http://www.obito.top/"/>
-  <updated>2024-12-21T13:44:59.528Z</updated>
+  <updated>2024-12-21T14:42:27.067Z</updated>
   <id>http://www.obito.top/</id>
   
   <author>
@@ -15,6 +15,29 @@
   </author>
   
   <generator uri="https://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>重装系统后重新配置hexo环境</title>
+    <link href="http://www.obito.top/2024/12/21/%E9%87%8D%E8%A3%85%E7%B3%BB%E7%BB%9F%E5%90%8E%E9%87%8D%E6%96%B0%E9%85%8D%E7%BD%AEhexo%E7%8E%AF%E5%A2%83/"/>
+    <id>http://www.obito.top/2024/12/21/%E9%87%8D%E8%A3%85%E7%B3%BB%E7%BB%9F%E5%90%8E%E9%87%8D%E6%96%B0%E9%85%8D%E7%BD%AEhexo%E7%8E%AF%E5%A2%83/</id>
+    <published>2024-12-21T13:59:07.000Z</published>
+    <updated>2024-12-21T14:42:27.067Z</updated>
+    
+    <content type="html"><![CDATA[<h1 id="重装系统后重新配置hexo环境">重装系统后重新配置hexo环境</h1><h2 id="序言">序言</h2><p>电脑重装系统后 hexo 环境没了，但还留着 hexo 的本地目录，就不用重头来过了，只需要配置一下基础环境就可以继续玩耍了。</p><h2 id="过程">过程</h2><h3 id="1-安装-node-js-和-hexo">1. 安装 Node.js 和 hexo</h3><blockquote><p><a href="https://nodejs.org/zh-cn">Node.js — 在任何地方运行 JavaScript (nodejs.org)</a></p></blockquote><p>查看版本：</p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">node -v </span><br><span class="line">npm -v</span><br></pre></td></tr></table></figure><p>安装 hexo 环境：</p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">npm install -g hexo</span><br></pre></td></tr></table></figure><h3 id="2-git-安装与配置">2. git 安装与配置</h3><p>安装 git bash：</p><blockquote><p><a href="https://git-scm.com/downloads/win">Git - Downloading Package (git-scm.com)</a></p></blockquote><p>git config：</p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">git config --global user.name <span class="string">&quot;GitHub账户名&quot;</span></span><br><span class="line">git config --global user.email <span class="string">&quot;GitHub注册邮箱&quot;</span></span><br></pre></td></tr></table></figure><p>配置 SSH KEY，在 <code>C:\Users\用户名\.ssh</code> 目录下打开 git bash：</p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ssh-keygen -t rsa -C <span class="string">&quot;GitHub注册邮箱&quot;</span></span><br></pre></td></tr></table></figure><p>使用 cat 命令输出 <code>id_rsa.pub</code> 文件内容：</p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">cat</span> id_rsa.pub</span><br></pre></td></tr></table></figure><p>进入 GitHub 主页新建 SSH KEY，Key 粘贴 cat 输出内容。</p><p>测试是否成功：</p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ssh -T git@github.com</span><br></pre></td></tr></table></figure><h3 id="3-配置远程仓库">3. 配置远程仓库</h3><p>防止误删请提前备份！删除本地文件中的 <code>.deploy_git</code>、<code>.git</code>、<code>public</code>。</p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">rm</span> -rf .deploy_git</span><br><span class="line"><span class="built_in">rm</span> -rf .git</span><br><span class="line"><span class="built_in">rm</span> -rf public</span><br></pre></td></tr></table></figure><p>建立本地仓库：</p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">git init</span><br><span class="line">git remote add 别名 仓库git</span><br></pre></td></tr></table></figure><p>由于是初次建立仓库，默认分支名是 master，如果需要改变分支名，需要先随便提交一下初始化仓库：</p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">git add .或者随便文件</span><br><span class="line">git commit -m <span class="string">&quot;xxx&quot;</span></span><br></pre></td></tr></table></figure><p>最后就可以成功部署了：</p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">hexo c &amp;&amp; hexo g &amp;&amp; hexo d</span><br></pre></td></tr></table></figure>]]></content>
+    
+    
+      
+      
+    <summary type="html">&lt;h1 id=&quot;重装系统后重新配置hexo环境&quot;&gt;重装系统后重新配置hexo环境&lt;/h1&gt;
+&lt;h2 id=&quot;序言&quot;&gt;序言&lt;/h2&gt;
+&lt;p&gt;电脑重装系统后 hexo 环境没了，但还留着 hexo 的本地目录，就不用重头来过了，只需要配置一下基础环境就可以继续玩耍了。&lt;/p&gt;
+&lt;h2</summary>
+      
+    
+    
+    
+    
+  </entry>
   
   <entry>
     <title>Qt-Android环境搭建</title>
@@ -532,32 +555,6 @@
     
     
     
-    
-  </entry>
-  
-  <entry>
-    <title>mqttFx测试</title>
-    <link href="http://www.obito.top/2024/05/22/mqttFx%E6%B5%8B%E8%AF%95/"/>
-    <id>http://www.obito.top/2024/05/22/mqttFx%E6%B5%8B%E8%AF%95/</id>
-    <published>2024-05-22T07:54:17.000Z</published>
-    <updated>2024-07-22T03:58:29.027Z</updated>
-    
-    <content type="html"><![CDATA[<h1 id="mqttfx测试">mqttFx测试</h1><p>使用 mqttFx 软件测试连接阿里云平台和 OneNET 平台。</p><h2 id="阿里云平台">阿里云平台</h2><h3 id="1-平台添加产品设备">1. 平台添加产品设备</h3><p>首先到<a href="https://iot.console.aliyun.com/">阿里云物联网平台</a>，添加一个产品，然后在这个产品下面添加一个设备，接着点开 <code>DeviceSecret</code>，复制设备的三个要素 ProductKey、DeviceName、DeviceSecret。</p><p><img src="image-20240522155946305.png" alt="image-20240522155946305"></p><h3 id="2-生成-client-id-用户名和密码">2. 生成 Client ID 用户名和密码</h3><p>打开 MQTT_Password 软件(将阿里云连接的三元素转换为 MQTT 连接的 Client ID 用户名和密码)</p><p><img src="image-20240522160358541.png" alt="image-20240522160358541"></p><p>保存生成的计算结果。</p><h3 id="3-填入-mqttfx-软件中">3. 填入 mqttFx 软件中</h3><p><img src="image-20240522160619377.png" alt="image-20240522160619377"></p><p>计算得到的结果填入 Client ID、User Name、Password</p><ul><li><p>域名地址 Broker Address：<a href="http://iot-06z00h6z06dknsn.mqtt.iothub.aliyuncs.com">iot-06z00h6z06dknsn.mqtt.iothub.aliyuncs.com</a></p></li><li><p>端口号 Broker Port：非加密端口 1883</p></li></ul><p><strong>消息发布主题（Publish）</strong></p><p>/sys/ProductKey/DeviceName/thing/event/property/post</p><p><strong>消息订阅主题（Subscribe）</strong></p><p>/sys/ProductKey/DeviceName/thing/service/property/set</p><p>ProductKey、DeviceName 替换成自己的即可。</p><p>阿里云平台发送的数据格式如下：</p><figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="punctuation">&#123;</span><span class="attr">&quot;params&quot;</span><span class="punctuation">:</span><span class="punctuation">&#123;</span><span class="attr">&quot;temp&quot;</span><span class="punctuation">:</span><span class="number">1</span><span class="punctuation">&#125;</span><span class="punctuation">,</span><span class="attr">&quot;version&quot;</span><span class="punctuation">:</span><span class="string">&quot;1.0.0&quot;</span><span class="punctuation">&#125;</span></span><br><span class="line"></span><br><span class="line">注<span class="punctuation">:</span><span class="attr">&quot;temp&quot;</span><span class="punctuation">:</span><span class="number">1</span>是一个键值对，temp 是物模型功能的标识符，后面的 <span class="number">1</span> 发布设置的数据。通过这个键值对来发送数据。</span><br></pre></td></tr></table></figure><blockquote><p><a href="https://blog.csdn.net/m0_61712829/article/details/135248254">【物联网】手把手完整实现STM32+ESP8266+MQTT+阿里云+APP应用——第1节-阿里云配置+MQTT.fx模拟与使用AT命令发布订阅消息_esp8266连接mqtt订阅和发布主题-CSDN博客</a></p></blockquote><h2 id="onenet-平台">OneNET 平台</h2><h3 id="1-平台添加产品设备">1. 平台添加产品设备</h3><p>首先到[OneNET平台](<a href="https://open.iot.10086.cn/">OneNET - 中国移动物联网开放平台 (10086.cn)</a>)，添加一个产品，然后在这个产品下面添加一个设备。</p><p><img src="image-20240522152234332.png" alt="image-20240522152234332"></p><p>创建数据流模板</p><p><img src="image-20240522152410525.png" alt="image-20240522152410525"></p><h3 id="2-token工具计算密码">2. token工具计算密码</h3><p><img src="image-20240522161122841.png" alt="image-20240522161122841"></p><ul><li>res：products/产品 ID/devices/设备名，替换产品 ID 和设备名即可</li><li>et：过期时间：随便填个如：7557387130</li><li>key：设备 Key</li></ul><h3 id="3-填入-mqttfx-软件中">3. 填入 mqttFx 软件中</h3><ul><li>域名地址 Broker Address：<a href="http://mqtts.heclouds.com">mqtts.heclouds.com</a></li><li>端口号 Broker Port：1883</li></ul><p><strong>消息发布主题（Publish）</strong></p><p>$sys/{pid}/{device-name}/dp/post/json</p><p><strong>消息订阅主题（Subscribe）</strong></p><p>$sys/{pid}/{device-name}/dp/post/json/+</p><ul><li><strong>{pid}</strong> ：产品ID</li><li><strong>{device-name}</strong> ：设备名称</li></ul><p>发布数据格式如下 LED为数据流模板名称，v后面为值：</p><figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="punctuation">&#123;</span></span><br><span class="line">    <span class="attr">&quot;id&quot;</span><span class="punctuation">:</span> <span class="number">01</span><span class="punctuation">,</span>        </span><br><span class="line">    <span class="attr">&quot;dp&quot;</span><span class="punctuation">:</span> <span class="punctuation">&#123;</span>             </span><br><span class="line">        <span class="attr">&quot;LED&quot;</span><span class="punctuation">:</span> <span class="punctuation">[</span><span class="punctuation">&#123;</span>     </span><br><span class="line">            <span class="attr">&quot;v&quot;</span><span class="punctuation">:</span> <span class="number">0</span><span class="punctuation">,</span></span><br><span class="line">        <span class="punctuation">&#125;</span><span class="punctuation">]</span><span class="punctuation">,</span></span><br><span class="line">    <span class="punctuation">&#125;</span></span><br><span class="line"><span class="punctuation">&#125;</span></span><br></pre></td></tr></table></figure><p><strong>如果出现 Invalid MQTT version 则修改 mqtt 协议版本改成 3.1.1</strong></p><p><img src="image-20240522160948359.png" alt="image-20240522160948359"></p><blockquote><p><a href="https://blog.csdn.net/xiaolinmiao0/article/details/125701316">https://blog.csdn.net/xiaolinmiao0/article/details/125701316</a></p></blockquote>]]></content>
-    
-    
-      
-      
-    <summary type="html">&lt;h1 id=&quot;mqttfx测试&quot;&gt;mqttFx测试&lt;/h1&gt;
-&lt;p&gt;使用 mqttFx 软件测试连接阿里云平台和 OneNET 平台。&lt;/p&gt;
-&lt;h2 id=&quot;阿里云平台&quot;&gt;阿里云平台&lt;/h2&gt;
-&lt;h3 id=&quot;1-平台添加产品设备&quot;&gt;1. 平台添加产品设备&lt;/h3&gt;
-&lt;p&gt;首</summary>
-      
-    
-    
-    
-    
-    <category term="STM32" scheme="http://www.obito.top/tags/STM32/"/>
     
   </entry>
   
