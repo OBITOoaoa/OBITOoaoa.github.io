@@ -1,0 +1,642 @@
+<!DOCTYPE html><html lang="zh-CN" data-theme="dark"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0,viewport-fit=cover"><title>硬件通讯协议 | Obito Blog</title><meta name="author" content="Obito"><meta name="copyright" content="Obito"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#0d0d0d"><meta name="description" content="常见硬件通讯协议 一些基础概念 串行通信协议 同步通信(asynchronous data communication)：以数据块为单位传输，收发方必须使用同一时钟源。 异步通信(synchronous data communication)：以字符为单位传输，两个字符之间传输的时间间隔不固定的，但同个字符内部的时间间隔是固定的，收发方无需使用同一时钟源，只要时钟信号的频率相同即可。 异步通信通过">
+<meta property="og:type" content="article">
+<meta property="og:title" content="硬件通讯协议">
+<meta property="og:url" content="http://www.obito.top/2023/05/08/%E7%A1%AC%E4%BB%B6%E9%80%9A%E8%AE%AF%E5%8D%8F%E8%AE%AE/index.html">
+<meta property="og:site_name" content="Obito Blog">
+<meta property="og:description" content="常见硬件通讯协议 一些基础概念 串行通信协议 同步通信(asynchronous data communication)：以数据块为单位传输，收发方必须使用同一时钟源。 异步通信(synchronous data communication)：以字符为单位传输，两个字符之间传输的时间间隔不固定的，但同个字符内部的时间间隔是固定的，收发方无需使用同一时钟源，只要时钟信号的频率相同即可。 异步通信通过">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="http://www.obito.top/img/scenery_01.webp">
+<meta property="article:published_time" content="2023-05-08T13:33:49.000Z">
+<meta property="article:modified_time" content="2024-06-18T10:38:24.995Z">
+<meta property="article:author" content="Obito">
+<meta property="article:tag" content="嵌入式">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://www.obito.top/img/scenery_01.webp"><link rel="shortcut icon" href="/img/favicon.png"><link rel="canonical" href="http://www.obito.top/2023/05/08/%E7%A1%AC%E4%BB%B6%E9%80%9A%E8%AE%AF%E5%8D%8F%E8%AE%AE/index.html"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="stylesheet" href="/css/index.css"><link rel="stylesheet" href="/pluginsSrc/@fortawesome/fontawesome-free/css/all.min.css" media="print" onload="this.media='all'"><link rel="stylesheet" href="/pluginsSrc/@fancyapps/ui/dist/fancybox/fancybox.css" media="print" onload="this.media='all'"><script>const GLOBAL_CONFIG = {
+  root: '/',
+  algolia: undefined,
+  localSearch: undefined,
+  translate: undefined,
+  noticeOutdate: {"limitDay":60,"position":"top","messagePrev":"It has been","messageNext":"days since the last update, the content of the article may be outdated."},
+  highlight: {"plugin":"highlighjs","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":300},
+  copy: {
+    success: '复制成功',
+    error: '复制错误',
+    noSupport: '浏览器不支持'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '天',
+  dateSuffix: {
+    just: '刚刚',
+    min: '分钟前',
+    hour: '小时前',
+    day: '天前',
+    month: '个月前'
+  },
+  copyright: undefined,
+  lightbox: 'fancybox',
+  Snackbar: undefined,
+  source: {
+    justifiedGallery: {
+      js: '/pluginsSrc/flickr-justified-gallery/dist/fjGallery.min.js',
+      css: '/pluginsSrc/flickr-justified-gallery/dist/fjGallery.css'
+    }
+  },
+  isPhotoFigcaption: false,
+  islazyload: false,
+  isAnchor: false,
+  percent: {
+    toc: true,
+    rightside: false,
+  },
+  autoDarkmode: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: '硬件通讯协议',
+  isPost: true,
+  isHome: false,
+  isHighlightShrink: false,
+  isToc: true,
+  postUpdate: '2024-06-18 18:38:24'
+}</script><noscript><style type="text/css">
+  #nav {
+    opacity: 1
+  }
+  .justified-gallery img {
+    opacity: 1
+  }
+
+  #recent-posts time,
+  #post-meta time {
+    display: inline !important
+  }
+</style></noscript><script>(win=>{
+    win.saveToLocal = {
+      set: function setWithExpiry(key, value, ttl) {
+        if (ttl === 0) return
+        const now = new Date()
+        const expiryDay = ttl * 86400000
+        const item = {
+          value: value,
+          expiry: now.getTime() + expiryDay,
+        }
+        localStorage.setItem(key, JSON.stringify(item))
+      },
+
+      get: function getWithExpiry(key) {
+        const itemStr = localStorage.getItem(key)
+
+        if (!itemStr) {
+          return undefined
+        }
+        const item = JSON.parse(itemStr)
+        const now = new Date()
+
+        if (now.getTime() > item.expiry) {
+          localStorage.removeItem(key)
+          return undefined
+        }
+        return item.value
+      }
+    }
+  
+    win.getScript = url => new Promise((resolve, reject) => {
+      const script = document.createElement('script')
+      script.src = url
+      script.async = true
+      script.onerror = reject
+      script.onload = script.onreadystatechange = function() {
+        const loadState = this.readyState
+        if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
+        script.onload = script.onreadystatechange = null
+        resolve()
+      }
+      document.head.appendChild(script)
+    })
+  
+    win.getCSS = (url,id = false) => new Promise((resolve, reject) => {
+      const link = document.createElement('link')
+      link.rel = 'stylesheet'
+      link.href = url
+      if (id) link.id = id
+      link.onerror = reject
+      link.onload = link.onreadystatechange = function() {
+        const loadState = this.readyState
+        if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
+        link.onload = link.onreadystatechange = null
+        resolve()
+      }
+      document.head.appendChild(link)
+    })
+  
+      win.activateDarkMode = function () {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      win.activateLightMode = function () {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+        }
+      }
+      const t = saveToLocal.get('theme')
+    
+          if (t === 'dark') activateDarkMode()
+          else if (t === 'light') activateLightMode()
+        
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        if (asideStatus === 'hide') {
+          document.documentElement.classList.add('hide-aside')
+        } else {
+          document.documentElement.classList.remove('hide-aside')
+        }
+      }
+    
+    const detectApple = () => {
+      if(/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)){
+        document.documentElement.classList.add('apple')
+      }
+    }
+    detectApple()
+    })(window)</script><link rel="stylesheet" href="/css/universe.css"><link rel="stylesheet" href="/css/rightmenu.css"><span id="fps"></span><link rel="stylesheet" href="/css/custom.css"><!-- hexo injector head_end start --><link rel="stylesheet" href="https://cdn.cbd.int/hexo-butterfly-clock-anzhiyu/lib/clock.min.css" /><!-- hexo injector head_end end --><meta name="generator" content="Hexo 6.3.0"><link rel="alternate" href="/atom.xml" title="Obito Blog" type="application/atom+xml">
+<link href="https://cdn.bootcss.com/KaTeX/0.11.1/katex.min.css" rel="stylesheet" /></head><body><div id="loading-box"><div class="loading-left-bg"></div><div class="loading-right-bg"></div><div class="spinner-box"><div class="configure-border-1"><div class="configure-core"></div></div><div class="configure-border-2"><div class="configure-core"></div></div><div class="loading-word">加载中...</div></div></div><script>(()=>{
+  const $loadingBox = document.getElementById('loading-box')
+  const $body = document.body
+  const preloader = {
+    endLoading: () => {
+      $body.style.overflow = ''
+      $loadingBox.classList.add('loaded')
+    },
+    initLoading: () => {
+      $body.style.overflow = 'hidden'
+      $loadingBox.classList.remove('loaded')
+    }
+  }
+
+  preloader.initLoading()
+  window.addEventListener('load',() => { preloader.endLoading() })
+
+  if (true) {
+    document.addEventListener('pjax:send', () => { preloader.initLoading() })
+    document.addEventListener('pjax:complete', () => { preloader.endLoading() })
+  }
+})()</script><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img is-center"><img src="/img/head.jpg" onerror="onerror=null;src='null'" alt="avatar"/></div><div class="sidebar-site-data site-data is-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">43</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">13</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">13</div></a></div><hr class="custom-hr"/><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> Home</span></a></div><div class="menus_item"><a class="site-page" href="/notes/"><i class="fa-fw fa fa-sticky-note"></i><span> Notes</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> Archives</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> Tags</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> Categories</span></a></div><div class="menus_item"><a class="site-page group" href="javascript:void(0);"><i class="fa-fw fas fa-list"></i><span> List</span><i class="fas fa-chevron-down"></i></a><ul class="menus_item_child"><li><a class="site-page child" href="/music/"><i class="fa-fw fas fa-music"></i><span> Music</span></a></li><li><a class="site-page child" href="/movies/"><i class="fa-fw fas fa-video"></i><span> Movie</span></a></li></ul></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fas fa-link"></i><span> Link</span></a></div><div class="menus_item"><a class="site-page group" href="javascript:void(0);"><i class="fa-fw fas fa-heart"></i><span> About</span><i class="fas fa-chevron-down"></i></a><ul class="menus_item_child"><li><a class="site-page child" href="/about-me/"><i class="fa-fw fa-fw fas fa-medal"></i><span> AboutMe</span></a></li><li><a class="site-page child" href="/about-website/"><i class="fa-fw fa-fw fas fa-envelope-open-text"></i><span> Statement</span></a></li></ul></div></div></div></div><div class="post" id="body-wrap"><header class="post-bg" id="page-header" style="background-image: url('/img/scenery_01.webp')"><nav id="nav"><span id="blog-info"><a href="/" title="Obito Blog"><span class="site-name">Obito Blog</span></a></span><div id="menus"><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> Home</span></a></div><div class="menus_item"><a class="site-page" href="/notes/"><i class="fa-fw fa fa-sticky-note"></i><span> Notes</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> Archives</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> Tags</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> Categories</span></a></div><div class="menus_item"><a class="site-page group" href="javascript:void(0);"><i class="fa-fw fas fa-list"></i><span> List</span><i class="fas fa-chevron-down"></i></a><ul class="menus_item_child"><li><a class="site-page child" href="/music/"><i class="fa-fw fas fa-music"></i><span> Music</span></a></li><li><a class="site-page child" href="/movies/"><i class="fa-fw fas fa-video"></i><span> Movie</span></a></li></ul></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fas fa-link"></i><span> Link</span></a></div><div class="menus_item"><a class="site-page group" href="javascript:void(0);"><i class="fa-fw fas fa-heart"></i><span> About</span><i class="fas fa-chevron-down"></i></a><ul class="menus_item_child"><li><a class="site-page child" href="/about-me/"><i class="fa-fw fa-fw fas fa-medal"></i><span> AboutMe</span></a></li><li><a class="site-page child" href="/about-website/"><i class="fa-fw fa-fw fas fa-envelope-open-text"></i><span> Statement</span></a></li></ul></div></div><div id="toggle-menu"><a class="site-page" href="javascript:void(0);"><i class="fas fa-bars fa-fw"></i></a></div></div></nav><div id="post-info"><h1 class="post-title">硬件通讯协议</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">发表于</span><time class="post-meta-date-created" datetime="2023-05-08T13:33:49.000Z" title="发表于 2023-05-08 21:33:49">2023-05-08</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">更新于</span><time class="post-meta-date-updated" datetime="2024-06-18T10:38:24.995Z" title="更新于 2024-06-18 18:38:24">2024-06-18</time></span><span class="post-meta-categories"><span class="post-meta-separator">|</span><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/%E5%B5%8C%E5%85%A5%E5%BC%8F/">嵌入式</a></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-wordcount"><i class="far fa-file-word fa-fw post-meta-icon"></i><span class="post-meta-label">字数总计:</span><span class="word-count">5.3k</span><span class="post-meta-separator">|</span><i class="far fa-clock fa-fw post-meta-icon"></i><span class="post-meta-label">阅读时长:</span><span>17分钟</span></span><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title="硬件通讯协议"><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">阅读量:</span><span id="busuanzi_value_page_pv"><i class="fa-solid fa-spinner fa-spin"></i></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="post-content" id="article-container"><h1 id="常见硬件通讯协议">常见硬件通讯协议</h1>
+<h2 id="一些基础概念">一些基础概念</h2>
+<h3 id="串行通信协议">串行通信协议</h3>
+<p><strong>同步通信(asynchronous data communication)</strong>：以<strong>数据块</strong>为单位传输，收发方<strong>必须</strong>使用同一时钟源。</p>
+<p><strong>异步通信(synchronous data communication)</strong>：以<strong>字符</strong>为单位传输，两个字符之间传输的时间间隔不固定的，但同个字符内部的时间间隔是固定的，收发方<strong>无需</strong>使用同一时钟源，只要时钟信号的<strong>频率相同</strong>即可。</p>
+<p><strong>异步通信</strong>通过传送字符内的<strong>起始位</strong>来进行同步，而<strong>同步通信</strong>采用<strong>共用外部时钟</strong>来进行同步。</p>
+<p>通俗点来说：同步通信就是舔狗发微信找女神，对方一直不回复，但舔狗一直在那等待回复；异步通信就是一个比较聪明点的舔狗发微信找女神，对方一直不回复，但舔狗不在那一直等待回复，选择了干其他事情。</p>
+<h3 id="数据传送方式">数据传送方式</h3>
+<p>单工：只有一个固定方向进行传送数据。</p>
+<p>半双工：双方都可以进行传送数据，但不能同时传送和接收数据，即只存在一方传送，一方接收。</p>
+<p>全双工：双方都可以进行发送数据，并且可以同时传送和接收数据。</p>
+<h3 id="常见电平标准">常见电平标准</h3>
+<p>TTL 电平：全双工，1：2.4V~5V，0：0.</p>
+<table>
+<thead>
+<tr>
+<th style="text-align:center">电平类型</th>
+<th style="text-align:center">通信方式</th>
+<th>逻辑1</th>
+<th>逻辑0</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center">TTL 电平</td>
+<td style="text-align:center">全双工</td>
+<td>2.4V~5V</td>
+<td>0V~0.5V</td>
+</tr>
+<tr>
+<td style="text-align:center">COMS 电平</td>
+<td style="text-align:center"></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td style="text-align:center">RS232</td>
+<td style="text-align:center">全双工</td>
+<td>-15V~-5V</td>
+<td>+3V~+15V</td>
+</tr>
+<tr>
+<td style="text-align:center">RS485</td>
+<td style="text-align:center">半双工</td>
+<td>+2V~+6V</td>
+<td>-6V~-2V</td>
+</tr>
+</tbody>
+</table>
+<h3 id="串口参数">串口参数</h3>
+<ul>
+<li>波特率：串口通信的速率 单位一般为 bit/s，一秒传送多少位，波特率的倒数就是传送 1 位的时间。</li>
+<li>起始位：标志一个数据帧的开始，固定为低电平。</li>
+<li>数据位：数据帧的有效载荷，1 为高电平，0 为低电平，<strong>低位先行</strong>即一组数据是低位先入。</li>
+<li>检验位：用于数据验证，根据数据位计算得来。</li>
+<li>停止位：用于数据帧间隔，固定为高电平</li>
+</ul>
+<p>TX 引脚与 GND 进行比较输出定时翻转的高低电平，RX 引脚定时读取引脚的高低电平，每个字节的数据加上起始位、停止位、可选的检验位封装位数据帧，依次输出在 TX 引脚，另一端 RX 引脚依次接收。</p>
+<p><strong>硬件流控制</strong>：多接了根线连接发送端和接收端，只有当接收端准备好了告诉发送端，发送端才开始发送数据。<strong>防止发送端数据太快导致接收端数据丢失或被覆盖。</strong></p>
+<h2 id="常见的硬件通讯协议">常见的硬件通讯协议</h2>
+<h3 id="uart">UART</h3>
+<p>UART——通用异步收发传输器，工作原理是将传输数据的每个字符一位接一位地传输。只要 3 根线（TX、RX、GND）就可以实现双向通信，一根线发送数据的同时用另一根线接收数据。</p>
+<p>由于 UART 是异步通信，因此对于两个使用 UART 串口通信的端口，下面参数必须匹配，否则通信出错。</p>
+<p><strong>通信数据格式</strong></p>
+<ul>
+<li>
+<p>起始位：表示数据传输的开始，电平逻辑为“0” ，位数为 1 位。</p>
+</li>
+<li>
+<p>数据位：可以是 5~8 位的数据，<strong>先发低位，再发高位</strong>，一般取值为 8，因为一个 ASCII 字符值为 8 位。</p>
+</li>
+<li>
+<p>奇偶校验位：用于接收方对接收到的数据进行校验，“1”的位数为偶数(偶校验) 或奇数(奇校验)；mark parity：校验位始终为 1；space parity：校验位始终为 0；以此来校验数据传送的正确性，使用时不需要此位也可以。</p>
+</li>
+<li>
+<p>停止位：表示一帧数据的结束，电平逻辑为“1”，位数可以是 1/1.5/2 位。</p>
+</li>
+<li>
+<p>波特率：串口通信时的速率，它用单位时间内传输的二进制代码的有效位(bit) 数来表示，其单位为每秒比特数 bit/s(bps)。常见的波特率值有 4800、9600、115200 等，数值越大数据传输的越快，波特率为 115200 表示每秒钟传输 115200 位数据。</p>
+</li>
+</ul>
+<p>连接方式为 TX——RX，RX——TX，GND——GND。</p>
+<ul>
+<li>UART 只是对信号的时序进行了定义，而未定义接口的电气特性；</li>
+<li>UART 通信时一般直接使用处理器使用的电平，即 TTL 电平，但<strong>不同的处理器使用的电平存在差异</strong>，所以不同的处理器使用 UART 通信时<strong>一般不能直接相连</strong>；</li>
+<li>UART 没有规定不同器件连接时连接器的标准，所以不同器件之间通过 UART 通信时连接不方便。</li>
+<li>UART 一般直接使用 TTL 信号来表示 0 和 1，但 TTL 信号的抗干扰能力较差，数据在传输过程中很容易出错。</li>
+<li>由于 <strong>TTL 信号的抗干扰能力较差，所以其通信距离很短</strong>，一般只能用于一个电路板上的两个不同芯片之间的通信。</li>
+</ul>
+<h3 id="usart">USART</h3>
+<p>通用同步异步收发器（Universal Synchronous Asynchronous Receiver Transmitter），速率不快，可全双工，一般由 <strong>RX、TX、GND 三根线组成</strong> ，当总线处于<strong>空闲状态时信号线的状态为高电平。</strong></p>
+<p>内容跟 UART 类似，不过 USART 比 UART 多了另外一种通信方式——异步通信，即 USART 既可以异步通信也可以同步通信，具体设置方式参考手册。</p>
+<p><img src="md20.png" alt="md20"></p>
+<p><strong>TX</strong>：发送数据<strong>输出</strong>引脚。<br>
+<strong>RX</strong>：接收数据<strong>输入</strong>引脚。<br>
+<strong>SW_RX</strong>：数据接收引脚，只用于单线和智能卡模式，属于内部引脚，没有具体外部引脚。<br>
+<strong>nRTS</strong>：请求以发送(Request To Send)，<strong>n 表示低电平有效</strong>。如果使能 RTS 流控制，当 USART 接收器准备好接收新数据时就会将 nRTS 变成低电平；当接收寄存器已满时，nRTS 将被设置为高电平。该引脚只适用于<strong>硬件流控制</strong>。<br>
+<strong>nCTS</strong>：清除以发送(Clear To Send)，<strong>n 表示低电平有效</strong>。如果使能 CTS 流控制，发送器在发送下一帧数据之前会检测 nCTS 引脚，如果为低电平，表示可以发送数据，如果为高电平则在发送完当前数据帧之后停止发送。该引脚只适用于<strong>硬件流控制</strong>。<br>
+<strong>SCLK</strong>：发送器时钟输出引脚。</p>
+<p><strong>编程时常用的标志位</strong></p>
+<ul>
+<li>RE：接收使能</li>
+<li>RXNE：读数据寄存器非空</li>
+<li>RXNEIE：发送完成中断使能</li>
+</ul>
+<p>USART 支持使用 DMA，可实现高速数据通信，USART 在 STM32 常用于<strong>打印</strong>程序信息，一般在硬件设计时都会预留一个 USART 通信接口连接电脑，用于在调试程序是可以把一些调试信息<strong>打印</strong>在电脑端的串口调试助手工具上，从而了解程序运行是否正确、如果出错具体哪里出错等等。</p>
+<h3 id="iic">IIC</h3>
+<p>**IIC（Inter-Integrated Circuit集成电路总线）**是一种串行通信总线，使用多主从架构，利用该总线可实现多主机系统所需的裁决和高低速设备同步等功能。</p>
+<ul>
+<li>
+<p>IIC 总线是一种<strong>串行、半双工总线</strong>，<strong>同步通信</strong>、主要用于近距离、低速的芯片之间的通信。</p>
+</li>
+<li>
+<p>IIC 串行总线一般有<strong>两根信号线</strong>，一根是双向的<strong>数据线 SDA</strong> 收发数据，另一根是<strong>时钟线 SCL</strong> 双方时钟同步。所有接到 IIC 总线设备上的串行数据 SDA 都接到总线的 SDA 上，各设备的时钟线 SCL 接到总线的 SCL 上。</p>
+</li>
+<li>
+<p>IIC 是真正的多主机总线，（IIC 可以在通讯过程中，改变主机）。如果两个或更多的主机同时请求总线，可以通过<strong>冲突检测</strong>和<strong>仲裁</strong>防止总线数据被破坏。</p>
+</li>
+<li>
+<p>多个 IIC 器件可以并联在 IIC 总线上，每个器件有特定的地址，分时共享 IIC 总线**。连接到 IIC 总线上的设备既可以用作主设备，也可以用作从设备**。主设备负责控制通信，通过对数据传输进行初始化/终止化，来发送数据并产生所需的同步时钟脉冲。从设备则是等待来自主设备的命令，并响应命令接收。主设备和从设备都可以作为发送设备或接收设备。无论主设备是作为发送设备还是接收设备，<strong>同步时钟信号都只能由主设备产生</strong>。</p>
+</li>
+<li>
+<p>串行的 8 位双向数据传输位速率在<strong>标准模式下可达 100kbit/s，快速模式下可达 400kbit/s ，高速模式下可达 3.4Mbit/s。</strong></p>
+</li>
+<li>
+<p><strong>IIC  的传输速率和 IIC 的时钟频率相关。IIC 中一个 SCL 时钟周期只能传输 1bit 数据</strong>（并且只能在SCL的低电平期间进行 SDA 数据电平的变化），假如 SCL 的时钟频率为 100KHz，那么 1s 中就能产生 100K 个 SCL 时钟周期，也就是说 1s 中可以传输 100Kbit 的数据。因此，想要设置I2C的传输速率，只需要设置 IIC 的时钟频率就好了。</p>
+</li>
+<li>
+<p><strong>中断函数中不能使用 IIC 传输</strong>。<strong>一是中断要求快速处理</strong>，否则会影响其他中断的响应；二是 I2C传输（I2C_transfer）时 transfer 内部如果使用中断传输模式，则会造成“中断嵌套”，会出一些不可预见的错误（内核可能崩溃）。</p>
+</li>
+</ul>
+<p><img src="md19.png" alt="md19"></p>
+<p><strong>当总线处于空闲状态时信号线 SDA 的状态为高电平。</strong></p>
+<p>SCL 为高时，SDA 由高电平——&gt;低电平，表示起始位。</p>
+<p>SCL 为高时，SDA 由低电平——&gt;高电平，表示停止位。</p>
+<p>SCL 为高时，SDA 始终为高电平，表示逻辑 1。</p>
+<p>SCL 为高时，SDA 始终为低电平，表示逻辑 0。</p>
+<p><img src="md17.png" alt="md17"></p>
+<p><strong>数据帧中，0 表示写数据，1 表示读数据；应答信号中，0 表示数据被正确接收，1 表示从机正忙，接收错误。</strong></p>
+<p><img src="md18.png" alt="md18"></p>
+<p><strong>写数据帧：</strong><br>
+主机发送起始信号后发送 <strong>IIC 从机地址（7 位）和写操作 0（1 位）</strong>，主机等待从机发送 ACK，收到 ACK 后主机发送<strong>从机寄存器地址（8 位）</strong>，接着继续等待 ACK，等到 ACK 后主机发送要<strong>写入寄存器的数据</strong>。主机发送 data，从机发送 ACK，重复多次可顺序写入多个寄存器<strong>直至主机产生结束信号</strong>。</p>
+<p><strong>读数据帧（随机读）：</strong><br>
+主机发送起始信号后发送 <strong>IIC 从机地址（7 位）和写操作 0（1 位）</strong>，主机等待从机发送 ACK，收到 ACK 后主机发送<strong>从机寄存器地址（8 位）</strong>，接着继续等待 ACK，等到 ACK 后主机<strong>再次发起起始信号</strong>，然后发送从机地址和读操作 1，并等待 ACK，从机发送 ACK 之后接着发送指定寄存器里的数据，主机发送 ACK 表示收到，从机继续发送数据即顺序读取下一个寄存器。当主机希望停止接收数据时就返回一个非应答信号 NACK，数据传输将结束。</p>
+<p><strong>总线仲裁机制：</strong></p>
+<p>IIC 中由于是多主机进行通信，各主机互相抢占总线，多主机会产生总线裁决问题。当多个主机同时想占用总线时，企图启动总线传输数据，就叫做<strong>总线竞争</strong>。IIC 通过<strong>总线仲裁</strong>，以决定哪台主机控制总线。在多主机中寻址需要在数据帧中添加设备地址，这个设备地址为 7 位，0x00 不用，支持最多 255 台主机通信。</p>
+<p>在起始信号后必须传送一个从机的地址(7 位)，第 8 位是数据的传送方向位(R/T)，用“0”表示主机发送数据(T)，“1”表示主机接收数据®。</p>
+<h4 id="iic-的优缺点">IIC 的优缺点</h4>
+<p><strong>优点：</strong></p>
+<ul>
+<li><strong>简单的两线串行 IIC 总线</strong>，节省 PCB 布板走线空间。</li>
+<li>支持多主设备和多从设备通信。</li>
+<li>适用于低速、短距离的数据传输。</li>
+</ul>
+<p><strong>缺点：</strong></p>
+<ul>
+<li>数据传输<strong>速率较慢</strong>；</li>
+<li>只适用<strong>短距离</strong>传输。</li>
+</ul>
+<h4 id="iic-的应用">IIC 的应用</h4>
+<p>IIC 协议广泛应用于各种电子设备中，尤其是在嵌入式系统和消费电子产品中。例如：</p>
+<ul>
+<li>传感器（温度传感器、加速度计等）</li>
+<li>存储器（EEPROM）</li>
+<li>实时时钟（RTC）</li>
+<li>显示器（LCD驱动器）</li>
+</ul>
+<h3 id="spi">SPI</h3>
+<p>SPI 是串行外设接口（Serial Peripheral Interface）的缩写，是一种<strong>高速的，全双工，同步</strong>的通信总线。它以主从方式工作，这种模式通常有一个主设备和一个或多个从设备，需要至少 4 根线，事实上 2 根也可以（单向传输时）。</p>
+<p>SPI 是一个环形总线结构，由 <strong>MOSI、MISO、SCLK、SS 四根线</strong>构成，其时序其实很简单，主要是在 SCLK 的控制下，两个双向移位寄存器进行数据交换。</p>
+<ul>
+<li><strong>MISO (Master Input Slave Output)</strong>：主设备数据输入，从设备数据输出；</li>
+<li><strong>MOSI (Master Output Slave Input)</strong>：主设备数据输出，从设备数据输入；</li>
+<li><strong>SCLK (Serial Clock)</strong>：时钟信号，由主设备产生；</li>
+<li><strong>SS (Slave Selection)</strong>：外围设备片选信号线，用来选择哪个设备工作。</li>
+</ul>
+<p>连接图大致如下：</p>
+<p><img src="md21.png" alt="md21"></p>
+<p>操作码：<strong>01：写数据；10：读数据</strong>。在多主机中寻址需要在数据帧中添加设备地址，这个设备地址为 7 位，支持最多 255 台主机通信。</p>
+<p><img src="md22.png" alt="md22"></p>
+<p><img src="md23.png" alt="md23"></p>
+<p><img src="md24.png" alt="md24"></p>
+<p>在 SPI 操作中，有两项比较重要的设置，就是时钟极性（**CPOL(Clock Polarity)**或 UCCKPL）和时钟相位（**CPHA(Clock Phase)**或 UCCKPH）。</p>
+<p><strong>时钟极性设置时钟空闲时的电平。</strong></p>
+<ul>
+<li>
+<p>CPOL=0，表示当 SCLK=0 时处于空闲态，SCLK=1 有效。</p>
+</li>
+<li>
+<p>CPOL=1，表示当 SCLK=1 时处于空闲态，SCLK=0 有效。</p>
+</li>
+</ul>
+<p><strong>时钟相位设置读取数据和发送数据的时钟沿，用来决定何时进行信号采样。</strong></p>
+<ul>
+<li>
+<p>CPHA=0，表示数据采样是在第一个跳变沿，数据发送在第二个跳变沿（1 采 2 发）。</p>
+</li>
+<li>
+<p>CPHA=1，表示数据采样是在第二个跳变沿，数据发送在第一个跳变沿（1 发 2 采）。</p>
+</li>
+</ul>
+<p><strong>SPI 分为四种传输模式</strong></p>
+<table>
+<thead>
+<tr>
+<th style="text-align:center">SPI 模式</th>
+<th style="text-align:center">CPOL</th>
+<th style="text-align:center">CPHA</th>
+<th style="text-align:center">空闲状态下的时钟极性</th>
+<th style="text-align:center">用于采样和移位数据的时钟相位</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center">0</td>
+<td style="text-align:center">0</td>
+<td style="text-align:center">0</td>
+<td style="text-align:center">逻辑低电平</td>
+<td style="text-align:center">数据在上升沿采样，在下降沿发送</td>
+</tr>
+<tr>
+<td style="text-align:center">1</td>
+<td style="text-align:center">0</td>
+<td style="text-align:center">1</td>
+<td style="text-align:center">逻辑低电平</td>
+<td style="text-align:center">数据在下降沿采样，在上升沿发送</td>
+</tr>
+<tr>
+<td style="text-align:center">2</td>
+<td style="text-align:center">1</td>
+<td style="text-align:center">1</td>
+<td style="text-align:center">逻辑高电平</td>
+<td style="text-align:center">数据在下降沿采样，在上升沿发送</td>
+</tr>
+<tr>
+<td style="text-align:center">3</td>
+<td style="text-align:center">1</td>
+<td style="text-align:center">0</td>
+<td style="text-align:center">逻辑高电平</td>
+<td style="text-align:center">数据在上升沿采样，在下降沿发送</td>
+</tr>
+</tbody>
+</table>
+<p><strong>SPI 接口主要应用</strong>在 EEPROM，FLASH，实时时钟，AD转换器，还有数字信号处理器和数字信号解码器之间。</p>
+<p><strong>优点：</strong></p>
+<ul>
+<li>支持全双工，推挽(push-pull)的驱动性能相比开漏(open-drain)信号完整性更好；</li>
+<li>硬件连接简单，且支持高速（<strong>100MHz以上</strong>）；</li>
+<li>协议支持<strong>数据字长不限于 8bits</strong>，可根据应用特点灵活选择消息字长。</li>
+<li>在点对点的通信中，SPI 接口进行片选从机，<strong>不</strong>需要进行寻址操作，且为全双工通信，显得简单高效。</li>
+</ul>
+<p><strong>缺点：</strong></p>
+<ul>
+<li>相比 IIC 多两根线，<strong>没有寻址机制</strong>，只能<strong>靠片选</strong>选择不同设备；</li>
+<li>没有指定的流控制，<strong>没有应答机制（ACK）确认是否接收到数据</strong>，主设备对于发送成功与否不得而知；</li>
+<li>典型应用只支持<strong>单主控，只有一个主机</strong>；</li>
+<li>在多个从器件的系统中，每个从器件需要独立的使能信号，硬件上比 I2C 系统要稍微复杂一些。</li>
+<li>SPI 仅适用于<strong>短距离传输</strong>。</li>
+</ul>
+<h4 id="如何选择-spi-的相位和极性">如何选择 SPI 的相位和极性</h4>
+<p>关于 SPI 从设备，在空闲的时候，是高电平还是低电平，即决定了 CPOL 是 0 还是 1；然后再找到关于设备是在上升沿还是下降沿去采样数据，这样就是，在定了 CPOL 的值的前提下，对应着可以推算出 CPHA 是 0 还是 1 了。如果从设备也是一个 SPI 控制器，4 种模式都支持，此时只要自己设置为某种模式即可。</p>
+<h3 id="rs-485">RS-485</h3>
+<blockquote>
+<p>RS-232、RS-422 与 RS-485 都是串行数据接口标准，最初都是由电子工业协会（EIA）制订并发布的，RS-232 在 1962 年发布，命名为 EIA-232-E，作为工业标准，以保证不同厂家产品之间的兼容。RS-422 由 RS-232 发展而来，它是为弥补 RS-232 之不足而提出的。**为改进 RS-232 通信距离短、速率低的缺点，RS-422 定义了一种平衡通信接口，将传输速率提高到 10Mb/s，传输距离延长到 4000 英尺（速率低于 100 kb/s时），并允许在一条平衡总线上连接最多 10 个接收器。**RS-422 是一种单机发送、多机接收的单向、平衡传输规范，被命名为 TIA/EIA-422-A 标准。为扩展应用范围，EIA 又于 1983 年在 RS-422 基础上制定了 RS-485 标准，<strong>增加了多点、双向通信能力，即允许多个发送器连接到同一条总线上，同时增加了发送器的驱动能力和冲突保护特性，扩展了总线共模范围</strong>，后命名为 TIA/EIA-485-A 标准。由于 EIA 提出的建议标准都是以“RS”作为前缀，所以在通讯工业领域，仍然习惯将上述标准以 RS 作前缀称谓。</p>
+</blockquote>
+<p>RS232、RS422、RS485 都是基于串口进行延伸的，主要是针对原来<strong>串口协议上的电平标准</strong>进行细分，以达到更好的信号传输。</p>
+<p><strong>RS485</strong> 是一种工业控制环境中常用的通讯协议，其中 <strong>RS</strong> 是 <strong>Recommended Standard</strong> 的缩写。<br>
+RS485 是<strong>半双工异步</strong>串行通信。4000 英尺或大约 1200 米是 RS-485 通信中的最大电缆长度。但是，一般准则是线路长度（以米为单位）和数据速率（以每秒比特数为单位）的乘积不应超过 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mn>1</mn><msup><mn>0</mn><mn>8</mn></msup></mrow><annotation encoding="application/x-tex">10^8</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.8141079999999999em;vertical-align:0em;"></span><span class="mord">1</span><span class="mord"><span class="mord">0</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.8141079999999999em;"><span style="top:-3.063em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight">8</span></span></span></span></span></span></span></span></span></span></span>。例如，20 米长的电缆允许的最大数据速率为 5 Mbits /秒。</p>
+<p><strong>特点：</strong></p>
+<ul>
+<li><strong>支持多节点</strong>：一般最大支持 32 个节点。</li>
+<li><strong>传输距离远</strong>：最远通讯距离可达 1200 米。</li>
+<li><strong>抗干扰能力强</strong>：信号线为双绞线，差分信号传输，对共模干扰的高抵抗力。</li>
+<li><strong>连接简单</strong>：只需要两根信号线（A+ 和 B-）就可以进行正常的通信。</li>
+</ul>
+<p><strong>差分信号传输</strong></p>
+<p>RS485 通信采用差分信号传输，通常情况下只需要两根信号线就可以进行正常的通信。在差分信号中，逻辑 0 和逻辑 1 是用两根信号线（A+ 和 B-）的电压差来表示。</p>
+<ul>
+<li><strong>逻辑 1</strong>：两根信号线（A+ 和 B-）的<strong>电压差</strong>在 <strong>+2V～+6V</strong> 之间。</li>
+<li><strong>逻辑 0</strong>：两根信号线（A+ 和 B-）的<strong>电压差</strong>在 <strong>-2V～-6V</strong> 之间。</li>
+</ul>
+<p><strong>连接方式</strong></p>
+<p>在 RS485 通信网络中，通常会<strong>使用 485 收发器来转换 TTL 电平和 RS485 电平</strong>。节点中的串口控制器使用 <strong>RX 与 TX 信号线连接到 485 收发器</strong>上，而<strong>收发器通过差分线连接到网络总线</strong>；串口控制器与收发器之间一般使用 TTL 信号传输，收发器与总线则使用差分信号来传输。</p>
+<ul>
+<li>发送数据时，串口控制器的 TX 信号经过收发器转换成差分信号传输到总线上。</li>
+<li>接收数据时，收发器把总线上的差分信号转化成 TTL 信号通过 RX 引脚传输到串口控制器中。</li>
+<li>通常在这些节点中只能有一个主机，剩下的全为从机。在总线的起止端分别加了一个 120 欧的匹配电阻。</li>
+</ul>
+<p>具体连接图如下所示：</p>
+<p><img src="/3b5b7ed3ac6148e2bdcd28fed72c44c5.png" alt="在这里插入图片描述"></p>
+<blockquote>
+<p><a target="_blank" rel="noopener" href="https://blog.csdn.net/MQ0522/article/details/128559845?spm=1001.2101.3001.6650.3&amp;utm_medium=distribute.pc_relevant.none-task-blog-2~default~CTRLIST~Rate-3-128559845-blog-86320577.235%5Ev43%5Epc_blog_bottom_relevance_base4&amp;depth_1-utm_source=distribute.pc_relevant.none-task-blog-2~default~CTRLIST~Rate-3-128559845-blog-86320577.235%5Ev43%5Epc_blog_bottom_relevance_base4&amp;utm_relevant_index=6">RS485通信----基本原理+电路图-CSDN博客</a></p>
+<p><a target="_blank" rel="noopener" href="https://mp.weixin.qq.com/s/xTL9oNlYy8hFh_U-7xGtJg">一分钟学会区分RS232、RS485和RS422 (qq.com)</a></p>
+</blockquote>
+<h3 id="can">CAN</h3>
+<blockquote>
+<p><a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/162708070">一篇易懂的CAN通讯协议指南1 - 知乎 (zhihu.com)</a></p>
+<p><a target="_blank" rel="noopener" href="https://blog.csdn.net/XiaoXiaoPengBo/article/details/116206252">秀！靠这篇我竟然2天理解了CAN协议！实战STM32F4 CAN！_程序获取 can协议所有id-CSDN博客</a></p>
+</blockquote>
+<h3 id="usb">USB</h3>
+<h3 id="type-c">Type-C</h3>
+<blockquote>
+<p><a target="_blank" rel="noopener" href="https://blog.csdn.net/m0_46582811/article/details/124039693">(49条消息) 常用的嵌入式硬件通信接口协议（UART、IIC、SPI、RS-232、RS-485、RS-422、CAN、USB、IRDA）（二）_嵌入式硬件接口_木木9026的博客-CSDN博客</a></p>
+<p><a target="_blank" rel="noopener" href="https://blog.csdn.net/m0_46582811/article/details/124039693">(49条消息) 常用的嵌入式硬件通信接口协议（UART、IIC、SPI、RS-232、RS-485、RS-422、CAN、USB、IRDA）（二）_嵌入式硬件接口_木木9026的博客-CSDN博客</a></p>
+<p><a target="_blank" rel="noopener" href="https://blog.csdn.net/m0_46582811/article/details/124123349?spm=1001.2014.3001.5502">(49条消息) 常用的嵌入式硬件通信接口协议（UART、IIC、SPI、RS-232、RS-485、RS-422、CAN、USB、IRDA）（三）_硬件协议接口对接_木木9026的博客-CSDN博客</a></p>
+<p><a target="_blank" rel="noopener" href="https://blog.csdn.net/shaguahaha/article/details/70766665">(49条消息) IIC详解，包括原理、过程，最后一步步教你实现IIC_shaguahaha的博客-CSDN博客</a></p>
+<p><a target="_blank" rel="noopener" href="https://blog.csdn.net/qq_54747686/article/details/119237161">(49条消息) STM32 USART通信协议详细讲解—小白入门_usart基础知识_阿乔不想编程的博客-CSDN博客</a></p>
+<p><a target="_blank" rel="noopener" href="https://blog.csdn.net/qq_43489868/article/details/124000513?ops_request_misc=%7B%22request%5Fid%22%3A%22168355344016800188566377%22%2C%22scm%22%3A%2220140713.130102334.pc%5Fall.%22%7D&amp;request_id=168355344016800188566377&amp;biz_id=0&amp;utm_medium=distribute.pc_search_result.none-task-blog-2~all~first_rank_ecpm_v1~hot_rank-1-124000513-null-null.142%5Ev86%5Einsert_down1,239%5Ev2%5Einsert_chatgpt&amp;utm_term=%E7%A1%AC%E4%BB%B6%E9%80%9A%E8%AE%AF%E5%8D%8F%E8%AE%AE">(49条消息) 常用硬件通信协议_硬件协议_爱吃饭的王的博客-CSDN博客</a></p>
+<p><a target="_blank" rel="noopener" href="https://blog.csdn.net/Ivan804638781/article/details/111823453">【I2C】I2C Q&amp;A_i2c时钟频率如何确定-CSDN博客</a></p>
+</blockquote>
+</article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta">文章作者: </span><span class="post-copyright-info"><a href="obito.top">Obito</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta">文章链接: </span><span class="post-copyright-info"><a href="http://www.obito.top/2023/05/08/%E7%A1%AC%E4%BB%B6%E9%80%9A%E8%AE%AF%E5%8D%8F%E8%AE%AE/">http://www.obito.top/2023/05/08/硬件通讯协议/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta">版权声明: </span><span class="post-copyright-info">本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">CC BY-NC-SA 4.0</a> 许可协议。转载请注明来自 <a href="http://www.obito.top" target="_blank">Obito Blog</a>！</span></div></div><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/%E5%B5%8C%E5%85%A5%E5%BC%8F/">嵌入式</a></div><div class="post_share"><div class="social-share" data-image="/img/scenery_01.webp" data-sites="facebook,twitter,wechat,weibo,qq"></div><link rel="stylesheet" href="/pluginsSrc/butterfly-extsrc/sharejs/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="/pluginsSrc/butterfly-extsrc/sharejs/dist/js/social-share.min.js" defer></script></div></div><nav class="pagination-post" id="pagination"><div class="prev-post pull-left"><a href="/2023/05/10/Ubuntu%E5%85%B1%E4%BA%AB%E6%96%87%E4%BB%B6%E5%A4%B9%E9%97%AE%E9%A2%98/" title="Ubuntu共享文件夹问题"><img class="cover" src="/img/background.jpg" onerror="onerror=null;src='/img/error.png'" alt="cover of previous post"><div class="pagination-info"><div class="label">上一篇</div><div class="prev_info">Ubuntu共享文件夹问题</div></div></a></div><div class="next-post pull-right"><a href="/2023/04/25/%E6%A2%AF%E5%BA%A6%E4%B8%8B%E9%99%8D%E6%B3%95/" title="梯度下降法"><img class="cover" src="/img/scenery_03.jpg" onerror="onerror=null;src='/img/error.png'" alt="cover of next post"><div class="pagination-info"><div class="label">下一篇</div><div class="next_info">梯度下降法</div></div></a></div></nav><div class="relatedPosts"><div class="headline"><i class="fas fa-thumbs-up fa-fw"></i><span>相关推荐</span></div><div class="relatedPosts-list"><div><a href="/2024/07/17/IMX6ULL-%E4%BA%A4%E5%8F%89%E7%BC%96%E8%AF%91Mplayer/" title="IMX6ULL-交叉编译Mplayer"><img class="cover" src="/img/scenery_01.webp" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2024-07-17</div><div class="title">IMX6ULL-交叉编译Mplayer</div></div></a></div><div><a href="/2024/06/27/Linux-I2C-AP3216C/" title="Linux-I2C-AP3216C"><img class="cover" src="/img/scenery_01.webp" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2024-06-27</div><div class="title">Linux-I2C-AP3216C</div></div></a></div><div><a href="/2024/06/27/Linux-I2C%E9%A9%B1%E5%8A%A8/" title="Linux-I2C驱动"><img class="cover" src="/img/scenery_11.jpg" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2024-06-27</div><div class="title">Linux-I2C驱动</div></div></a></div><div><a href="/2024/06/28/Linux-SPI-ICM20608/" title="Linux-SPI-ICM20608"><img class="cover" src="/img/background.jpg" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2024-06-28</div><div class="title">Linux-SPI-ICM20608</div></div></a></div><div><a href="/2024/06/27/Linux-SPI%E9%A9%B1%E5%8A%A8/" title="Linux-SPI驱动"><img class="cover" src="/img/scenery_03.jpg" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2024-06-27</div><div class="title">Linux-SPI驱动</div></div></a></div><div><a href="/2024/08/11/Linux-V4L2-USB-Camera/" title="Linux-V4L2-USB-Camera"><img class="cover" src="/img/background.jpg" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2024-08-11</div><div class="title">Linux-V4L2-USB-Camera</div></div></a></div></div></div><hr class="custom-hr"/><div id="post-comment"><div class="comment-head"><div class="comment-headline"><i class="fas fa-comments fa-fw"></i><span> 评论</span></div></div><div class="comment-wrap"><div><div id="twikoo-wrap"></div></div></div></div></div><div class="aside-content" id="aside-content"><div class="card-widget card-info"><div class="is-center"><div class="avatar-img"><img src="/img/head.jpg" onerror="this.onerror=null;this.src='/null'" alt="avatar"/></div><div class="author-info__name">Obito</div><div class="author-info__description">保持初心</div></div><div class="card-info-data site-data is-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">43</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">13</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">13</div></a></div><a id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/OBITOoaoa"><i class="fab fa-github"></i><span>Follow Me</span></a></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>目录</span><span class="toc-percentage"></span></div><div class="toc-content"><ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#%E5%B8%B8%E8%A7%81%E7%A1%AC%E4%BB%B6%E9%80%9A%E8%AE%AF%E5%8D%8F%E8%AE%AE"><span class="toc-text">常见硬件通讯协议</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%80%E4%BA%9B%E5%9F%BA%E7%A1%80%E6%A6%82%E5%BF%B5"><span class="toc-text">一些基础概念</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%B8%B2%E8%A1%8C%E9%80%9A%E4%BF%A1%E5%8D%8F%E8%AE%AE"><span class="toc-text">串行通信协议</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%95%B0%E6%8D%AE%E4%BC%A0%E9%80%81%E6%96%B9%E5%BC%8F"><span class="toc-text">数据传送方式</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%B8%B8%E8%A7%81%E7%94%B5%E5%B9%B3%E6%A0%87%E5%87%86"><span class="toc-text">常见电平标准</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%B8%B2%E5%8F%A3%E5%8F%82%E6%95%B0"><span class="toc-text">串口参数</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%B8%B8%E8%A7%81%E7%9A%84%E7%A1%AC%E4%BB%B6%E9%80%9A%E8%AE%AF%E5%8D%8F%E8%AE%AE"><span class="toc-text">常见的硬件通讯协议</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#uart"><span class="toc-text">UART</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#usart"><span class="toc-text">USART</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#iic"><span class="toc-text">IIC</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#iic-%E7%9A%84%E4%BC%98%E7%BC%BA%E7%82%B9"><span class="toc-text">IIC 的优缺点</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#iic-%E7%9A%84%E5%BA%94%E7%94%A8"><span class="toc-text">IIC 的应用</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#spi"><span class="toc-text">SPI</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%A6%82%E4%BD%95%E9%80%89%E6%8B%A9-spi-%E7%9A%84%E7%9B%B8%E4%BD%8D%E5%92%8C%E6%9E%81%E6%80%A7"><span class="toc-text">如何选择 SPI 的相位和极性</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#rs-485"><span class="toc-text">RS-485</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#can"><span class="toc-text">CAN</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#usb"><span class="toc-text">USB</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#type-c"><span class="toc-text">Type-C</span></a></li></ol></li></ol></li></ol></div></div></div></div></main><footer id="footer" style="background-image: url('/img/scenery_01.webp')"><div id="footer-wrap"><div class="copyright">&copy;2020 - 2024 By Obito</div><div class="framework-info"><span>框架 </span><a target="_blank" rel="noopener" href="https://hexo.io">Hexo</a><span class="footer-separator">|</span><span>主题 </span><a target="_blank" rel="noopener" href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly</a></div><div class="footer_custom_text">I wish you to become your own sun, no need to rely on who's light.</div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="阅读模式"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="浅色和深色模式转换"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="单栏和双栏切换"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside_config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="目录"><i class="fas fa-list-ul"></i></button><a id="to_comment" href="#post-comment" title="直达评论"><i class="fas fa-comments"></i></a><button id="go-up" type="button" title="回到顶部"><span class="scroll-percent"></span><i class="fas fa-arrow-up"></i></button><button id="go-down" type="button" title="直达底部" onclick="btf.scrollToDest(document.body.scrollHeight, 500)"><i class="fas fa-arrow-down"></i></button></div></div><div id="rightMenu"><div class="rightMenu-group rightMenu-small"><a class="rightMenu-item" href="javascript:window.history.back();"><i class="fa-solid fa-arrow-left"></i></a><a class="rightMenu-item" href="javascript:window.location.reload();"><i class="fa-solid fa-arrow-rotate-right"></i></a><a class="rightMenu-item" href="javascript:window.history.forward();"><i class="fa-solid fa-arrow-right"></i></a><a class="rightMenu-item" id="menu-radompage" href="javascript:window.location.href = window.location.origin;"><i class="fa-solid fa-house"></i></a></div><div class="rightMenu-group rightMenu-line hide" id="menu-text"><a class="rightMenu-item" href="javascript:rmf.copySelect();"><i class="fa-solid fa-copy"></i><span>复制</span></a></div><div class="rightMenu-group rightMenu-line"><a class="rightMenu-item" href="javascript:rmf.switchDarkMode();"><i class="fa-solid fa-circle-half-stroke"></i><span>昼夜切换</span></a><a class="rightMenu-item" href="javascript:toRandomPost();"><i class="fa-solid fa-bus"></i><span>随便逛逛</span></a><a class="rightMenu-item" href="javascript:rmf.switchReadMode();"><i class="fa-solid fa-book"></i><span>阅读模式</span></a><a class="rightMenu-item" href="javascript:window.location.href = window.location.origin + '/archives/';"><i class="fa-solid fa-archive"></i><span>文章归档</span></a><a class="rightMenu-item" href="javascript:window.location.href = window.location.origin + '/categories/';"><i class="fa-solid fa-folder-open"></i><span>文章分类</span></a><a class="rightMenu-item" href="javascript:window.location.href = window.location.origin + '/tags/';"><i class="fa-solid fa-tags"></i><span>文章标签</span></a><a class="rightMenu-item" href="javascript:window.location.href = window.location.origin + '/about-website/';"><i class="fa-solid fa-envelope-open-text"></i><span>网站声明</span></a></div></div><div><script src="/js/utils.js"></script><script src="/js/main.js"></script><script src="/pluginsSrc/@fancyapps/ui/dist/fancybox/fancybox.umd.js"></script><div class="js-pjax"><script>(()=>{
+  const init = () => {
+    twikoo.init(Object.assign({
+      el: '#twikoo-wrap',
+      envId: 'https://twikoo.obito.top/',
+      region: '',
+      onCommentLoaded: function () {
+        btf.loadLightbox(document.querySelectorAll('#twikoo .tk-content img:not(.tk-owo-emotion)'))
+      }
+    }, null))
+  }
+
+  const getCount = () => {
+    const countELement = document.getElementById('twikoo-count')
+    if(!countELement) return
+    twikoo.getCommentsCount({
+      envId: 'https://twikoo.obito.top/',
+      region: '',
+      urls: [window.location.pathname],
+      includeReply: false
+    }).then(function (res) {
+      countELement.textContent = res[0].count
+    }).catch(function (err) {
+      console.error(err);
+    });
+  }
+
+  const runFn = () => {
+    init()
+    
+  }
+
+  const loadTwikoo = () => {
+    if (typeof twikoo === 'object') {
+      setTimeout(runFn,0)
+      return
+    } 
+    getScript('/pluginsSrc/twikoo/dist/twikoo.all.min.js').then(runFn)
+  }
+
+  if ('Twikoo' === 'Twikoo' || !true) {
+    if (true) btf.loadComment(document.getElementById('twikoo-wrap'), loadTwikoo)
+    else loadTwikoo()
+  } else {
+    window.loadOtherComment = () => {
+      loadTwikoo()
+    }
+  }
+})()</script></div><canvas id="universe"></canvas><script src="/js/universe.js"></script><script defer src="https://npm.elemecdn.com/jquery@latest/dist/jquery.min.js"></script><script src="/js/rightmenu.js"></script><script async src="/js/fps.js"></script><script src="/random.js"></script><script id="click-heart" src="/pluginsSrc/butterfly-extsrc/dist/click-heart.min.js" async="async" mobile="false"></script><script src="/pluginsSrc/pjax/pjax.min.js"></script><script>let pjaxSelectors = ["head > title","#config-diff","#body-wrap","#rightside-config-hide","#rightside-config-show",".js-pjax"]
+
+var pjax = new Pjax({
+  elements: 'a:not([target="_blank"])',
+  selectors: pjaxSelectors,
+  cacheBust: false,
+  analytics: false,
+  scrollRestoration: false
+})
+
+document.addEventListener('pjax:send', function () {
+
+  // removeEventListener scroll 
+  window.tocScrollFn && window.removeEventListener('scroll', window.tocScrollFn)
+  window.scrollCollect && window.removeEventListener('scroll', scrollCollect)
+
+  document.getElementById('rightside').style.cssText = "opacity: ''; transform: ''"
+  
+  if (window.aplayers) {
+    for (let i = 0; i < window.aplayers.length; i++) {
+      if (!window.aplayers[i].options.fixed) {
+        window.aplayers[i].destroy()
+      }
+    }
+  }
+
+  typeof typed === 'object' && typed.destroy()
+
+  //reset readmode
+  const $bodyClassList = document.body.classList
+  $bodyClassList.contains('read-mode') && $bodyClassList.remove('read-mode')
+
+  typeof disqusjs === 'object' && disqusjs.destroy()
+})
+
+document.addEventListener('pjax:complete', function () {
+  window.refreshFn()
+
+  document.querySelectorAll('script[data-pjax]').forEach(item => {
+    const newScript = document.createElement('script')
+    const content = item.text || item.textContent || item.innerHTML || ""
+    Array.from(item.attributes).forEach(attr => newScript.setAttribute(attr.name, attr.value))
+    newScript.appendChild(document.createTextNode(content))
+    item.parentNode.replaceChild(newScript, item)
+  })
+
+  GLOBAL_CONFIG.islazyload && window.lazyLoadInstance.update()
+
+  typeof panguInit === 'function' && panguInit()
+
+  // google analytics
+  typeof gtag === 'function' && gtag('config', '', {'page_path': window.location.pathname});
+
+  // baidu analytics
+  typeof _hmt === 'object' && _hmt.push(['_trackPageview',window.location.pathname]);
+
+  typeof loadMeting === 'function' && document.getElementsByClassName('aplayer').length && loadMeting()
+
+  // prismjs
+  typeof Prism === 'object' && Prism.highlightAll()
+})
+
+document.addEventListener('pjax:error', (e) => {
+  if (e.request.status === 404) {
+    pjax.loadUrl('/404.html')
+  }
+})</script><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script></div><!-- hexo injector body_end start --><script data-pjax>
+  function butterfly_clock_anzhiyu_injector_config(){
+    var parent_div_git = document.getElementsByClassName('sticky_layout')[0];
+    var item_html = '<div class="card-widget card-clock"><div class="card-glass"><div class="card-background"><div class="card-content"><div id="hexo_electric_clock"><img class="entered loading" id="card-clock-loading" src="https://cdn.cbd.int/hexo-butterfly-clock-anzhiyu/lib/loading.gif" style="height: 120px; width: 100%;" data-ll-status="loading"/></div></div></div></div></div>';
+    console.log('已挂载butterfly_clock_anzhiyu')
+    if(parent_div_git) {
+      parent_div_git.insertAdjacentHTML("afterbegin",item_html)
+    }
+  }
+  var elist = 'null'.split(',');
+  var cpage = location.pathname;
+  var epage = '/';
+  var qweather_key = 'b16a1fa0e63c46a4b8f28abfb06ae3fe';
+  var gaud_map_key = 'e2b04289e870b005374ee030148d64fd&s=rsv3';
+  var baidu_ak_key = 'undefined';
+  var flag = 0;
+  var clock_rectangle = '113.34532,23.15624';
+  var clock_default_rectangle_enable = 'false';
+
+  for (var i=0;i<elist.length;i++){
+    if (cpage.includes(elist[i])){
+      flag++;
+    }
+  }
+
+  if ((epage ==='all')&&(flag == 0)){
+    butterfly_clock_anzhiyu_injector_config();
+  }
+  else if (epage === cpage){
+    butterfly_clock_anzhiyu_injector_config();
+  }
+  </script><script src="https://widget.qweather.net/simple/static/js/he-simple-common.js?v=2.0"></script><script data-pjax src="https://cdn.cbd.int/hexo-butterfly-clock-anzhiyu/lib/clock.min.js"></script><!-- hexo injector body_end end --></body></html>

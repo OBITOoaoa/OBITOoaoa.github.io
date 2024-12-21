@@ -1,0 +1,961 @@
+<!DOCTYPE html><html lang="zh-CN" data-theme="dark"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0,viewport-fit=cover"><title>Linux系统移植 | Obito Blog</title><meta name="author" content="Obito"><meta name="copyright" content="Obito"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#0d0d0d"><meta name="description" content="Linux 系统移植 序言 Linux 学了有些时间了，手上的开发板很多功能都提前做好了，对初学者挺友好的，但是为了学到更到东西，就来试试移植下新的 Linux 系统到开发板上。 环境 硬件环境  开发板型号： 100ask_imx6ull_pro 开发板 处理器类型：NXP IMX6ULL **处理器架构：**恩单核 Cortex-A7 **处理器主频：**800MHZ 内存容量：512 MB">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Linux系统移植">
+<meta property="og:url" content="http://www.obito.top/2024/06/30/Linux%E7%B3%BB%E7%BB%9F%E7%A7%BB%E6%A4%8D/index.html">
+<meta property="og:site_name" content="Obito Blog">
+<meta property="og:description" content="Linux 系统移植 序言 Linux 学了有些时间了，手上的开发板很多功能都提前做好了，对初学者挺友好的，但是为了学到更到东西，就来试试移植下新的 Linux 系统到开发板上。 环境 硬件环境  开发板型号： 100ask_imx6ull_pro 开发板 处理器类型：NXP IMX6ULL **处理器架构：**恩单核 Cortex-A7 **处理器主频：**800MHZ 内存容量：512 MB">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="http://www.obito.top/img/scenery_11.jpg">
+<meta property="article:published_time" content="2024-06-30T06:18:41.000Z">
+<meta property="article:modified_time" content="2024-07-19T09:31:36.235Z">
+<meta property="article:author" content="Obito">
+<meta property="article:tag" content="Linux 嵌入式">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://www.obito.top/img/scenery_11.jpg"><link rel="shortcut icon" href="/img/favicon.png"><link rel="canonical" href="http://www.obito.top/2024/06/30/Linux%E7%B3%BB%E7%BB%9F%E7%A7%BB%E6%A4%8D/index.html"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="stylesheet" href="/css/index.css"><link rel="stylesheet" href="/pluginsSrc/@fortawesome/fontawesome-free/css/all.min.css" media="print" onload="this.media='all'"><link rel="stylesheet" href="/pluginsSrc/@fancyapps/ui/dist/fancybox/fancybox.css" media="print" onload="this.media='all'"><script>const GLOBAL_CONFIG = {
+  root: '/',
+  algolia: undefined,
+  localSearch: undefined,
+  translate: undefined,
+  noticeOutdate: {"limitDay":60,"position":"top","messagePrev":"It has been","messageNext":"days since the last update, the content of the article may be outdated."},
+  highlight: {"plugin":"highlighjs","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":300},
+  copy: {
+    success: '复制成功',
+    error: '复制错误',
+    noSupport: '浏览器不支持'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '天',
+  dateSuffix: {
+    just: '刚刚',
+    min: '分钟前',
+    hour: '小时前',
+    day: '天前',
+    month: '个月前'
+  },
+  copyright: undefined,
+  lightbox: 'fancybox',
+  Snackbar: undefined,
+  source: {
+    justifiedGallery: {
+      js: '/pluginsSrc/flickr-justified-gallery/dist/fjGallery.min.js',
+      css: '/pluginsSrc/flickr-justified-gallery/dist/fjGallery.css'
+    }
+  },
+  isPhotoFigcaption: false,
+  islazyload: false,
+  isAnchor: false,
+  percent: {
+    toc: true,
+    rightside: false,
+  },
+  autoDarkmode: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: 'Linux系统移植',
+  isPost: true,
+  isHome: false,
+  isHighlightShrink: false,
+  isToc: true,
+  postUpdate: '2024-07-19 17:31:36'
+}</script><noscript><style type="text/css">
+  #nav {
+    opacity: 1
+  }
+  .justified-gallery img {
+    opacity: 1
+  }
+
+  #recent-posts time,
+  #post-meta time {
+    display: inline !important
+  }
+</style></noscript><script>(win=>{
+    win.saveToLocal = {
+      set: function setWithExpiry(key, value, ttl) {
+        if (ttl === 0) return
+        const now = new Date()
+        const expiryDay = ttl * 86400000
+        const item = {
+          value: value,
+          expiry: now.getTime() + expiryDay,
+        }
+        localStorage.setItem(key, JSON.stringify(item))
+      },
+
+      get: function getWithExpiry(key) {
+        const itemStr = localStorage.getItem(key)
+
+        if (!itemStr) {
+          return undefined
+        }
+        const item = JSON.parse(itemStr)
+        const now = new Date()
+
+        if (now.getTime() > item.expiry) {
+          localStorage.removeItem(key)
+          return undefined
+        }
+        return item.value
+      }
+    }
+  
+    win.getScript = url => new Promise((resolve, reject) => {
+      const script = document.createElement('script')
+      script.src = url
+      script.async = true
+      script.onerror = reject
+      script.onload = script.onreadystatechange = function() {
+        const loadState = this.readyState
+        if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
+        script.onload = script.onreadystatechange = null
+        resolve()
+      }
+      document.head.appendChild(script)
+    })
+  
+    win.getCSS = (url,id = false) => new Promise((resolve, reject) => {
+      const link = document.createElement('link')
+      link.rel = 'stylesheet'
+      link.href = url
+      if (id) link.id = id
+      link.onerror = reject
+      link.onload = link.onreadystatechange = function() {
+        const loadState = this.readyState
+        if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
+        link.onload = link.onreadystatechange = null
+        resolve()
+      }
+      document.head.appendChild(link)
+    })
+  
+      win.activateDarkMode = function () {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      win.activateLightMode = function () {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+        }
+      }
+      const t = saveToLocal.get('theme')
+    
+          if (t === 'dark') activateDarkMode()
+          else if (t === 'light') activateLightMode()
+        
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        if (asideStatus === 'hide') {
+          document.documentElement.classList.add('hide-aside')
+        } else {
+          document.documentElement.classList.remove('hide-aside')
+        }
+      }
+    
+    const detectApple = () => {
+      if(/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)){
+        document.documentElement.classList.add('apple')
+      }
+    }
+    detectApple()
+    })(window)</script><link rel="stylesheet" href="/css/universe.css"><link rel="stylesheet" href="/css/rightmenu.css"><span id="fps"></span><link rel="stylesheet" href="/css/custom.css"><!-- hexo injector head_end start --><link rel="stylesheet" href="https://cdn.cbd.int/hexo-butterfly-clock-anzhiyu/lib/clock.min.css" /><!-- hexo injector head_end end --><meta name="generator" content="Hexo 6.3.0"><link rel="alternate" href="/atom.xml" title="Obito Blog" type="application/atom+xml">
+<link href="https://cdn.bootcss.com/KaTeX/0.11.1/katex.min.css" rel="stylesheet" /></head><body><div id="loading-box"><div class="loading-left-bg"></div><div class="loading-right-bg"></div><div class="spinner-box"><div class="configure-border-1"><div class="configure-core"></div></div><div class="configure-border-2"><div class="configure-core"></div></div><div class="loading-word">加载中...</div></div></div><script>(()=>{
+  const $loadingBox = document.getElementById('loading-box')
+  const $body = document.body
+  const preloader = {
+    endLoading: () => {
+      $body.style.overflow = ''
+      $loadingBox.classList.add('loaded')
+    },
+    initLoading: () => {
+      $body.style.overflow = 'hidden'
+      $loadingBox.classList.remove('loaded')
+    }
+  }
+
+  preloader.initLoading()
+  window.addEventListener('load',() => { preloader.endLoading() })
+
+  if (true) {
+    document.addEventListener('pjax:send', () => { preloader.initLoading() })
+    document.addEventListener('pjax:complete', () => { preloader.endLoading() })
+  }
+})()</script><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img is-center"><img src="/img/head.jpg" onerror="onerror=null;src='null'" alt="avatar"/></div><div class="sidebar-site-data site-data is-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">43</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">13</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">13</div></a></div><hr class="custom-hr"/><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> Home</span></a></div><div class="menus_item"><a class="site-page" href="/notes/"><i class="fa-fw fa fa-sticky-note"></i><span> Notes</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> Archives</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> Tags</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> Categories</span></a></div><div class="menus_item"><a class="site-page group" href="javascript:void(0);"><i class="fa-fw fas fa-list"></i><span> List</span><i class="fas fa-chevron-down"></i></a><ul class="menus_item_child"><li><a class="site-page child" href="/music/"><i class="fa-fw fas fa-music"></i><span> Music</span></a></li><li><a class="site-page child" href="/movies/"><i class="fa-fw fas fa-video"></i><span> Movie</span></a></li></ul></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fas fa-link"></i><span> Link</span></a></div><div class="menus_item"><a class="site-page group" href="javascript:void(0);"><i class="fa-fw fas fa-heart"></i><span> About</span><i class="fas fa-chevron-down"></i></a><ul class="menus_item_child"><li><a class="site-page child" href="/about-me/"><i class="fa-fw fa-fw fas fa-medal"></i><span> AboutMe</span></a></li><li><a class="site-page child" href="/about-website/"><i class="fa-fw fa-fw fas fa-envelope-open-text"></i><span> Statement</span></a></li></ul></div></div></div></div><div class="post" id="body-wrap"><header class="post-bg" id="page-header" style="background-image: url('/img/scenery_11.jpg')"><nav id="nav"><span id="blog-info"><a href="/" title="Obito Blog"><span class="site-name">Obito Blog</span></a></span><div id="menus"><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> Home</span></a></div><div class="menus_item"><a class="site-page" href="/notes/"><i class="fa-fw fa fa-sticky-note"></i><span> Notes</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> Archives</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> Tags</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> Categories</span></a></div><div class="menus_item"><a class="site-page group" href="javascript:void(0);"><i class="fa-fw fas fa-list"></i><span> List</span><i class="fas fa-chevron-down"></i></a><ul class="menus_item_child"><li><a class="site-page child" href="/music/"><i class="fa-fw fas fa-music"></i><span> Music</span></a></li><li><a class="site-page child" href="/movies/"><i class="fa-fw fas fa-video"></i><span> Movie</span></a></li></ul></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fas fa-link"></i><span> Link</span></a></div><div class="menus_item"><a class="site-page group" href="javascript:void(0);"><i class="fa-fw fas fa-heart"></i><span> About</span><i class="fas fa-chevron-down"></i></a><ul class="menus_item_child"><li><a class="site-page child" href="/about-me/"><i class="fa-fw fa-fw fas fa-medal"></i><span> AboutMe</span></a></li><li><a class="site-page child" href="/about-website/"><i class="fa-fw fa-fw fas fa-envelope-open-text"></i><span> Statement</span></a></li></ul></div></div><div id="toggle-menu"><a class="site-page" href="javascript:void(0);"><i class="fas fa-bars fa-fw"></i></a></div></div></nav><div id="post-info"><h1 class="post-title">Linux系统移植</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">发表于</span><time class="post-meta-date-created" datetime="2024-06-30T06:18:41.000Z" title="发表于 2024-06-30 14:18:41">2024-06-30</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">更新于</span><time class="post-meta-date-updated" datetime="2024-07-19T09:31:36.235Z" title="更新于 2024-07-19 17:31:36">2024-07-19</time></span><span class="post-meta-categories"><span class="post-meta-separator">|</span><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/%E5%B5%8C%E5%85%A5%E5%BC%8F/">嵌入式</a><i class="fas fa-angle-right post-meta-separator"></i><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/%E5%B5%8C%E5%85%A5%E5%BC%8F/Linux/">Linux</a></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-wordcount"><i class="far fa-file-word fa-fw post-meta-icon"></i><span class="post-meta-label">字数总计:</span><span class="word-count">12.1k</span><span class="post-meta-separator">|</span><i class="far fa-clock fa-fw post-meta-icon"></i><span class="post-meta-label">阅读时长:</span><span>50分钟</span></span><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title="Linux系统移植"><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">阅读量:</span><span id="busuanzi_value_page_pv"><i class="fa-solid fa-spinner fa-spin"></i></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="post-content" id="article-container"><h1 id="linux-系统移植">Linux 系统移植</h1>
+<h2 id="序言">序言</h2>
+<p>Linux 学了有些时间了，手上的开发板很多功能都提前做好了，对初学者挺友好的，但是为了学到更到东西，就来试试移植下新的 Linux 系统到开发板上。</p>
+<h2 id="环境">环境</h2>
+<h3 id="硬件环境">硬件环境</h3>
+<ul>
+<li><strong>开发板型号</strong>： <a target="_blank" rel="noopener" href="https://blog.csdn.net/thisway_diy/article/details/109841372">100ask_imx6ull_pro 开发板</a></li>
+<li><strong>处理器类型</strong>：NXP IMX6ULL</li>
+<li>**处理器架构：**恩单核 Cortex-A7</li>
+<li>**处理器主频：**800MHZ</li>
+<li><strong>内存容量</strong>：512 MB DDR3</li>
+<li><strong>存储介质</strong>：4GB eMMC</li>
+</ul>
+<h3 id="软件环境">软件环境</h3>
+<ul>
+<li>宿主机
+<ul>
+<li><strong>宿主机操作系统</strong>：Ubuntu 18.04</li>
+<li><strong>交叉编译器</strong>：100ask 提供的工具链 arm-buildroot-linux-gnueabihf- <strong>支持的最低内核版本</strong>：4.9.0</li>
+</ul>
+</li>
+<li>开发板
+<ul>
+<li><strong>U-Boot</strong>：一开始用的 NXP 官方提供的版本但不能正常启动内核，后改为 100ask 提供的版本</li>
+<li><strong>内核版本</strong>： <a target="_blank" rel="noopener" href="https://github.com/nxp-imx/linux-imx/tree/imx_4.9.88_2.0.0_ga">NXP 提供的 4.9.88 版本</a></li>
+<li><strong>根文件系统类型</strong>：<a target="_blank" rel="noopener" href="https://busybox.net/downloads/">BusyBox 1.29.0</a></li>
+</ul>
+</li>
+</ul>
+<h2 id="linux-系统移植过程概述">Linux 系统移植过程概述</h2>
+<p>Linux 系统移植需要以下三个部分：</p>
+<ul>
+<li>bootloader：用于启动 Linux 内核。常用 bootloader：U-Boot</li>
+<li>Linux 内核：一般使用芯片原厂提供的源码</li>
+<li>根文件系统：存放一些常用的命令和文件</li>
+</ul>
+<p><strong>U-Boot、Linux kernel 和 根文件系统三者一起构成了一个完整的 Linux 系统。</strong></p>
+<p><strong>步骤</strong></p>
+<ul>
+<li>移植 U-Boot</li>
+<li>移植 Linux 内核：编译内核可以选择是否生成设备树</li>
+<li>根文件系统</li>
+</ul>
+<blockquote>
+<p>移植 Linux 之前我们需要先移植一个 bootloader 代码，这个 bootloader 代码用于启动 Linux 内核，bootloader 有很多，常用的就是 U-Boot。移植好 U-Boot 以后再移植 Linux 内核，移植完 Linux 内核以后 Linux 还不能正常启动，还需要再移植一个根文件系统(rootfs)，根文件系统里面包含了一些最常用的命令和文件。所以 U-Boot、Linux kernel 和 rootfs 这三者一起构成了一个完整的 Linux 系统，一个可以正常使用、功能完善的 Linux 系统。在本篇我们就来讲解 U-Boot、Linux Kernel 和 rootfs 的移植，与其说是“移植”，倒不如说是“适配”，因为大部分的移植工作都由 NXP 完成了，我们这里所谓的“移植”主要是使其能够在I.MX6U-ALPHA 开发板上跑起来。</p>
+</blockquote>
+<blockquote>
+<p><a target="_blank" rel="noopener" href="https://blog.csdn.net/m0_56694518/article/details/131463913">系统移植（环境搭建、uboot、Linux内核、根文件系统）-CSDN博客</a></p>
+</blockquote>
+<h2 id="u-boot">U-Boot</h2>
+<p>U-Boot 的全称是 Universal Boot Loader，U-Boot 是一个遵循 GPL 协议的开源软件，U-Boot 是一个裸机代码，可以看作是一个裸机综合例程</p>
+<p>Linux 系统要启动就必须需要一个 bootloader 程序，也就说<strong>芯片上电以后先运行一段 bootloader 程序</strong>。这段bootloader 程序会先<strong>初始化 DDR 等外设</strong>，然后将 Linux 内核从 flash(NAND，NOR FLASH，SD，MMC 等)<strong>拷贝到 DDR 中</strong>，最后<strong>启动 Linux 内核</strong>。</p>
+<p>U-Boot 我们一般不是使用 U-Boot 官方的源码，而是采用开发板对应芯片厂商的定制版本，一般分为三种：</p>
+<table>
+<thead>
+<tr>
+<th>厂商</th>
+<th>描述</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>U-Boot 官方的 U-Boot 代码</td>
+<td>由 U-Boot 官方维护开发的 U-Boot 版本，版本更新快，基本包含所有常用的芯片。</td>
+</tr>
+<tr>
+<td>半导体厂商的 U-Boot 代码</td>
+<td>半导体厂商维护的一个 U-Boot，专门针对自家的芯片，在对自家芯片支持上要比 U-Boot 官方的好。</td>
+</tr>
+<tr>
+<td>开发板厂商的 U-Boot 代码</td>
+<td>开发板厂商在半导体厂商提供的 U-Boot 基础上加入了对自家开发板的支持。</td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p>U-boot 官方 U-Boot 源码下载页面：<a target="_blank" rel="noopener" href="http://ftp.denx.de/pub/uboot/">http://ftp.denx.de/pub/uboot/</a><br>
+NXP 官方 U-Boot 源码 Git 地址：<a target="_blank" rel="noopener" href="https://source.codeaurora.org/external/imx/ubootimx">https://source.codeaurora.org/external/imx/ubootimx</a></p>
+</blockquote>
+<h3 id="u-boot-移植">U-Boot 移植</h3>
+<p>uboot 移植的一般流程：</p>
+<ul>
+<li>在 uboot 中找到参考的开发平台，一般是原厂的开发板。</li>
+<li>参考原厂开发板移植 uboot 到我们所使用的开发板上。</li>
+</ul>
+<p><strong>一般 uboot 中需要解决串口、NAND、EMMC 或 SD 卡、网络和 LCD 驱动，因为 uboot 的主要目的就是启动 Linux 内核，所以不需要考虑太多的外设驱动。</strong></p>
+<p><em><strong>PS：这里使用 NXP 官方提供的 uboot 按照正点原子教程移植到 100ask 开发板初步测试成功，但是后续启动 Linux 内核时会出现 <code>data abort</code> 的问题，目前暂未解决，换成 100ask 提供的 uboot 则能正常启动 Linux 内核，这里依旧是使用 NXP 官方提供的 uboot 源码进行修改测试。</strong></em></p>
+<h4 id="编译-nxp-官方开发板的-u-boot">编译 NXP 官方开发板的 U-Boot</h4>
+<p>找到 NXP 官方 I.MX6ULL EVK 开发板对应的默认配置文件以后就可以编译一下，这里我们选择 EMMC 版本的 <code>mx6ull_14x14_evk_emmc_defconfig</code> ，CROSS_COMPILE 选择自己的交叉编译器。</p>
+<p>使用如下命令编译 uboot：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">make ARCH=arm CROSS_COMPILE=arm-buildroot-linux-gnueabihf- mx6ull_14x14_evk_emmc_defconfig</span><br><span class="line">make V=1 ARCH=arm CROSS_COMPILE=arm-buildroot-linux-gnueabihf- -j16</span><br></pre></td></tr></table></figure>
+<p>编译成功结果如下：</p>
+<p><img src="image-20240702145611903.png" alt="image-20240702145611903"></p>
+<h4 id="烧录到-sd-卡测试">烧录到 SD 卡测试</h4>
+<p>将 SD 卡插入查看 /dev/ 目录下新增哪个目录，就是 SD 卡的目录。</p>
+<p>**我们编译出来的 .bin 文件不能直接烧写到 SD 卡中，需要在 .bin 文件前面加上 IVT、Boot Data 和 DCD 这三个数据块。**这三个数据块是有指定格式的我们必须按照格式填写，然后将其放到 .bin 文件前面，最终合成的才是可以直接烧写到 SD 卡中的文件。</p>
+<h5 id="方法一：使用-imxdownload-程序">方法一：使用 imxdownload 程序</h5>
+<p>使用 imxdownload 程序将 .bin文件转换为 .imx 烧录进 SD 卡。</p>
+<p><img src="image-20240702153906291.png" alt="image-20240702153906291"></p>
+<h5 id="方法二：使用-dd-命令">方法二：使用 dd 命令</h5>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">dd iflag=dsync oflag=dsync if=u-boot-dtb.imx of=/dev/mmcblk0 seek=2</span><br></pre></td></tr></table></figure>
+<p>烧录完成后，将开发板启动方式转换为 SD 卡启动，然后复位开发板，即可看见串口打印 uboot 信息如下：</p>
+<p><img src="image-20240702155829913.png" alt="image-20240702155829913"></p>
+<p>imxdownload 头文件和源文件如下：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">ifndef</span> _IMXDOWNLOAD_H</span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> _IMXDOWNLOAD_H</span></span><br><span class="line"><span class="comment">/* IMX6U IVT DCD表信息  暂时定义为1K Bytes，此表是读取的u-boot.imx前1K Bytes</span></span><br><span class="line"><span class="comment"> * imx6_ivedcd_table[9]是指明代码长度的，本应该根据实际的代码长度来修改</span></span><br><span class="line"><span class="comment"> * 这里为了方便，就直接定义为2M Bytes，即</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"></span><br><span class="line"><span class="type">const</span> <span class="type">int</span> imx6_512mb_ivtdcd_table[<span class="number">256</span>] = &#123;</span><br><span class="line"><span class="number">0X402000D1</span>,<span class="number">0X87800000</span>,<span class="number">0X00000000</span>,<span class="number">0X877FF42C</span>,<span class="number">0X877FF420</span>,<span class="number">0X877FF400</span>,<span class="number">0X00000000</span>,<span class="number">0X00000000</span>,</span><br><span class="line"><span class="number">0X877FF000</span>,<span class="number">0X00200000</span>,<span class="number">0X00000000</span>,<span class="number">0X40E801D2</span>,<span class="number">0X04E401CC</span>,<span class="number">0X68400C02</span>,<span class="number">0XFFFFFFFF</span>,<span class="number">0X6C400C02</span>,</span><br><span class="line"><span class="number">0XFFFFFFFF</span>,<span class="number">0X70400C02</span>,<span class="number">0XFFFFFFFF</span>,<span class="number">0X74400C02</span>,<span class="number">0XFFFFFFFF</span>,<span class="number">0X78400C02</span>,<span class="number">0XFFFFFFFF</span>,<span class="number">0X7C400C02</span>,</span><br><span class="line"><span class="number">0XFFFFFFFF</span>,<span class="number">0X80400C02</span>,<span class="number">0XFFFFFFFF</span>,<span class="number">0XB4040E02</span>,<span class="number">0X00000C00</span>,<span class="number">0XAC040E02</span>,<span class="number">0X00000000</span>,<span class="number">0X7C020E02</span>,</span><br><span class="line"><span class="number">0X30000000</span>,<span class="number">0X50020E02</span>,<span class="number">0X30000000</span>,<span class="number">0X4C020E02</span>,<span class="number">0X30000000</span>,<span class="number">0X90040E02</span>,<span class="number">0X30000000</span>,<span class="number">0X88020E02</span>,</span><br><span class="line"><span class="number">0X30000C00</span>,<span class="number">0X70020E02</span>,<span class="number">0X00000000</span>,<span class="number">0X60020E02</span>,<span class="number">0X30000000</span>,<span class="number">0X64020E02</span>,<span class="number">0X30000000</span>,<span class="number">0XA0040E02</span>,</span><br><span class="line"><span class="number">0X30000000</span>,<span class="number">0X94040E02</span>,<span class="number">0X00000200</span>,<span class="number">0X80020E02</span>,<span class="number">0X30000000</span>,<span class="number">0X84020E02</span>,<span class="number">0X30000000</span>,<span class="number">0XB0040E02</span>,</span><br><span class="line"><span class="number">0X00000200</span>,<span class="number">0X98040E02</span>,<span class="number">0X30000000</span>,<span class="number">0XA4040E02</span>,<span class="number">0X30000000</span>,<span class="number">0X44020E02</span>,<span class="number">0X30000000</span>,<span class="number">0X48020E02</span>,</span><br><span class="line"><span class="number">0X30000000</span>,<span class="number">0X1C001B02</span>,<span class="number">0X00800000</span>,<span class="number">0X00081B02</span>,<span class="number">0X030039A1</span>,<span class="number">0X0C081B02</span>,<span class="number">0X0B000300</span>,<span class="number">0X3C081B02</span>,</span><br><span class="line"><span class="number">0X44014801</span>,<span class="number">0X48081B02</span>,<span class="number">0X302C4040</span>,<span class="number">0X50081B02</span>,<span class="number">0X343E4040</span>,<span class="number">0X1C081B02</span>,<span class="number">0X33333333</span>,<span class="number">0X20081B02</span>,</span><br><span class="line"><span class="number">0X33333333</span>,<span class="number">0X2C081B02</span>,<span class="number">0X333333F3</span>,<span class="number">0X30081B02</span>,<span class="number">0X333333F3</span>,<span class="number">0XC0081B02</span>,<span class="number">0X09409400</span>,<span class="number">0XB8081B02</span>,</span><br><span class="line"><span class="number">0X00080000</span>,<span class="number">0X04001B02</span>,<span class="number">0X2D000200</span>,<span class="number">0X08001B02</span>,<span class="number">0X3030331B</span>,<span class="number">0X0C001B02</span>,<span class="number">0XF3526B67</span>,<span class="number">0X10001B02</span>,</span><br><span class="line"><span class="number">0X630B6DB6</span>,<span class="number">0X14001B02</span>,<span class="number">0XDB00FF01</span>,<span class="number">0X18001B02</span>,<span class="number">0X40172000</span>,<span class="number">0X1C001B02</span>,<span class="number">0X00800000</span>,<span class="number">0X2C001B02</span>,</span><br><span class="line"><span class="number">0XD2260000</span>,<span class="number">0X30001B02</span>,<span class="number">0X23106B00</span>,<span class="number">0X40001B02</span>,<span class="number">0X4F000000</span>,<span class="number">0X00001B02</span>,<span class="number">0X00001884</span>,<span class="number">0X90081B02</span>,</span><br><span class="line"><span class="number">0X00004000</span>,<span class="number">0X1C001B02</span>,<span class="number">0X32800002</span>,<span class="number">0X1C001B02</span>,<span class="number">0X33800000</span>,<span class="number">0X1C001B02</span>,<span class="number">0X31800400</span>,<span class="number">0X1C001B02</span>,</span><br><span class="line"><span class="number">0X30802015</span>,<span class="number">0X1C001B02</span>,<span class="number">0X40800004</span>,<span class="number">0X20001B02</span>,<span class="number">0X00080000</span>,<span class="number">0X18081B02</span>,<span class="number">0X27020000</span>,<span class="number">0X04001B02</span>,</span><br><span class="line"><span class="number">0X2D550200</span>,<span class="number">0X04041B02</span>,<span class="number">0X06100100</span>,<span class="number">0X1C001B02</span>,<span class="number">0X00000000</span>,<span class="number">0X00000000</span>,<span class="number">0X00000000</span>,<span class="number">0X00000000</span>,</span><br><span class="line"><span class="number">0X00000000</span>,<span class="number">0X00000000</span>,<span class="number">0X00000000</span>,<span class="number">0X00000000</span>,<span class="number">0X00000000</span>,<span class="number">0X00000000</span>,<span class="number">0X00000000</span>,<span class="number">0X00000000</span>,</span><br><span class="line"><span class="number">0X00000000</span>,<span class="number">0X00000000</span>,<span class="number">0X00000000</span>,<span class="number">0X00000000</span>,<span class="number">0X00000000</span>,<span class="number">0X00000000</span>,<span class="number">0X00000000</span>,<span class="number">0X00000000</span>,</span><br><span class="line"><span class="number">0X00000000</span>,<span class="number">0X00000000</span>,<span class="number">0X00000000</span>,<span class="number">0X00000000</span>,<span class="number">0X00000000</span>,<span class="number">0X00000000</span>,<span class="number">0X00000000</span>,<span class="number">0X00000000</span>,</span><br><span class="line"><span class="number">0X00000000</span>,<span class="number">0X00000000</span>,<span class="number">0X00000000</span>,<span class="number">0X00000000</span>,<span class="number">0X00000000</span>,<span class="number">0X00000000</span>,<span class="number">0X00000000</span>,<span class="number">0X00000000</span>,</span><br><span class="line"><span class="number">0X00000000</span>,<span class="number">0X00000000</span>,<span class="number">0X00000000</span>,<span class="number">0X00000000</span>,<span class="number">0X00000000</span>,<span class="number">0X00000000</span>,<span class="number">0X00000000</span>,<span class="number">0X00000000</span>,</span><br><span class="line"><span class="number">0X00000000</span>,<span class="number">0X00000000</span>,<span class="number">0X00000000</span>,<span class="number">0X00000000</span>,<span class="number">0X00000000</span>,<span class="number">0X00000000</span>,<span class="number">0X00000000</span>,<span class="number">0X00000000</span>,</span><br><span class="line"><span class="number">0X00000000</span>,<span class="number">0X00000000</span>,<span class="number">0X00000000</span>,<span class="number">0X00000000</span>,<span class="number">0X00000000</span>,<span class="number">0X00000000</span>,<span class="number">0X00000000</span>,<span class="number">0X00000000</span>,</span><br><span class="line"><span class="number">0X00000000</span>,<span class="number">0X00000000</span>,<span class="number">0X00000000</span>,<span class="number">0X00000000</span>,<span class="number">0X00000000</span>,<span class="number">0X00000000</span>,<span class="number">0X00000000</span>,<span class="number">0X00000000</span>,</span><br><span class="line"><span class="number">0X00000000</span>,<span class="number">0X00000000</span>,<span class="number">0X00000000</span>,<span class="number">0X00000000</span>,<span class="number">0X00000000</span>,<span class="number">0X00000000</span>,<span class="number">0X00000000</span>,<span class="number">0X00000000</span>,</span><br><span class="line"><span class="number">0X00000000</span>,<span class="number">0X00000000</span>,<span class="number">0X00000000</span>,<span class="number">0X00000000</span>,<span class="number">0X00000000</span>,<span class="number">0X00000000</span>,<span class="number">0X00000000</span>,<span class="number">0X00000000</span>,</span><br><span class="line"><span class="number">0X00000000</span>,<span class="number">0X00000000</span>,<span class="number">0X00000000</span>,<span class="number">0X00000000</span>,<span class="number">0X00000000</span>,<span class="number">0X00000000</span>,<span class="number">0X00000000</span>,<span class="number">0X00000000</span>,</span><br><span class="line"><span class="number">0X00000000</span>,<span class="number">0X00000000</span>,<span class="number">0X00000000</span>,<span class="number">0X00000000</span>,<span class="number">0X00000000</span>,<span class="number">0X00000000</span>,<span class="number">0X00000000</span>,<span class="number">0X00000000</span>,</span><br><span class="line"><span class="number">0X00000000</span>,<span class="number">0X00000000</span>,<span class="number">0X00000000</span>,<span class="number">0X00000000</span>,<span class="number">0X00000000</span>,<span class="number">0X00000000</span>,<span class="number">0X00000000</span>,<span class="number">0X00000000</span>,</span><br><span class="line"><span class="number">0X00000000</span>,<span class="number">0X00000000</span>,<span class="number">0X00000000</span>,<span class="number">0X00000000</span>,<span class="number">0X00000000</span>,<span class="number">0X00000000</span>,<span class="number">0X00000000</span>,<span class="number">0X00000000</span>,</span><br><span class="line"><span class="number">0X00000000</span>,<span class="number">0X00000000</span>,<span class="number">0X00000000</span>,<span class="number">0X00000000</span>,<span class="number">0X00000000</span>,<span class="number">0X00000000</span>,<span class="number">0X00000000</span>,<span class="number">0X00000000</span></span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="type">const</span> <span class="type">int</span> imx6_256mb_ivtdcd_table[<span class="number">256</span>] = &#123;</span><br><span class="line"><span class="number">0X402000D1</span>,<span class="number">0X87800000</span>,<span class="number">0X00000000</span>,<span class="number">0X877FF42C</span>,<span class="number">0X877FF420</span>,<span class="number">0X877FF400</span>,<span class="number">0X00000000</span>,<span class="number">0X00000000</span>,</span><br><span class="line"><span class="number">0X877FF000</span>,<span class="number">0X00076000</span>,<span class="number">0X00000000</span>,<span class="number">0X40E801D2</span>,<span class="number">0X04E401CC</span>,<span class="number">0X68400C02</span>,<span class="number">0XFFFFFFFF</span>,<span class="number">0X6C400C02</span>,</span><br><span class="line"><span class="number">0XFFFFFFFF</span>,<span class="number">0X70400C02</span>,<span class="number">0XFFFFFFFF</span>,<span class="number">0X74400C02</span>,<span class="number">0XFFFFFFFF</span>,<span class="number">0X78400C02</span>,<span class="number">0XFFFFFFFF</span>,<span class="number">0X7C400C02</span>,</span><br><span class="line"><span class="number">0XFFFFFFFF</span>,<span class="number">0X80400C02</span>,<span class="number">0XFFFFFFFF</span>,<span class="number">0XB4040E02</span>,<span class="number">0X00000C00</span>,<span class="number">0XAC040E02</span>,<span class="number">0X00000000</span>,<span class="number">0X7C020E02</span>,</span><br><span class="line"><span class="number">0X30000000</span>,<span class="number">0X50020E02</span>,<span class="number">0X30000000</span>,<span class="number">0X4C020E02</span>,<span class="number">0X30000000</span>,<span class="number">0X90040E02</span>,<span class="number">0X30000000</span>,<span class="number">0X88020E02</span>,</span><br><span class="line"><span class="number">0X30000C00</span>,<span class="number">0X70020E02</span>,<span class="number">0X00000000</span>,<span class="number">0X60020E02</span>,<span class="number">0X30000000</span>,<span class="number">0X64020E02</span>,<span class="number">0X30000000</span>,<span class="number">0XA0040E02</span>,</span><br><span class="line"><span class="number">0X30000000</span>,<span class="number">0X94040E02</span>,<span class="number">0X00000200</span>,<span class="number">0X80020E02</span>,<span class="number">0X30000000</span>,<span class="number">0X84020E02</span>,<span class="number">0X30000000</span>,<span class="number">0XB0040E02</span>,</span><br><span class="line"><span class="number">0X00000200</span>,<span class="number">0X98040E02</span>,<span class="number">0X30000000</span>,<span class="number">0XA4040E02</span>,<span class="number">0X30000000</span>,<span class="number">0X44020E02</span>,<span class="number">0X30000000</span>,<span class="number">0X48020E02</span>,</span><br><span class="line"><span class="number">0X30000000</span>,<span class="number">0X1C001B02</span>,<span class="number">0X00800000</span>,<span class="number">0X00081B02</span>,<span class="number">0X030039A1</span>,<span class="number">0X0C081B02</span>,<span class="number">0X04000000</span>,<span class="number">0X3C081B02</span>,</span><br><span class="line"><span class="number">0X3C013C01</span>,<span class="number">0X48081B02</span>,<span class="number">0X38324040</span>,<span class="number">0X50081B02</span>,<span class="number">0X28304040</span>,<span class="number">0X1C081B02</span>,<span class="number">0X33333333</span>,<span class="number">0X20081B02</span>,</span><br><span class="line"><span class="number">0X33333333</span>,<span class="number">0X2C081B02</span>,<span class="number">0X333333F3</span>,<span class="number">0X30081B02</span>,<span class="number">0X333333F3</span>,<span class="number">0XC0081B02</span>,<span class="number">0X09409400</span>,<span class="number">0XB8081B02</span>,</span><br><span class="line"><span class="number">0X00080000</span>,<span class="number">0X04001B02</span>,<span class="number">0X2D000200</span>,<span class="number">0X08001B02</span>,<span class="number">0X3030331B</span>,<span class="number">0X0C001B02</span>,<span class="number">0XF352433F</span>,<span class="number">0X10001B02</span>,</span><br><span class="line"><span class="number">0X630B6DB6</span>,<span class="number">0X14001B02</span>,<span class="number">0XDB00FF01</span>,<span class="number">0X18001B02</span>,<span class="number">0X40172000</span>,<span class="number">0X1C001B02</span>,<span class="number">0X00800000</span>,<span class="number">0X2C001B02</span>,</span><br><span class="line"><span class="number">0XD2260000</span>,<span class="number">0X30001B02</span>,<span class="number">0X23104300</span>,<span class="number">0X40001B02</span>,<span class="number">0X47000000</span>,<span class="number">0X00001B02</span>,<span class="number">0X00001883</span>,<span class="number">0X90081B02</span>,</span><br><span class="line"><span class="number">0X00004000</span>,<span class="number">0X1C001B02</span>,<span class="number">0X32800002</span>,<span class="number">0X1C001B02</span>,<span class="number">0X33800000</span>,<span class="number">0X1C001B02</span>,<span class="number">0X31800400</span>,<span class="number">0X1C001B02</span>,</span><br><span class="line"><span class="number">0X30802015</span>,<span class="number">0X1C001B02</span>,<span class="number">0X40800004</span>,<span class="number">0X20001B02</span>,<span class="number">0X00080000</span>,<span class="number">0X18081B02</span>,<span class="number">0X27020000</span>,<span class="number">0X04001B02</span>,</span><br><span class="line"><span class="number">0X2D550200</span>,<span class="number">0X04041B02</span>,<span class="number">0X06100100</span>,<span class="number">0X1C001B02</span>,<span class="number">0X00000000</span>,<span class="number">0X00000000</span>,<span class="number">0X00000000</span>,<span class="number">0X00000000</span>,</span><br><span class="line"><span class="number">0X00000000</span>,<span class="number">0X00000000</span>,<span class="number">0X00000000</span>,<span class="number">0X00000000</span>,<span class="number">0X00000000</span>,<span class="number">0X00000000</span>,<span class="number">0X00000000</span>,<span class="number">0X00000000</span>,</span><br><span class="line"><span class="number">0X00000000</span>,<span class="number">0X00000000</span>,<span class="number">0X00000000</span>,<span class="number">0X00000000</span>,<span class="number">0X00000000</span>,<span class="number">0X00000000</span>,<span class="number">0X00000000</span>,<span class="number">0X00000000</span>,</span><br><span class="line"><span class="number">0X00000000</span>,<span class="number">0X00000000</span>,<span class="number">0X00000000</span>,<span class="number">0X00000000</span>,<span class="number">0X00000000</span>,<span class="number">0X00000000</span>,<span class="number">0X00000000</span>,<span class="number">0X00000000</span>,</span><br><span class="line"><span class="number">0X00000000</span>,<span class="number">0X00000000</span>,<span class="number">0X00000000</span>,<span class="number">0X00000000</span>,<span class="number">0X00000000</span>,<span class="number">0X00000000</span>,<span class="number">0X00000000</span>,<span class="number">0X00000000</span>,</span><br><span class="line"><span class="number">0X00000000</span>,<span class="number">0X00000000</span>,<span class="number">0X00000000</span>,<span class="number">0X00000000</span>,<span class="number">0X00000000</span>,<span class="number">0X00000000</span>,<span class="number">0X00000000</span>,<span class="number">0X00000000</span>,</span><br><span class="line"><span class="number">0X00000000</span>,<span class="number">0X00000000</span>,<span class="number">0X00000000</span>,<span class="number">0X00000000</span>,<span class="number">0X00000000</span>,<span class="number">0X00000000</span>,<span class="number">0X00000000</span>,<span class="number">0X00000000</span>,</span><br><span class="line"><span class="number">0X00000000</span>,<span class="number">0X00000000</span>,<span class="number">0X00000000</span>,<span class="number">0X00000000</span>,<span class="number">0X00000000</span>,<span class="number">0X00000000</span>,<span class="number">0X00000000</span>,<span class="number">0X00000000</span>,</span><br><span class="line"><span class="number">0X00000000</span>,<span class="number">0X00000000</span>,<span class="number">0X00000000</span>,<span class="number">0X00000000</span>,<span class="number">0X00000000</span>,<span class="number">0X00000000</span>,<span class="number">0X00000000</span>,<span class="number">0X00000000</span>,</span><br><span class="line"><span class="number">0X00000000</span>,<span class="number">0X00000000</span>,<span class="number">0X00000000</span>,<span class="number">0X00000000</span>,<span class="number">0X00000000</span>,<span class="number">0X00000000</span>,<span class="number">0X00000000</span>,<span class="number">0X00000000</span>,</span><br><span class="line"><span class="number">0X00000000</span>,<span class="number">0X00000000</span>,<span class="number">0X00000000</span>,<span class="number">0X00000000</span>,<span class="number">0X00000000</span>,<span class="number">0X00000000</span>,<span class="number">0X00000000</span>,<span class="number">0X00000000</span>,</span><br><span class="line"><span class="number">0X00000000</span>,<span class="number">0X00000000</span>,<span class="number">0X00000000</span>,<span class="number">0X00000000</span>,<span class="number">0X00000000</span>,<span class="number">0X00000000</span>,<span class="number">0X00000000</span>,<span class="number">0X00000000</span>,</span><br><span class="line"><span class="number">0X00000000</span>,<span class="number">0X00000000</span>,<span class="number">0X00000000</span>,<span class="number">0X00000000</span>,<span class="number">0X00000000</span>,<span class="number">0X00000000</span>,<span class="number">0X00000000</span>,<span class="number">0X00000000</span>,</span><br><span class="line"><span class="number">0X00000000</span>,<span class="number">0X00000000</span>,<span class="number">0X00000000</span>,<span class="number">0X00000000</span>,<span class="number">0X00000000</span>,<span class="number">0X00000000</span>,<span class="number">0X00000000</span>,<span class="number">0X00000000</span>,</span><br><span class="line"><span class="number">0X00000000</span>,<span class="number">0X00000000</span>,<span class="number">0X00000000</span>,<span class="number">0X00000000</span>,<span class="number">0X00000000</span>,<span class="number">0X00000000</span>,<span class="number">0X00000000</span>,<span class="number">0X00000000</span>,</span><br><span class="line"><span class="number">0X00000000</span>,<span class="number">0X00000000</span>,<span class="number">0X00000000</span>,<span class="number">0X00000000</span>,<span class="number">0X00000000</span>,<span class="number">0X00000000</span>,<span class="number">0X00000000</span>,<span class="number">0X00000000</span>,</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="keyword">endif</span></span></span><br></pre></td></tr></table></figure>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br><span class="line">125</span><br><span class="line">126</span><br><span class="line">127</span><br><span class="line">128</span><br><span class="line">129</span><br><span class="line">130</span><br><span class="line">131</span><br><span class="line">132</span><br><span class="line">133</span><br><span class="line">134</span><br><span class="line">135</span><br><span class="line">136</span><br><span class="line">137</span><br><span class="line">138</span><br><span class="line">139</span><br><span class="line">140</span><br><span class="line">141</span><br><span class="line">142</span><br><span class="line">143</span><br><span class="line">144</span><br><span class="line">145</span><br><span class="line">146</span><br><span class="line">147</span><br><span class="line">148</span><br><span class="line">149</span><br><span class="line">150</span><br><span class="line">151</span><br><span class="line">152</span><br><span class="line">153</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&quot;stdio.h&quot;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&quot;stdlib.h&quot;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&quot;string.h&quot;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&quot;imxdownload.h&quot;</span></span></span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> SHELLCMD_LEN	(200)</span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> BIN_OFFSET		(3072)</span></span><br><span class="line"></span><br><span class="line"><span class="comment">/* 此宏指明是否打印u-boot.imx的IVT DCD表信息，不同的开发板其IVT和DCD</span></span><br><span class="line"><span class="comment"> * 表的数据是不同的，因此需要获取所使用的开发板的IVT和DCD表信息，最</span></span><br><span class="line"><span class="comment"> * 简单的方法就是读取开发板配套资料里面的u-boot.imx的前1KB数据，理论上</span></span><br><span class="line"><span class="comment"> * 应该读取3KB的数据，但是表信息远远没有3K这么多，因此读1KB即可 </span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> PRINT_TAB		0	</span></span><br><span class="line"><span class="comment">/*</span></span><br><span class="line"><span class="comment"> * 介绍： 此软件是针对NXP的IMX6U系列芯片的，软件用来烧写bin文件到SD卡里面，</span></span><br><span class="line"><span class="comment"> *        本软件会自动添加IVT、DCD等信息到原始的bin文件里面，主要用于裸机和uboot的烧写。</span></span><br><span class="line"><span class="comment"> * 使用方法： 1、编译好原始的二进制bin文件，如，u-boot.bin等，并将编译好的.bin文件和本</span></span><br><span class="line"><span class="comment"> *             软件放置到同一个目录下！！！！</span></span><br><span class="line"><span class="comment"> *        	2、执行命令sudo ./imxdownload &lt;soucre_bin&gt; &lt;sd_device&gt;</span></span><br><span class="line"><span class="comment"> *             如烧写u-boot.bin到/dev/sdd中即可使用如下所示命令:</span></span><br><span class="line"><span class="comment"> *             sudo ./imxdownload u-boot.bin /dev/sdd</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"></span><br><span class="line"><span class="comment">/*</span></span><br><span class="line"><span class="comment"> * 输出一些信息</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="type">void</span> <span class="title function_">message_print</span><span class="params">(<span class="type">void</span>)</span></span><br><span class="line">&#123;	</span><br><span class="line">	<span class="built_in">printf</span>(<span class="string">&quot;I.MX6ULL bin download software\r\n&quot;</span>);</span><br><span class="line">	<span class="built_in">printf</span>(<span class="string">&quot;Edit by:zuozhongkai\r\n&quot;</span>);</span><br><span class="line">	<span class="built_in">printf</span>(<span class="string">&quot;Date:2019/6/10\r\n&quot;</span>);</span><br><span class="line">	<span class="built_in">printf</span>(<span class="string">&quot;Version:V1.1\r\n&quot;</span>);</span><br><span class="line">	<span class="built_in">printf</span>(<span class="string">&quot;log:V1.0 initial version,just support 512MB DDR3\r\n&quot;</span>);</span><br><span class="line">	<span class="built_in">printf</span>(<span class="string">&quot;    V1.1 and support 256MB DDR3\r\n&quot;</span>);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="type">int</span> <span class="title function_">main</span><span class="params">(<span class="type">int</span> argc, <span class="type">char</span> *argv[])</span></span><br><span class="line">&#123;</span><br><span class="line">	FILE *fp;</span><br><span class="line">	<span class="type">unsigned</span> <span class="type">char</span> *buf;</span><br><span class="line">	<span class="type">unsigned</span> <span class="type">char</span> *cmdbuf;</span><br><span class="line">	<span class="type">int</span> nbytes, filelen;</span><br><span class="line">	<span class="type">int</span> i = <span class="number">0</span>, j = <span class="number">0</span>;</span><br><span class="line">	<span class="type">int</span> ddrsize = <span class="number">0</span>; <span class="comment">/* 0为512MB，1为256MB，2为128MB...... */</span></span><br><span class="line"></span><br><span class="line">	message_print();</span><br><span class="line"></span><br><span class="line">	<span class="keyword">if</span>((argc != <span class="number">3</span>) &amp;&amp; (argc != <span class="number">4</span>))&#123;</span><br><span class="line">		<span class="built_in">printf</span>(<span class="string">&quot;Error Usage! Reference Below:\r\n&quot;</span>);</span><br><span class="line">		<span class="built_in">printf</span>(<span class="string">&quot;sudo ./%s &lt;-512m or -256m&gt; &lt;source_bin&gt; &lt;sd_device&gt;\r\n&quot;</span>, argv[<span class="number">0</span>]);</span><br><span class="line">		<span class="keyword">return</span> <span class="number">-1</span>;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="comment">/* 查找参数，获取DDR容量 */</span></span><br><span class="line">	<span class="keyword">for</span>(i = <span class="number">0</span>; i &lt; argc; i++)</span><br><span class="line">	&#123;</span><br><span class="line">		<span class="type">char</span> *param = argv[i];</span><br><span class="line">		<span class="keyword">if</span>(param[<span class="number">0</span>] != <span class="string">&#x27;-&#x27;</span>)</span><br><span class="line">			<span class="keyword">continue</span>;</span><br><span class="line">		<span class="keyword">if</span>(<span class="built_in">strcmp</span>(param, <span class="string">&quot;-256m&quot;</span>) == <span class="number">0</span>) 		<span class="comment">/* 256MB */</span></span><br><span class="line">			ddrsize = <span class="number">1</span>;</span><br><span class="line">		<span class="keyword">else</span> <span class="keyword">if</span>(<span class="built_in">strcmp</span>(param, <span class="string">&quot;-512m&quot;</span>) == <span class="number">0</span>)	<span class="comment">/* 512MB */</span></span><br><span class="line">			ddrsize = <span class="number">0</span>;</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">if</span>(argc == <span class="number">3</span>)	<span class="comment">/* 三个参数，也就是不输入DDR容量的话默认为512MB */</span></span><br><span class="line">		ddrsize = <span class="number">0</span>;</span><br><span class="line"></span><br><span class="line">	<span class="comment">/* 打开bin文件 */</span></span><br><span class="line">	fp = fopen(argv[<span class="number">1</span>], <span class="string">&quot;rb&quot;</span>); <span class="comment">/* 以二进制只读方式打开bin文件 */</span></span><br><span class="line">	<span class="keyword">if</span>(fp == <span class="literal">NULL</span>)&#123;</span><br><span class="line">		<span class="built_in">printf</span>(<span class="string">&quot;Can&#x27;t Open file %s\r\n&quot;</span>, argv[<span class="number">1</span>]);</span><br><span class="line">		<span class="keyword">return</span> <span class="number">-1</span>;</span><br><span class="line">	&#125;</span><br><span class="line">	</span><br><span class="line">	<span class="comment">/* 获取bin文件长度 */</span></span><br><span class="line">	fseek(fp, <span class="number">0L</span>, SEEK_END);</span><br><span class="line">	filelen = ftell(fp);</span><br><span class="line">	fseek(fp, <span class="number">0L</span>, SEEK_SET);</span><br><span class="line">	<span class="built_in">printf</span>(<span class="string">&quot;file %s size = %dBytes\r\n&quot;</span>, argv[<span class="number">1</span>], filelen);</span><br><span class="line">	</span><br><span class="line">	<span class="comment">/* 读取bin文件到缓冲区buf中 */</span></span><br><span class="line">	buf = <span class="built_in">malloc</span>(filelen + BIN_OFFSET);</span><br><span class="line">	<span class="keyword">if</span>(buf == <span class="literal">NULL</span>)&#123;</span><br><span class="line">		<span class="built_in">printf</span>(<span class="string">&quot;Mem Malloc Failed!\r\n&quot;</span>);</span><br><span class="line">		fclose(fp);</span><br><span class="line">		<span class="keyword">return</span> <span class="number">-1</span>;</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="built_in">memset</span>(buf, <span class="number">0</span>, filelen + BIN_OFFSET); <span class="comment">/* 清零 */</span></span><br><span class="line">	<span class="comment">/* 读取bin源码文件 */</span></span><br><span class="line">	fread(buf + BIN_OFFSET, <span class="number">1</span>, filelen, fp);</span><br><span class="line"></span><br><span class="line">	<span class="comment">/* 关闭文件 */</span></span><br><span class="line">	fclose(fp);</span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="keyword">if</span> PRINT_TAB</span></span><br><span class="line">	<span class="built_in">printf</span>(<span class="string">&quot;IVT DCD Table:\r\n&quot;</span>);</span><br><span class="line">	<span class="keyword">for</span>(i = <span class="number">0</span>; i &lt; <span class="number">1024</span>/<span class="number">32</span>; i++)&#123;</span><br><span class="line">		<span class="keyword">for</span>(j = <span class="number">0</span>; j &lt; <span class="number">8</span>; j++)</span><br><span class="line">		&#123;</span><br><span class="line">			<span class="built_in">printf</span>(<span class="string">&quot;0X%08X,&quot;</span>,*(<span class="type">int</span> *)(buf + BIN_OFFSET + (((i * <span class="number">8</span>) + j) * <span class="number">4</span>)));</span><br><span class="line">		&#125;</span><br><span class="line">		<span class="built_in">printf</span>(<span class="string">&quot;\r\n&quot;</span>);</span><br><span class="line">	&#125;	</span><br><span class="line">	<span class="built_in">free</span>(buf);</span><br><span class="line">	<span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line"><span class="meta">#<span class="keyword">endif</span></span></span><br><span class="line">	</span><br><span class="line">	<span class="comment">/* 添加IVT DCD等表信息到bin文件里面 */</span></span><br><span class="line">	<span class="keyword">if</span>(ddrsize == <span class="number">0</span>) &#123;		<span class="comment">/* 512MB */</span></span><br><span class="line">		<span class="built_in">printf</span>(<span class="string">&quot;Board DDR SIZE: 512MB\r\n&quot;</span>);</span><br><span class="line">		<span class="built_in">memcpy</span>(buf, imx6_512mb_ivtdcd_table, <span class="keyword">sizeof</span>(imx6_512mb_ivtdcd_table));</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">else</span> <span class="keyword">if</span> (ddrsize == <span class="number">1</span>) &#123;	<span class="comment">/* 256MB */</span></span><br><span class="line">		<span class="built_in">printf</span>(<span class="string">&quot;Board DDR SIZE: 256MB\r\n&quot;</span>);</span><br><span class="line">		<span class="built_in">memcpy</span>(buf, imx6_256mb_ivtdcd_table, <span class="keyword">sizeof</span>(imx6_256mb_ivtdcd_table));</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="comment">/* 现在我们已经在buf中构建好了可以用于下载的bin文件，将buf中的数据保存到</span></span><br><span class="line"><span class="comment">	 * 到一个文件中，文件命名为load.imx</span></span><br><span class="line"><span class="comment">	 */</span></span><br><span class="line">	<span class="built_in">printf</span>(<span class="string">&quot;Delete Old load.imx\r\n&quot;</span>);</span><br><span class="line">	system(<span class="string">&quot;rm -rf load.imx&quot;</span>);		<span class="comment">/* 先删除旧的load.imx文件	*/</span></span><br><span class="line">	</span><br><span class="line">	<span class="built_in">printf</span>(<span class="string">&quot;Create New load.imx\r\n&quot;</span>);</span><br><span class="line">	system(<span class="string">&quot;touch load.imx&quot;</span>);		<span class="comment">/* 创建新的load.imx文件		*/</span></span><br><span class="line">	fp = fopen(<span class="string">&quot;load.imx&quot;</span>, <span class="string">&quot;wb&quot;</span>);	<span class="comment">/* 打开laod.imx				*/</span></span><br><span class="line">	<span class="keyword">if</span>(fp == <span class="literal">NULL</span>)&#123;</span><br><span class="line">		<span class="built_in">printf</span>(<span class="string">&quot;Cant&#x27;t Open load.imx!!!\r\n&quot;</span>);</span><br><span class="line">		<span class="built_in">free</span>(buf);</span><br><span class="line">		<span class="keyword">return</span> <span class="number">-1</span>;</span><br><span class="line">	&#125;</span><br><span class="line">	nbytes = fwrite(buf, <span class="number">1</span>, filelen + BIN_OFFSET, fp);</span><br><span class="line">	<span class="keyword">if</span>(nbytes != (filelen + BIN_OFFSET))&#123;</span><br><span class="line">		<span class="built_in">printf</span>(<span class="string">&quot;File Write Error!\r\n&quot;</span>);</span><br><span class="line">		<span class="built_in">free</span>(buf);</span><br><span class="line">		fclose(fp);</span><br><span class="line">		<span class="keyword">return</span> <span class="number">-1</span>;</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="built_in">free</span>(buf);</span><br><span class="line">	fclose(fp);	</span><br><span class="line">	</span><br><span class="line">	<span class="comment">/* 构建烧写的shell命令 */</span></span><br><span class="line">	cmdbuf = <span class="built_in">malloc</span>(SHELLCMD_LEN);</span><br><span class="line">	<span class="comment">//sprintf(cmdbuf, &quot;sudo dd iflag=dsync oflag=dsync if=load.imx of=%s bs=512 seek=2&quot;,argv[2]);	</span></span><br><span class="line">    <span class="built_in">sprintf</span>(cmdbuf, <span class="string">&quot;dd iflag=dsync oflag=dsync if=load.imx of=%s bs=512 seek=2&quot;</span>,argv[<span class="number">2</span>]);	</span><br><span class="line">	<span class="built_in">printf</span>(<span class="string">&quot;Download load.imx to %s  ......\r\n&quot;</span>, argv[<span class="number">2</span>]);</span><br><span class="line">	</span><br><span class="line">	<span class="comment">/* 执行上面的shell命令 */</span></span><br><span class="line">	system(cmdbuf);</span><br><span class="line">	<span class="built_in">free</span>(cmdbuf);</span><br><span class="line">	<span class="keyword">return</span> <span class="number">0</span>;	</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<blockquote>
+<p><a target="_blank" rel="noopener" href="https://blog.csdn.net/OnlyLove_/article/details/121843883">i.MX6ULL裸机开发 三：imxdownload 源码分析-CSDN博客</a></p>
+</blockquote>
+<h4 id="检查驱动">检查驱动</h4>
+<p>检查 uboot 的驱动，一般是检查 SD 卡、EMMC、LCD、网络这几方面的驱动。根据下面检查后可知，NXP 官方I.MX6ULL EVK 开发板的 uboot 在 100ask 开发板的运行情况：</p>
+<ul>
+<li>uboot 启动正常，DRAM 识别正确，SD 卡和 EMMC 驱动正常。</li>
+<li>uboot 默认 LCD 驱动是 4.3 寸 480*272 分辨率的，若使用其他屏幕需要修改参数。</li>
+<li>网络不能工作，需要修改驱动。</li>
+</ul>
+<h5 id="sd-卡和-emmc-驱动检查">SD 卡和 EMMC 驱动检查</h5>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">mmc list	// 列出当前的 MMC 设备</span><br><span class="line">mmc dev 0 	// 转换到 MMC 设备 0</span><br><span class="line">mmc info	// 打印 MMC 设备信息</span><br></pre></td></tr></table></figure>
+<p><img src="/image-20240702154709026.png" alt="image-20240702154709026"></p>
+<p>从打印信息看出，mmc 设备 0 是 SD 卡，容量为 942.5 MB，与我使用的 SD 卡相符，说明 SD 卡驱动正常。</p>
+<p>检查 mmc 设备 1，输入</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">mmc list	// 列出当前的 MMC 设备</span><br><span class="line">mmc dev 1 	// 转换到 MMC 设备 1</span><br><span class="line">mmc info	// 打印 MMC 设备信息</span><br></pre></td></tr></table></figure>
+<p><img src="image-20240702155007588.png" alt="image-20240702155007588"></p>
+<p>从打印信息看出，mmc 设备 1 是 EMMC 卡，容量为 3.6 GB，说明 EMMC 卡驱动正常。</p>
+<h5 id="lcd-驱动检查">LCD 驱动检查</h5>
+<p>由上面 uboot 启动信息可知，默认设置的 LCD 屏幕参数为 NXP 官方 I.MX6ULL 开发板的屏幕：4.3 寸 480x272 分辨率的，因此需要修改驱动。</p>
+<p><img src="image-20240702155427332.png" alt="image-20240702155427332"></p>
+<h5 id="网络驱动">网络驱动</h5>
+<p>由上面 uboot 启动信息可知，网络驱动有问题，这是因为 100ask 开发板的网络芯片复位引脚和 NXP 官方开发板不一样，因此需要修改驱动。</p>
+<h4 id="在-u-boot-中添加自己的开发板">在 U-Boot 中添加自己的开发板</h4>
+<p>NXP 官方 uboot 中默认都是 NXP 自己的开发板，虽说我们可以直接在官方的开发板上直接修改，使 uboot 可以完整的运行在我们的板子上。但是为了学习更多东西，接下来学习如何在 uboot 中添加我们的开发板或开发平台。</p>
+<h5 id="添加开发板默认配置文件">添加开发板默认配置文件</h5>
+<p>在 uboot 源码下的 configs 目录下创建默认配置文件。</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">cd configs</span><br><span class="line">cp mx6ull_14x14_evk_emmc_defconfig mx6ull_obito_emmc_defconfig</span><br></pre></td></tr></table></figure>
+<p>对 CONFIG_SYS_EXTRA_OPTIONS 和 CONFIG_TARGET_ 修改：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">CONFIG_SYS_EXTRA_OPTIONS=<span class="string">&quot;IMX_CONFIG=board/freescale/mx6ull_obito_emmc/imximage.cfg,MX6ULL_EVK_EMMC_REWORK&quot;</span> </span><br><span class="line">CONFIG_ARM=y</span><br><span class="line">CONFIG_ARCH_MX6=y</span><br><span class="line">CONFIG_TARGET_MX6ULL_OBITO_EMMC=y</span><br><span class="line">CONFIG_CMD_GPIO=y</span><br></pre></td></tr></table></figure>
+<h5 id="添加开发板对应的头文件">添加开发板对应的头文件</h5>
+<p>在 uboot 源码下的 include/configs 目录下添加自己开发板对应的头文件：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">cp include/configs/mx6ullevk.h include/configs/mx6ull_obito_emmc.h</span><br></pre></td></tr></table></figure>
+<p>打开头文件修改宏定义：跟文件名相同，该文件主要是用来配置或裁剪 uboot。</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 修改前</span></span><br><span class="line"><span class="meta">#<span class="keyword">ifndef</span> __MX6ULLEVK_CONFIG_H</span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> __MX6ULLEVK_CONFIG_H</span></span><br><span class="line"></span><br><span class="line"><span class="comment">// 修改后</span></span><br><span class="line"><span class="meta">#<span class="keyword">ifndef</span> __MX6ULL_OBITO_EMMC_CONFIG_H</span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> __MX6ULL_OBITO_EMMC_CONFIG_H</span></span><br></pre></td></tr></table></figure>
+<h5 id="添加开发板对应的板级文件夹">添加开发板对应的板级文件夹</h5>
+<p><strong>uboot 中每个板子都有一个对应的文件夹来存放板级文件</strong>，比如开发板上外设驱动文件等等。NXP 的 <a target="_blank" rel="noopener" href="http://I.MX">I.MX</a> 系列芯片的所有板级文件夹都存放在 board/freescale 目录下，在这个目录下有个名为 mx6ullevk 的文件夹，这个文件夹就是 NXP 官方 I.MX6ULL EVK 开发板的板级文件夹。复制 mx6ullevk，将其重命名为自己开发板的名字 mx6ull_obito_emmc，命令如下</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">cd board/freescale/</span><br><span class="line">cp mx6ullevk/ -r mx6ull_obito_emmc</span><br></pre></td></tr></table></figure>
+<p>文件夹下有以下文件：</p>
+<p><img src="image-20240702204622788.png" alt="image-20240702204622788"></p>
+<p>输入命令：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">grep -nr <span class="string">&quot;mx6ullevk&quot;</span></span><br></pre></td></tr></table></figure>
+<p><img src="image-20240702204827826.png" alt="image-20240702204827826"></p>
+<p>除了 ixmimage_lpddr2.cfg 文件我们将其他文件中的 mx6ullevk 字符串转换成自己给板子起的名字：我的是 <code>mx6ull_obito_emmc</code>，然后打开 Kconfig 文件进行修改：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 修改前</span></span><br><span class="line"><span class="keyword">if</span> TARGET_MX6ULL_14X14_EVK || TARGET_MX6ULL_9X9_EVK</span><br><span class="line"></span><br><span class="line">config SYS_BOARD</span><br><span class="line">	<span class="keyword">default</span> <span class="string">&quot;mx6ullevk&quot;</span></span><br><span class="line"></span><br><span class="line">config SYS_VENDOR</span><br><span class="line">	<span class="keyword">default</span> <span class="string">&quot;freescale&quot;</span></span><br><span class="line"></span><br><span class="line">config SYS_CONFIG_NAME</span><br><span class="line">	<span class="keyword">default</span> <span class="string">&quot;mx6ullevk&quot;</span></span><br><span class="line"></span><br><span class="line">endif</span><br><span class="line">    </span><br><span class="line"><span class="comment">// 修改后</span></span><br><span class="line"><span class="keyword">if</span> TARGET_MX6ULL_OBITO_EMMC</span><br><span class="line"></span><br><span class="line">config SYS_BOARD</span><br><span class="line">	<span class="keyword">default</span> <span class="string">&quot;mx6ull_obito_emmc&quot;</span></span><br><span class="line"></span><br><span class="line">config SYS_VENDOR</span><br><span class="line">	<span class="keyword">default</span> <span class="string">&quot;freescale&quot;</span></span><br><span class="line"></span><br><span class="line">config SYS_SOC</span><br><span class="line">	<span class="keyword">default</span> <span class="string">&quot;mx6&quot;</span></span><br><span class="line"></span><br><span class="line">config SYS_CONFIG_NAME</span><br><span class="line">	<span class="keyword">default</span> <span class="string">&quot;mx6ull_obito_emmc&quot;</span></span><br><span class="line"></span><br><span class="line">endif    </span><br></pre></td></tr></table></figure>
+<h5 id="修改-u-boot-图形界面配置文件">修改 U-Boot 图形界面配置文件</h5>
+<p>修改文件 arch/arm/cpu/armv7/mx6/Kconfig，在 207 行添加如下内容：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">config TARGET_MX6ULL_OBITO_EMMC</span><br><span class="line">    <span class="type">bool</span> <span class="string">&quot;Support mx6ull_obito_emmc&quot;</span></span><br><span class="line">    select MX6ULL</span><br><span class="line">    select DM</span><br><span class="line">    select DM_THERMAL</span><br></pre></td></tr></table></figure>
+<p>在最后一行的 #endif 的前一行添加如下内容：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">source <span class="string">&quot;board/freescale/mx6ull_obito_emmc/Kconfig&quot;</span></span><br></pre></td></tr></table></figure>
+<p><img src="image-20240702210111971.png" alt="image-20240702210111971"></p>
+<h5 id="编译新的-u-boot-测试">编译新的 U-Boot 测试</h5>
+<p>uboot 源码根目录下新建默认配置文件： <code>mx6ull_obito_emmc_defconfig</code></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#!/bin/bash</span></span><br><span class="line">make ARCH=arm CROSS_COMPILE=arm-buildroot-linux-gnueabihf- distclean</span><br><span class="line">make ARCH=arm CROSS_COMPILE=arm-buildroot-linux-gnueabihf- mx6ull_obito_emmc_defconfig</span><br><span class="line">make V=1 ARCH=arm CROSS_COMPILE=arm-buildroot-linux-gnueabihf- -j16</span><br></pre></td></tr></table></figure>
+<p>修改权限并执行脚本文件</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">chmod 777 mx6ull_obito_emmc.sh 	//给予可执行权限，一次即可</span><br><span class="line">./mx6ull_obito_emmc.sh 			//运行脚本编译uboot</span><br></pre></td></tr></table></figure>
+<p>新建默认配置文件是为了方便后续修改编译 uboot，编译成功后显示：</p>
+<p><img src="image-20240702210559495.png" alt="image-20240702210559495"></p>
+<h5 id="修改-lcd-驱动">修改 LCD 驱动</h5>
+<p>修改 LCD 驱动一般注意几点：</p>
+<ul>
+<li>LCD 所使用的 GPIO，查看 uboot 中 LCD 的 IO 配置是否正确。</li>
+<li>LCD 背光引脚 GPIO 的配置。</li>
+<li>LCD 配置参数是否正确。</li>
+</ul>
+<p>100ask 开发板 LCD 原理图和 NXP 官方I.MX6ULL 开发板一致，也就是 LCD 的 IO 和背光 IO 都一样的，所以 IO 部分就不用修改了。只需要修改 LCD 配置参数即可。</p>
+<p>打开之前新建的板级文件夹 board/freescale/mx6ull_obito_emmc，找到 <code>display_info_t</code> 结构体，修改 LCD 参数。</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 修改前</span></span><br><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">display_info_t</span> <span class="title">const</span> <span class="title">displays</span>[] =</span> &#123;&#123;</span><br><span class="line">        .bus = MX6UL_LCDIF1_BASE_ADDR,</span><br><span class="line">        .addr = <span class="number">0</span>,</span><br><span class="line">        .pixfmt = <span class="number">24</span>,</span><br><span class="line">        .detect = <span class="literal">NULL</span>,</span><br><span class="line">        .enable = do_enable_parallel_lcd,</span><br><span class="line">        .mode   = &#123;</span><br><span class="line">                .name                   = <span class="string">&quot;TFT43AB&quot;</span>,</span><br><span class="line">                .xres           = <span class="number">480</span>,</span><br><span class="line">                .yres           = <span class="number">272</span>,</span><br><span class="line">                .pixclock       = <span class="number">108695</span>,</span><br><span class="line">                .left_margin    = <span class="number">8</span>,</span><br><span class="line">                .right_margin   = <span class="number">4</span>,</span><br><span class="line">                .upper_margin   = <span class="number">2</span>,</span><br><span class="line">                .lower_margin   = <span class="number">4</span>,</span><br><span class="line">                .hsync_len      = <span class="number">41</span>,             </span><br><span class="line">                .vsync_len      = <span class="number">10</span>,</span><br><span class="line">                .sync           = <span class="number">0</span>,</span><br><span class="line">                .vmode          = FB_VMODE_NONINTERLACED</span><br><span class="line">&#125; &#125; &#125;;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 修改后</span></span><br><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">display_info_t</span> <span class="title">const</span> <span class="title">displays</span>[] =</span> &#123;&#123;</span><br><span class="line">        .bus = MX6UL_LCDIF1_BASE_ADDR,</span><br><span class="line">        .addr = <span class="number">0</span>,</span><br><span class="line">        .pixfmt = <span class="number">24</span>,</span><br><span class="line">        .detect = <span class="literal">NULL</span>,</span><br><span class="line">        .enable = do_enable_parallel_lcd,</span><br><span class="line">        .mode   = &#123;</span><br><span class="line">              	.name = <span class="string">&quot;TFT7016&quot;</span>,</span><br><span class="line">                .xres = <span class="number">1024</span>,</span><br><span class="line">                .yres = <span class="number">600</span>,</span><br><span class="line">                .pixclock = <span class="number">19531</span>,</span><br><span class="line">                .left_margin = <span class="number">140</span>, <span class="comment">//HBPD</span></span><br><span class="line">                .right_margin = <span class="number">160</span>, <span class="comment">//HFPD</span></span><br><span class="line">                .upper_margin = <span class="number">20</span>, <span class="comment">//VBPD</span></span><br><span class="line">                .lower_margin = <span class="number">12</span>, <span class="comment">//VFBD</span></span><br><span class="line">                .hsync_len = <span class="number">20</span>, <span class="comment">//HSPW</span></span><br><span class="line">                .vsync_len = <span class="number">3</span>, <span class="comment">//VSPW</span></span><br><span class="line">                .sync = <span class="number">0</span>,</span><br><span class="line">                .vmode = FB_VMODE_NONINTERLACED</span><br><span class="line">&#125; &#125; &#125;;</span><br></pre></td></tr></table></figure>
+<p>打开开发板对应的头文件：include/configs/mx6ull_obito_emmc.h</p>
+<p>将 panel=TFT43AB 全部修改为 panel=TFT7016，panel 的值要与 <code>display_info_t</code> 结构体的 .name 一致。</p>
+<h5 id="修改有线网络驱动">修改有线网络驱动</h5>
+<p>我们要修改ENET1 网络驱动的话重点就三点：<br>
+①、ENET1 复位引脚初始化。<br>
+②、LAN8720A 的器件ID。<br>
+③、LAN8720 驱动</p>
+<p>IMX6ULL有两个网络外设，分别为ENET1和ENET2，100ask开发板使用LAN8720A作为PHY芯片，接在了ENET2上，LAN8720A芯片有一个地址引脚，RXER/PHYAD0，在开发板上接到了高电平，所以 LAN8720A 的网络PHY地址为1，RESET引脚接在了SNVS_TAMPER6上，由于PHY网络芯片有规定，所有PHY芯片前16个寄存器都是一样的功能，并且使用这16个寄存器就可以让网络正常工作，所以需要修改三个地方：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"><span class="meta">#<span class="keyword">ifdef</span> CONFIG_CMD_NET</span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> CONFIG_CMD_PING</span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> CONFIG_CMD_DHCP</span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> CONFIG_CMD_MII</span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> CONFIG_FEC_MXC</span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> CONFIG_MII</span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> CONFIG_FEC_ENET_DEV		1</span></span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="keyword">if</span> (CONFIG_FEC_ENET_DEV == 0)</span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> IMX_FEC_BASE			ENET_BASE_ADDR</span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> CONFIG_FEC_MXC_PHYADDR          0x2</span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> CONFIG_FEC_XCV_TYPE             RMII</span></span><br><span class="line"><span class="meta">#<span class="keyword">elif</span> (CONFIG_FEC_ENET_DEV == 1)</span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> IMX_FEC_BASE			ENET2_BASE_ADDR</span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> CONFIG_FEC_MXC_PHYADDR		0x1</span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> CONFIG_FEC_XCV_TYPE		RMII</span></span><br><span class="line"><span class="meta">#<span class="keyword">endif</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> CONFIG_ETHPRIME			<span class="string">&quot;FEC&quot;</span></span></span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> CONFIG_PHYLIB</span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> CONFIG_PHY_MICREL</span></span><br><span class="line"><span class="meta">#<span class="keyword">endif</span></span></span><br><span class="line"></span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<p>setenv ipaddr 192.168.1.7 	<br>
+setenv ethaddr 00:04:9f:04:d2:35<br>
+setenv gatewayip 192.168.1.1 		<br>
+setenv netmask 255.255.255.0 	<br>
+setenv serverip 192.168.1.5 		<br>
+saveenv</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">setenv ipaddr 192.168.1.7 		//开发板IP地址</span><br><span class="line">setenv ethaddr 00:04:9f:04:d2:35 	//开发板网卡MAC地址</span><br><span class="line">setenv gatewayip 192.168.1.1 		//开发板默认网关</span><br><span class="line">setenv netmask 255.255.255.0 		//开发板子网掩码</span><br><span class="line">setenv serverip 192.168.1.5 		//服务器地址，也就是Ubuntu 地址</span><br><span class="line">saveenv 							//保存环境变量</span><br></pre></td></tr></table></figure>
+<p>注意！只能在uboot 中ping 其他的机器，其他机器不能ping uboot，因为uboot 没有对ping<br>
+命令做处理，如果用其他的机器ping uboot 的话会失败！</p>
+<h5 id="再次编译烧录-u-boot">再次编译烧录 U-Boot</h5>
+<p>uboot 启动以后会先从 EMMC 中读取环境变量，如果 EMMC 中没有环境变量的话才会使用 <code>mx6ull_obito_emmc.h</code> 的默认环境变量。</p>
+<p>在 uboot 命令模式下输入如下命令修改环境变量：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">setenv panel TFT7016</span><br><span class="line">saveenv</span><br></pre></td></tr></table></figure>
+<p>保存重启 uboot，LCD 驱动就能工作正常了。</p>
+<h3 id="u-boot-一些重要的环境变量">U-Boot 一些重要的环境变量</h3>
+<h4 id="bootcmd-环境变量">bootcmd 环境变量</h4>
+<p>bootcmd 保存 U-Boot 启动时执行的的命令序列，一般用来启动内核和加载文件系统，比如读取 EMMC 或者 NAND Flash 中的 Linux 内核镜像文件和设备树文件到 DRAM 中，然后启动 Linux 内核。若 EMMC 或者 NAND 中没有保存 bootcmd 的值，则 uboot 就会从 <code>include/env_default.h</code> 文件中读取 bootcmd 的默认值。</p>
+<p>例如 uboot 使用 run 命令来运行 findfdt 变量：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_">#</span><span class="language-bash">define CONFIG_BOOTCOMMAND \</span></span><br><span class="line"><span class="language-bash">           <span class="string">&quot;run findfdt;&quot;</span> \</span></span><br><span class="line"><span class="language-bash">           <span class="string">&quot;mmc dev <span class="variable">$&#123;mmcdev&#125;</span>;&quot;</span> \</span></span><br><span class="line"><span class="language-bash">           <span class="string">&quot;mmc dev <span class="variable">$&#123;mmcdev&#125;</span>; if mmc rescan; then &quot;</span> \</span></span><br><span class="line"><span class="language-bash">                   <span class="string">&quot;if run loadbootscript; then &quot;</span> \</span></span><br><span class="line"><span class="language-bash">                           <span class="string">&quot;run bootscript; &quot;</span> \</span></span><br><span class="line"><span class="language-bash">                   <span class="string">&quot;else &quot;</span> \</span></span><br><span class="line"><span class="language-bash">                           <span class="string">&quot;if run loadimage; then &quot;</span> \</span></span><br><span class="line"><span class="language-bash">                                   <span class="string">&quot;run mmcboot; &quot;</span> \</span></span><br><span class="line"><span class="language-bash">                           <span class="string">&quot;else run netboot; &quot;</span> \</span></span><br><span class="line"><span class="language-bash">                           <span class="string">&quot;fi; &quot;</span> \</span></span><br><span class="line"><span class="language-bash">                   <span class="string">&quot;fi; &quot;</span> \</span></span><br><span class="line"><span class="language-bash">           <span class="string">&quot;else run netboot; fi&quot;</span></span></span><br><span class="line"><span class="meta prompt_">#</span><span class="language-bash">endif</span></span><br></pre></td></tr></table></figure>
+<p>findfdt 是 NXP 自行添加的环境变量，用来<strong>查找开发板对应的设备树文件</strong>，内容如下：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">&quot;findfdt=&quot;\</span><br><span class="line">        &quot;if test $fdt_file = undefined; then &quot; \</span><br><span class="line">                &quot;if test $board_name = EVK &amp;&amp; test $board_rev = 9X9; then &quot; \</span><br><span class="line">                        &quot;setenv fdt_file imx6ull-9x9-evk.dtb; fi; &quot; \</span><br><span class="line">                &quot;if test $board_name = EVK &amp;&amp; test $board_rev = 14X14; then &quot; \</span><br><span class="line">                        &quot;setenv fdt_file imx6ull-14x14-evk.dtb; fi; &quot; \</span><br><span class="line">                &quot;if test $fdt_file = undefined; then &quot; \</span><br><span class="line">                        &quot;echo WARNING: Could not determine dtb to use; fi; &quot; \</span><br><span class="line">        &quot;fi;\0&quot; \</span><br></pre></td></tr></table></figure>
+<ul>
+<li>mmc dev ${mmcdev} 用于切换 mmc 设备，mmcdev 为 1，<code>mmc dev 1</code> 切换到 EMMC 上。</li>
+<li>mmc rescan 扫描看有没有 SD 卡或者 EMMC 存在</li>
+<li>mmc 设备存在的话则运行 loadbootscript 环境变量：</li>
+</ul>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">loadbootscript=fatload mmc $&#123;mmcdev&#125;:$&#123;mmcpart&#125; $&#123;loadaddr&#125; $&#123;script&#125;;</span><br></pre></td></tr></table></figure>
+<p>mmcdev = 1，mmcpart = 1，loadaddr = 0x80800000，script = boot.scr，展开就是：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">loadbootscript=fatload mmc 1:1 0x80800000 boot.scr;</span><br></pre></td></tr></table></figure>
+<p>loadbootscript 就是从 mmc1 的分区 1 中读取文件 boot.src 到 DRAM 的 0X80800000 处，加载成功则运行 bootscript 环境变量：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">bootscript=echo Running bootscript from mmc ...;</span><br><span class="line">source</span><br></pre></td></tr></table></figure>
+<p>如果 loadbootscript 没有找到 boot.src 则运行环境变量 loadimage：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">loadimage=fatload mmc $&#123;mmcdev&#125;:$&#123;mmcpart&#125; $&#123;loadaddr&#125; $&#123;image&#125;</span><br></pre></td></tr></table></figure>
+<p>mmcdev=1，mmcpart=1，loadaddr=0x80800000，image = zImage，展开就是：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">loadimage=fatload mmc 1:1 0x80800000 zImage</span><br></pre></td></tr></table></figure>
+<p>loadimage 就是从 mmc1 的分区中读取 zImage 到内存的 0X80800000 处，加载 linux 镜像文件 zImage 成功就运行环境变量 mmcboot：mmcargs 是用来设置 bootargs 环境变量的。</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">&quot;mmcboot=echo Booting from mmc ...; &quot; \</span><br><span class="line">               &quot;run mmcargs; &quot; \</span><br><span class="line">               &quot;if test $&#123;boot_fdt&#125; = yes || test $&#123;boot_fdt&#125; = try; then &quot; \</span><br><span class="line">                       &quot;if run loadfdt; then &quot; \</span><br><span class="line">                               &quot;bootz $&#123;loadaddr&#125; - $&#123;fdt_addr&#125;; &quot; \</span><br><span class="line">                       &quot;else &quot; \</span><br><span class="line">                               &quot;if test $&#123;boot_fdt&#125; = try; then &quot; \</span><br><span class="line">                                       &quot;bootz; &quot; \</span><br><span class="line">                               &quot;else &quot; \</span><br><span class="line">                                       &quot;echo WARN: Cannot load the DT; &quot; \</span><br><span class="line">                               &quot;fi; &quot; \</span><br><span class="line">                       &quot;fi; &quot; \</span><br><span class="line">               &quot;else &quot; \</span><br><span class="line">                       &quot;bootz; &quot; \</span><br><span class="line">               &quot;fi;\0&quot; \</span><br></pre></td></tr></table></figure>
+<p>环境变量 loadfdt：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">loadfdt=fatload mmc $&#123;mmcdev&#125;:$&#123;mmcpart&#125; $&#123;fdt_addr&#125; $&#123;fdt_file&#125;</span><br></pre></td></tr></table></figure>
+<p>展开就是：从mmc1 的分区 1 中读取 imx6ull-14x14-evk.dtb 文件并放到内存的 0x83000000 处d</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">loadfdt=fatload mmc 1:1 0x83000000 imx6ull-14x14-evk.dtb</span><br></pre></td></tr></table></figure>
+<p>读取设备树文件成功则调用命令 bootz 启动 linux：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">bootz $&#123;loadaddr&#125; - $&#123;fdt_addr&#125;</span><br></pre></td></tr></table></figure>
+<p>展开就是：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">bootz 0x80800000 - 0x83000000 (注意‘-’前后要有空格)</span><br></pre></td></tr></table></figure>
+<p>**至此 Linux 内核启动完毕，分析可知步骤如下：**4 行精华</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">mmc dev 1 											// 切换到EMMC</span><br><span class="line">fatload mmc 1:1 0x80800000 zImage 					// 读取 zImage到 0x80800000 处</span><br><span class="line">fatload mmc 1:1 0x83000000 imx6ull-14x14-evk.dtb 	// 读取设备树到 0x83000000 处</span><br><span class="line">bootz 0x80800000 - 0x83000000 						// 启动Linux</span><br></pre></td></tr></table></figure>
+<p>NXP 官方将 CONFIG_BOOTCOMMAND 写复杂是为了兼容多个板子，当我们明确找到自己所使用的板子就可以简化为：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_">#</span><span class="language-bash">define CONFIG_BOOTCOMMAND \</span></span><br><span class="line"><span class="language-bash">    <span class="string">&quot;mmc dev 1;&quot;</span> \</span></span><br><span class="line"><span class="language-bash">    <span class="string">&quot;fatload mmc 1:1 0x80800000 zImage;&quot;</span> \</span></span><br><span class="line"><span class="language-bash">    <span class="string">&quot;fatload mmc 1:1 0x83000000 imx6ull-14x14-evk.dtb;&quot;</span> \</span></span><br><span class="line"><span class="language-bash">    <span class="string">&quot;bootz 0x80800000 - 0x83000000;&quot;</span></span></span><br></pre></td></tr></table></figure>
+<p>或者可以直接在 uboot 启动时设置 bootcmd 的值，这个值是直接保存到 EMMC 中的：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">setenv bootcmd &#x27;mmc dev 1; fatload mmc 1:1 80800000 zImage; fatload mmc 1:1 83000000 imx6ull-14x14-evk.dtb; bootz 80800000 - 83000000;&#x27;</span><br></pre></td></tr></table></figure>
+<h4 id="bootargs-环境变量">bootargs 环境变量</h4>
+<p>bootargs 保存 uboot 传递给 linux 内核的参数，这些参数可以控制内核的启动行为，例如内存设置、控制台配置、文件系统类型等。</p>
+<p>bootargs 环境变量是由 mmcargs 设置的：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">mmcargs=setenv bootargs console=$&#123;console&#125;,$&#123;baudrate&#125; root=$&#123;mmcroot&#125;</span><br></pre></td></tr></table></figure>
+<p>console=ttymxc0，baudrate=115200，mmcroot=/dev/mmcblk1p2 rootwait rw，展开就是：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">mmcargs=setenv bootargs console=ttymxc0, 115200 root=/dev/mmcblk1p2 rootwait rw</span><br></pre></td></tr></table></figure>
+<ul>
+<li>console=ttymxc0, 115200：设置 ttymxc0（串口 1）作为 linux 终端，波特率为 115200。</li>
+<li>root=/dev/mmcblk1p2 rootwait rw：表示根文件系统存放在 mmcblk1 设备的分区 2 中，rootwait rw 表示等待 mmc 设备初始化完成以后再挂载，rw 表示根文件系统可以读写。</li>
+</ul>
+<p>bootargs 就是设置了很多的参数的值，给 linux 内核用，常用参数有：</p>
+<ul>
+<li>console：linux 终端，也叫控制台，一般 uboot 默认都有设置串口作为 linux 终端，这样就可以通过串口在 PC 机使用终端软件进行交互了。设置 console 为 ttymxc0，这是因为 linux 启动后 开发板串口 1 在 linux 下的设备文件就是 /dev/ttymxc0。</li>
+<li>root 用来设置根文件系统的位置。</li>
+<li>rootfstype 用于指定根文件系统类型，若根文件子系统为 ext 格式，则不用设置。</li>
+</ul>
+<h3 id="u-boot-启动-linux-测试">U-Boot 启动 Linux 测试</h3>
+<h4 id="网络启动">网络启动</h4>
+<p>网络启动系统主要是为了方便测试，不用频繁地烧写 EMMC，加快开发速度。一般使用 tftp 服务加载 zImage 和 dtb 文件，设置 bootcmd 和 bootargs 环境变量：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">setenv bootargs &#x27;console=ttymxc0,115200 root=/dev/mmcblk1p2 rootwait rw&#x27;</span><br><span class="line"></span><br><span class="line">setenv bootcmd &#x27;tftp 80800000 zImage; tftp 83000000 100ask_imx6ull-14x14.dtb; bootz</span><br><span class="line">80800000 - 83000000&#x27;</span><br><span class="line"></span><br><span class="line">saveenv</span><br></pre></td></tr></table></figure>
+<h4 id="emmc-启动">EMMC 启动</h4>
+<p>EMMC 启动的话，需要向 EMMC 分区提前存放已知好的 zImage 和 dtb 文件，然后设置 bootcmd 和 bootargs 环境变量：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">setenv bootargs &#x27;console=ttymxc0,115200 root=/dev/mmcblk1p2 rootwait rw&#x27;</span><br><span class="line"></span><br><span class="line">setenv bootcmd &#x27;mmc dev 1; fatload mmc 1:1 80800000 zImage; fatload mmc 1:1 83000000</span><br><span class="line">100ask_imx6ull-14x14.dtb; bootz 80800000 - 83000000;&#x27;</span><br><span class="line"></span><br><span class="line">saveenv</span><br></pre></td></tr></table></figure>
+<h2 id="linux-内核移植">Linux 内核移植</h2>
+<p><em><strong>一开始用的 4.1.15 版本，后面发现 100ask 交叉编译器支持不了该版本，导致根文件系统挂载时，内核崩溃，后改用 4.9.88 版本，这些 Linux 源码都是 NXP 改版适配后的源码。</strong></em></p>
+<blockquote>
+<p><a target="_blank" rel="noopener" href="https://github.com/nxp-imx/linux-imx/tree/imx_4.9.88_2.0.0_ga">nxp-imx/linux-imx at imx_4.9.88_2.0.0_ga (github.com)</a></p>
+</blockquote>
+<p>该版本下没有带 mfg 的 imx_v7_mfg_defconfig 文件，只有 imx_v7_defconfig 文件。</p>
+<h3 id="编译-nxp-官方开发板的-linux-内核">编译 NXP 官方开发板的 Linux 内核</h3>
+<h4 id="编译测试">编译测试</h4>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">make ARCH=arm CROSS_COMPILE=arm-buildroot-linux-gnueabihf- imx_v7_defconfig // 配置linux内核</span><br><span class="line">make ARCH=arm CROSS_COMPILE=arm-buildroot-linux-gnueabihf- -j16</span><br></pre></td></tr></table></figure>
+<p>编译完成后会在 <code>arch/arm/boot</code> 目录下生成 zImage 镜像文件，如果使用设备树的话还会在 <code>arh/arm/boot/dts</code> 目录下生成开发板对应的设备树文件。</p>
+<ul>
+<li>Linux 内核镜像文件：zImage</li>
+<li>设备树文件：imx6ull-14x14-evk.dtb</li>
+</ul>
+<p>将两个文件复制到 Ubuntu 的 tftp 目录下：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">cp arch/arm/boot/zImage ~/tftpboot/</span><br><span class="line">cp arch/arm/boot/dts/imx6ull-14x14-evk.dtb  ~/tftpboot/</span><br></pre></td></tr></table></figure>
+<p>uboot 命令行模式下使用 tftp 加载 zImage 和 imx6ull-14x14-evk.dtb</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">tftp 80800000 zImage</span><br><span class="line">tftp 83000000 imx6ull-14x14-evk.dtb</span><br><span class="line">bootz 80800000 - 83000000</span><br></pre></td></tr></table></figure>
+<p>因为还没有根文件系统，所以会显示以下信息并卡住——Linux 内核崩溃，重启进入 uboot 即可。</p>
+<p><img src="image-20240704163256225.png" alt="image-20240704163256225"></p>
+<blockquote>
+<p>也就是提示内核崩溃，因为 VFS(虚拟文件系统)不能挂载根文件系统，因为根文件系统目录不存在。即使根文件系统目录存在，如果根文件系统目录里面是空的依旧会提示内核崩溃。这个就是根文件系统缺失导致的内核崩溃，但是内核是启动了的，只是根文件系统不存在而已。</p>
+</blockquote>
+<h3 id="添加自己的开发板">添加自己的开发板</h3>
+<h4 id="添加开发板默认配置文件">添加开发板默认配置文件</h4>
+<p>复制 imx_v7_defconfig 文件重新命名。</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">cd arch/arm/configs</span><br><span class="line">cp imx_v7_defconfig imx_obito_emmc_defconfig</span><br></pre></td></tr></table></figure>
+<h4 id="添加开发板对应的设备树文件">添加开发板对应的设备树文件</h4>
+<p>复制 imx6ull-14x14-evk.dts 文件重新命名。</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">cd arch/arm/boot/dts</span><br><span class="line">cp imx6ull-14x14-evk.dts imx6ull-obito-emmc.dts</span><br></pre></td></tr></table></figure>
+<p>.dts 是设备树源码，编译后变为 .dtb 文件，因此需要在 <code>arch/arm/boot/dts/Makefile</code> 找到 <code>dtb- $(CONFIG_SOC_IMX6ULL)</code> 配置项，在此配置项中加入 <code>imx6ull-obito-emmc.dtb</code></p>
+<h4 id="编译测试">编译测试</h4>
+<p>放了方便调试，新建一个编译脚本文件 <code>imx6ull_obito_emmc.sh</code> ：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#!/bin/bash</span></span><br><span class="line">make ARCH=arm CROSS_COMPILE=arm-buildroot-linux-gnueabihf- distclean</span><br><span class="line">make ARCH=arm CROSS_COMPILE=arm-buildroot-linux-gnueabihf- imx_obito_emmc_defconfig</span><br><span class="line">make V=1 ARCH=arm CROSS_COMPILE=arm-buildroot-linux-gnueabihf- -j16</span><br></pre></td></tr></table></figure>
+<p>添加权限后执行脚本文件编译：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">chmod 777 imx6ull_obito_emmc.sh</span><br><span class="line">./imx6ull_obito_emmc.sh</span><br></pre></td></tr></table></figure>
+<p>将编译生成 zImage 和设备树复制到 tftp 目录：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">cp arch/arm/boot/zImage ~/tftpboot/</span><br><span class="line">cp arch/arm/boot/dts/imx6ull-obito-emmc.dtb ~/tftpboot/</span><br></pre></td></tr></table></figure>
+<p>使用 tftp 加载 zImage 和 设备树</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">tftp 80800000 zImage</span><br><span class="line">tftp 83000000 imx6ull-obito-emmc.dtb</span><br><span class="line">bootz 80800000 - 83000000</span><br></pre></td></tr></table></figure>
+<p>启动成功说明已经成功在 NXP 提供的 Linux 内核源码添加了自己的开发板。同样因为还没有根文件系统，重启进入 uboot 即可。</p>
+<h3 id="修改驱动">修改驱动</h3>
+<h4 id="cpu-主频">CPU 主频</h4>
+<p>CPU 主频这里不作修改，可以使用 make menuconfig 进入 Linux 内核图形化界面：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">CPU Power Management</span><br><span class="line">    -&gt; CPU Frequency scaling</span><br><span class="line">    	-&gt; Default CPUFreq governor</span><br></pre></td></tr></table></figure>
+<p>CPU 支持 198MHz、396MHz、528MHz 和 792MHz 四个模式：</p>
+<ul>
+<li>Performance：最高性能，直接用最高频率，不考虑耗电。</li>
+<li>Interactive：一开始直接用最高频率，然后根据 CPU 负载慢慢降低。</li>
+<li>Powersave：省电模式，通常以最低频率运行，系统性能会受影响，一般不会用这个！</li>
+<li>Userspace：可以在用户空间手动调节频率。</li>
+<li>Ondemand：定时检查负载，然后根据负载来调节频率。负载低的时候降低 CPU 频率，这样省电，负载高的时候提高 CPU 频率，增加性能。</li>
+</ul>
+<h4 id="修改-emmc-驱动">修改 EMMC 驱动</h4>
+<p>由开发板核心板原理图可知用到的 EMMC 采用 8 根数据线，而 Linux 内核驱动里面 EMMC 默认是 4 线模式，这样 EMMC 读写速度会慢很多，而我们只需要修改设备树 <code> imx6ull-obito-emmc.dts</code> 即可。</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line">// 修改前</span><br><span class="line">&amp;usdhc2 &#123;</span><br><span class="line">	pinctrl-names = &quot;default&quot;;</span><br><span class="line">	pinctrl-0 = &lt;&amp;pinctrl_usdhc2&gt;;</span><br><span class="line">	non-removable;</span><br><span class="line">	status = &quot;okay&quot;;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line">// 修改后</span><br><span class="line">&amp;usdhc2 &#123;</span><br><span class="line">	pinctrl-names = &quot;default&quot;, &quot;state_100mhz&quot;, &quot;state_200mhz&quot;;</span><br><span class="line">	pinctrl-0 = &lt;&amp;pinctrl_usdhc2_8bit&gt;;</span><br><span class="line">	pinctrl-1 = &lt;&amp;pinctrl_usdhc2_8bit_100mhz&gt;;</span><br><span class="line">	pinctrl-2 = &lt;&amp;pinctrl_usdhc2_8bit_200mhz&gt;;</span><br><span class="line">	bus-width = &lt;8&gt;;</span><br><span class="line">	non-removable;</span><br><span class="line">	no-1-8-v;</span><br><span class="line">	status = &quot;okay&quot;;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+<ul>
+<li>bus-width = &lt;8&gt;：表示 8 根线</li>
+<li>no-1-8-v：关闭EMMC 1.8 V 供电选项，防止内核运行时用 1.8 V 去驱动 EMMC</li>
+</ul>
+<h4 id="修改网络驱动">修改网络驱动</h4>
+<blockquote>
+<p><strong>为什么 uboot 有网络驱动了，还要修改内核的网络驱动呢？</strong></p>
+<p>uboot 的网络驱动主要用于实现网络启动(BOOTP 或 DHCP 协议)或通过 TFTP 等协议进行文件的传输，驱动相对简单，目的在于方便调试之类的。</p>
+<p>内核的网络驱动复杂，支持各种网络协议（TCP/IP、Ethernet、Wi-Fi 等），需要处理完整的网络堆栈和多种网络硬件。</p>
+</blockquote>
+<h5 id="添加复位引脚">添加复位引脚</h5>
+<p>由于 PHY 芯片不同，由前面移植 uboot 时可知修改网络驱动主要是在设备树添加 PHY 芯片的复位引脚，</p>
+<p>添在 iomuxc_sncs 节点下添加<strong>网络复位引脚</strong>信息：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 添加网络复位引脚</span></span><br><span class="line">		pinctrl_enet_reset: enetresetgrp &#123;</span><br><span class="line">            fsl,pins = &lt;</span><br><span class="line">                MX6ULL_PAD_SNVS_TAMPER9__GPIO5_IO09     <span class="number">0x1b0b0</span> <span class="comment">/* enet1 reset */</span></span><br><span class="line">                MX6ULL_PAD_SNVS_TAMPER6__GPIO5_IO06     <span class="number">0x1b0b0</span> <span class="comment">/* enet2 reset */</span></span><br><span class="line">            &gt;;</span><br><span class="line">        &#125;;</span><br></pre></td></tr></table></figure>
+<p>正点原子教程中还修改了网络时钟引脚配置信息，将 <code>MX6UL_PAD_ENET2_TX_CLK__ENET2_REF_CLK2</code> 和 <code>MX6UL_PAD_ENET1_TX_CLK__ENET1_REF_CLK1 </code>的值从默认值 0x4001b031 修改为 0x4001b009，但是我看 100ask 提供的设备树是没有修改默认值的，而是将 pinctrl_enet1节点的内容放到 pinctrl_enet2 中。</p>
+<h5 id="修改-fec1-和-fec2-节点">修改 fec1 和 fec2 节点</h5>
+<p>修改 fec1 节点：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 修改前</span></span><br><span class="line">&amp;fec1 &#123;</span><br><span class="line">	pinctrl-names = <span class="string">&quot;default&quot;</span>;</span><br><span class="line">	pinctrl<span class="number">-0</span> = &lt;&amp;pinctrl_enet1&gt;;</span><br><span class="line">	phy-mode = <span class="string">&quot;rmii&quot;</span>;</span><br><span class="line">	phy-handle = &lt;&amp;ethphy0&gt;;</span><br><span class="line">	status = <span class="string">&quot;okay&quot;</span>;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line">&amp;fec2 &#123;</span><br><span class="line">	pinctrl-names = <span class="string">&quot;default&quot;</span>;</span><br><span class="line">	pinctrl<span class="number">-0</span> = &lt;&amp;pinctrl_enet2&gt;;</span><br><span class="line">	phy-mode = <span class="string">&quot;rmii&quot;</span>;</span><br><span class="line">	phy-handle = &lt;&amp;ethphy1&gt;;</span><br><span class="line">	status = <span class="string">&quot;okay&quot;</span>;</span><br><span class="line"></span><br><span class="line">	mdio &#123;</span><br><span class="line">		<span class="meta">#address-cells = <span class="string">&lt;1&gt;</span>;</span></span><br><span class="line">		<span class="meta">#size-cells = <span class="string">&lt;0&gt;</span>;</span></span><br><span class="line"></span><br><span class="line">		ethphy0: ethernet-phy@<span class="number">2</span> &#123;</span><br><span class="line">			compatible = <span class="string">&quot;ethernet-phy-ieee802.3-c22&quot;</span>;</span><br><span class="line">			reg = &lt;<span class="number">2</span>&gt;;</span><br><span class="line">		&#125;;</span><br><span class="line"></span><br><span class="line">		ethphy1: ethernet-phy@<span class="number">1</span> &#123;</span><br><span class="line">			compatible = <span class="string">&quot;ethernet-phy-ieee802.3-c22&quot;</span>;</span><br><span class="line">			reg = &lt;<span class="number">1</span>&gt;;</span><br><span class="line">		&#125;;</span><br><span class="line">	&#125;;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">&amp;fec1 &#123;</span><br><span class="line">    pinctrl-names = <span class="string">&quot;default&quot;</span>;</span><br><span class="line">    pinctrl<span class="number">-0</span> = &lt;&amp;pinctrl_enet1&gt;;</span><br><span class="line">    phy-mode = <span class="string">&quot;rmii&quot;</span>;</span><br><span class="line">    phy-handle = &lt;&amp;ethphy0&gt;;</span><br><span class="line">    phy-reset-gpios = &lt;&amp;gpio5 <span class="number">9</span> GPIO_ACTIVE_LOW&gt;;</span><br><span class="line">    phy-reset-duration = &lt;<span class="number">26</span>&gt;;</span><br><span class="line">    status = <span class="string">&quot;okay&quot;</span>;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 修改后</span></span><br><span class="line">&amp;fec2 &#123;</span><br><span class="line">    pinctrl-names = <span class="string">&quot;default&quot;</span>;</span><br><span class="line">    pinctrl<span class="number">-0</span> = &lt;&amp;pinctrl_enet2&gt;;</span><br><span class="line">    phy-mode = <span class="string">&quot;rmii&quot;</span>;</span><br><span class="line">    phy-handle = &lt;&amp;ethphy1&gt;;</span><br><span class="line">    phy-reset-gpios = &lt;&amp;gpio5 <span class="number">6</span> GPIO_ACTIVE_LOW&gt;;</span><br><span class="line">    phy-reset-duration = &lt;<span class="number">26</span>&gt;;</span><br><span class="line">    status = <span class="string">&quot;okay&quot;</span>;</span><br><span class="line"></span><br><span class="line">    mdio &#123;</span><br><span class="line">        <span class="meta">#address-cells = <span class="string">&lt;1&gt;</span>;</span></span><br><span class="line">        <span class="meta">#size-cells = <span class="string">&lt;0&gt;</span>;</span></span><br><span class="line"></span><br><span class="line">        ethphy0: ethernet-phy@<span class="number">0</span> &#123;</span><br><span class="line">            compatible = <span class="string">&quot;ethernet-phy-ieee802.3-c22&quot;</span>;</span><br><span class="line">            smsc,disable-energy-detect;</span><br><span class="line">            reg = &lt;<span class="number">0</span>&gt;;</span><br><span class="line">        &#125;;</span><br><span class="line">        ethphy1: ethernet-phy@<span class="number">1</span> &#123;</span><br><span class="line">            compatible = <span class="string">&quot;ethernet-phy-ieee802.3-c22&quot;</span>;</span><br><span class="line">            smsc,disable-energy-detect;</span><br><span class="line">            reg = &lt;<span class="number">1</span>&gt;;</span><br><span class="line">        &#125;;</span><br><span class="line">    &#125;;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+<ul>
+<li>phy-reset-duration = &lt;26&gt;：复位低电平信号持续时间为 26 ms</li>
+<li>smsc,disable-energy-detect：表示 PHY 芯片是 SMSC 公司的，Linux 内核通过此信息找到对应 PHY 芯片驱动来驱动 LAN8720A</li>
+<li>ethernet-phy@：后面数字表示 PHY 的地址</li>
+<li>reg：PHY 的地址</li>
+</ul>
+<h5 id="配置-linux-内核-使能-lan8720-驱动">配置 Linux 内核，使能 LAN8720 驱动</h5>
+<p>Linux 内核已经有多个 PHY 芯片的驱动了，但默认是不编译的，我们用到的是 LAN8720A（SMSC 公司的），因此我们输入 make menuconfig 进入 Linux 图形界面配置使能 LAN8720 驱动，按以下路径进入找到并选择使能 SMSC PHY 芯片驱动。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">-&gt; Device Drivers</span><br><span class="line">	-&gt; Network device support</span><br><span class="line">		-&gt; PHY Device support and infrastructure</span><br><span class="line">			-&gt; Drivers for SMSC PHYs</span><br></pre></td></tr></table></figure>
+<h2 id="根文件系统构建">根文件系统构建</h2>
+<h3 id="根文件系统概述">根文件系统概述</h3>
+<p>根文件系统是 Linux 内核启动以后挂载(mount)的第一个文件系统，然后从根文件系统中读取初始化脚本，比如 rcS，inittab 等。</p>
+<p>Linux操作系统的根目录（通常表示为&quot;/&quot;）是文件系统的最顶层目录，它包含了所有其他目录和文件。以下是一些常见的根目录下子目录及其一般用途的解释：</p>
+<table>
+<thead>
+<tr>
+<th style="text-align:center">目录</th>
+<th style="text-align:center">描述</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center"><strong>/bin</strong></td>
+<td style="text-align:center">存放系统命令的二进制文件，比如<code>ls</code>、<code>cp</code>等</td>
+</tr>
+<tr>
+<td style="text-align:center"><strong>/boot</strong></td>
+<td style="text-align:center">包含启动 Linux 系统所需的文件，如内核和引导加载程序。</td>
+</tr>
+<tr>
+<td style="text-align:center"><strong>/dev</strong></td>
+<td style="text-align:center">包含设备文件，这些文件代表计算机上的硬件设备。</td>
+</tr>
+<tr>
+<td style="text-align:center"><strong>/etc</strong></td>
+<td style="text-align:center">存放系统配置文件，比如网络配置、服务配置等。</td>
+</tr>
+<tr>
+<td style="text-align:center"><strong>/home</strong></td>
+<td style="text-align:center">用户的个人目录，每个用户都有一个以用户名命名的子目录。</td>
+</tr>
+<tr>
+<td style="text-align:center"><strong>/lib</strong></td>
+<td style="text-align:center">存放系统库文件，这些是程序运行时需要的共享代码。</td>
+</tr>
+<tr>
+<td style="text-align:center"><strong>/media</strong></td>
+<td style="text-align:center">用于自动挂载可移动设备，如 USB 驱动器。</td>
+</tr>
+<tr>
+<td style="text-align:center"><strong>/mnt</strong></td>
+<td style="text-align:center">用于临时挂载文件系统。</td>
+</tr>
+<tr>
+<td style="text-align:center"><strong>/opt</strong></td>
+<td style="text-align:center">用于存放第三方软件包。</td>
+</tr>
+<tr>
+<td style="text-align:center"><strong>/proc</strong></td>
+<td style="text-align:center">虚拟文件系统，包含系统和进程信息，/proc 是一种伪文件系统（也即虚拟文件系统），存储的是当前内核运行状态的一系列特殊文件。</td>
+</tr>
+<tr>
+<td style="text-align:center"><strong>/root</strong></td>
+<td style="text-align:center">系统管理员（root 用户）的家目录。</td>
+</tr>
+<tr>
+<td style="text-align:center"><strong>/sbin</strong></td>
+<td style="text-align:center">存放系统管理命令的二进制文件，通常只有 root 用户才能访问。</td>
+</tr>
+<tr>
+<td style="text-align:center"><strong>/srv</strong></td>
+<td style="text-align:center">存放系统服务的数据。</td>
+</tr>
+<tr>
+<td style="text-align:center"><strong>/tmp</strong></td>
+<td style="text-align:center">存放临时文件。</td>
+</tr>
+<tr>
+<td style="text-align:center"><strong>/usr</strong></td>
+<td style="text-align:center">Unix Shared Resources(共享资源) 的缩写，用户相关的应用程序和文件，通常分为 /bin, /lib, /sbin 等子目录。</td>
+</tr>
+<tr>
+<td style="text-align:center"><strong>/var</strong></td>
+<td style="text-align:center">存放经常变化的文件，如日志文件。</td>
+</tr>
+<tr>
+<td style="text-align:center"><strong>/sys</strong></td>
+<td style="text-align:center">包含系统设备和驱动程序的接口信息，类似于 /proc。</td>
+</tr>
+</tbody>
+</table>
+<p>构建根文件系统有许多工具：BusyBox、Buildroot、</p>
+<h3 id="busybox-构建根文件系统">BusyBox 构建根文件系统</h3>
+<p>BusyBox 是一个集成了大量 Linux 命令和工具的软件，使用时只需要下载其源码，然后配置选择自己需要的功能，编译即可。</p>
+<blockquote>
+<p><a target="_blank" rel="noopener" href="https://busybox.net/downloads/">BusyBox Downloads</a></p>
+</blockquote>
+<p>一般在开发前期都是<strong>通过 nfs 挂载根文件系统</strong>的，等最后完善测试稳定才烧录到 EMMC 或 NAND 中的，因此我们在自己 Ubuntu 的 nfs 服务器目录下添加一个子目录(例如 busybox1.29.0_rootfs )来存放自己根文件系统。</p>
+<h4 id="初步编译-busybox">初步编译 BusyBox</h4>
+<h5 id="修改顶层-makefile">修改顶层 Makefile</h5>
+<p>在 BusyBox 顶层目录修改 Makefile 文件，添加 ARCH 和 CROSS_COMPILE，搜索 164 行和 190 行修改成自己的编译器存放目录：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">CROSS_COMPILE ?= /home/router2/100ask_imx6ull-sdk/ToolChain/arm-buildroot-linux-gnueabihf_sdk-buildroot/bin/arm-buildroot-linux-gnueabihf-</span><br><span class="line"></span><br><span class="line">ARCH ?= arm</span><br></pre></td></tr></table></figure>
+<h5 id="busybox-中文字符支持">BusyBox 中文字符支持</h5>
+<p>新版本的 busybox 默认不支持中文字符显示，中文字符都会显示为 ‘?’，所以我们需要修改 busybox 源码，打开文件 <code>libbb/printable_string.c</code> ，找到函数 <code>printable_string</code>，</p>
+<p>将字符大于 0x7f 的语句进行修改。</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">const</span> <span class="type">char</span>* FAST_FUNC <span class="title function_">printable_string</span><span class="params">(<span class="type">uni_stat_t</span> *stats, <span class="type">const</span> <span class="type">char</span> *str)</span></span><br><span class="line">&#123;</span><br><span class="line">        <span class="type">char</span> *dst;</span><br><span class="line">        <span class="type">const</span> <span class="type">char</span> *s;</span><br><span class="line"></span><br><span class="line">        s = str;</span><br><span class="line">        <span class="keyword">while</span> (<span class="number">1</span>) &#123;</span><br><span class="line">                <span class="type">unsigned</span> <span class="type">char</span> c = *s;</span><br><span class="line">                <span class="keyword">if</span> (c == <span class="string">&#x27;\0&#x27;</span>) &#123;</span><br><span class="line">                        <span class="comment">/* 99+% of inputs do not need conversion */</span></span><br><span class="line">                        <span class="keyword">if</span> (stats) &#123;</span><br><span class="line">                                stats-&gt;byte_count = (s - str);</span><br><span class="line">                                stats-&gt;unicode_count = (s - str);</span><br><span class="line">                                stats-&gt;unicode_width = (s - str);</span><br><span class="line">                        &#125;</span><br><span class="line">                        <span class="keyword">return</span> str;</span><br><span class="line"></span><br><span class="line">                &#125;</span><br><span class="line">                <span class="keyword">if</span> (c &lt; <span class="string">&#x27; &#x27;</span>)</span><br><span class="line">                        <span class="keyword">break</span>;</span><br><span class="line">                <span class="comment">// 注释下面两行代码</span></span><br><span class="line">                <span class="comment">/* if (c &gt;= 0x7f)</span></span><br><span class="line"><span class="comment">                        break; </span></span><br><span class="line"><span class="comment">                */</span></span><br><span class="line">                s++;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="keyword">if</span> ENABLE_UNICODE_SUPPORT</span></span><br><span class="line">        dst = unicode_conv_to_printable(stats, str);</span><br><span class="line"><span class="meta">#<span class="keyword">else</span></span></span><br><span class="line">        &#123;</span><br><span class="line">                <span class="type">char</span> *d = dst = xstrdup(str);</span><br><span class="line">                <span class="keyword">while</span> (<span class="number">1</span>) &#123;</span><br><span class="line">                        <span class="type">unsigned</span> <span class="type">char</span> c = *d;</span><br><span class="line">                        <span class="keyword">if</span> (c == <span class="string">&#x27;\0&#x27;</span>)</span><br><span class="line">                                <span class="keyword">break</span>;</span><br><span class="line">                        <span class="comment">// 将 c&gt;=0x7f删除</span></span><br><span class="line">                        <span class="comment">// if (c &lt; &#x27; &#x27; || c &gt;= 0x7f)</span></span><br><span class="line">                        <span class="keyword">if</span> (c &lt; <span class="string">&#x27;&#x27;) </span></span><br><span class="line"><span class="string">                                *d = &#x27;</span>?<span class="string">&#x27;;</span></span><br><span class="line"><span class="string">                        d++;</span></span><br><span class="line"><span class="string">                &#125;</span></span><br><span class="line"><span class="string">                if (stats) &#123;</span></span><br><span class="line"><span class="string">                        stats-&gt;byte_count = (d - dst);</span></span><br><span class="line"><span class="string">                        stats-&gt;unicode_count = (d - dst);</span></span><br><span class="line"><span class="string">                        stats-&gt;unicode_width = (d - dst);</span></span><br><span class="line"><span class="string">                &#125;</span></span><br><span class="line"><span class="string">        &#125;</span></span><br><span class="line"><span class="string">#endif</span></span><br></pre></td></tr></table></figure>
+<p>接着打开文件 <code>libbb/unicode.c</code>，搜索函数 <code>FAST_FUNC unicode_conv_to_printable2</code>，将字符大于 0x7f 显示 ‘?‘ 删除。</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span> (unicode_status != UNICODE_ON) &#123;</span><br><span class="line">               <span class="type">char</span> *d;</span><br><span class="line">               <span class="keyword">if</span> (flags &amp; UNI_FLAG_PAD) &#123;</span><br><span class="line">                       d = dst = xmalloc(width + <span class="number">1</span>);</span><br><span class="line">                       <span class="keyword">while</span> ((<span class="type">int</span>)--width &gt;= <span class="number">0</span>) &#123;</span><br><span class="line">                               <span class="type">unsigned</span> <span class="type">char</span> c = *src;</span><br><span class="line">                               <span class="keyword">if</span> (c == <span class="string">&#x27;\0&#x27;</span>) &#123;</span><br><span class="line">                                       <span class="keyword">do</span></span><br><span class="line">                                               *d++ = <span class="string">&#x27; &#x27;</span>;</span><br><span class="line">                                       <span class="keyword">while</span> ((<span class="type">int</span>)--width &gt;= <span class="number">0</span>);</span><br><span class="line">                                       <span class="keyword">break</span>;</span><br><span class="line">                               &#125;</span><br><span class="line">                                <span class="comment">// 修改</span></span><br><span class="line">                       <span class="comment">//      *d++ = (c &gt;= &#x27; &#x27; &amp;&amp; c &lt; 0x7f) ? c : &#x27;?&#x27;;</span></span><br><span class="line">                               *d++ = (c &gt;= <span class="string">&#x27; &#x27;</span>) ? c : <span class="string">&#x27;?&#x27;</span>;</span><br><span class="line">                               src++;</span><br><span class="line">                       &#125;</span><br><span class="line">                       *d = <span class="string">&#x27;\0&#x27;</span>;</span><br><span class="line">               &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">                       d = dst = xstrndup(src, width);</span><br><span class="line">                       <span class="keyword">while</span> (*d) &#123;</span><br><span class="line">                               <span class="type">unsigned</span> <span class="type">char</span> c = *d;</span><br><span class="line">                               <span class="comment">// 修改</span></span><br><span class="line">                               <span class="comment">//if (c &lt; &#x27; &#x27; || c &gt;= 0x7f)</span></span><br><span class="line">                               <span class="keyword">if</span> (c &lt; <span class="string">&#x27; &#x27;</span>)</span><br><span class="line">                                       *d = <span class="string">&#x27;?&#x27;</span>;</span><br><span class="line">                               d++;</span><br><span class="line">                       &#125;</span><br><span class="line">               &#125;</span><br><span class="line">               <span class="keyword">if</span> (stats) &#123;</span><br><span class="line">                       stats-&gt;byte_count = (d - dst);</span><br><span class="line">                       stats-&gt;unicode_count = (d - dst);</span><br><span class="line">                       stats-&gt;unicode_width = (d - dst);</span><br><span class="line">               &#125;</span><br><span class="line">               <span class="keyword">return</span> dst;</span><br><span class="line">       &#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<h5 id="配置-busybox">配置 busybox</h5>
+<p>busybox 有三种配置选项：</p>
+<ul>
+<li>defconfig：缺省配置，也就是默认配置选项。</li>
+<li>allyesconfig，全选配置，也就是选中 busybox 的所有功能。</li>
+<li>allnoconfig，最小配置。</li>
+</ul>
+<p>这里使用默认配置即可：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">make defconfig</span><br><span class="line">make menuconfig</span><br></pre></td></tr></table></figure>
+<p><strong>取消勾选 <code>Build static binary (no shared libs)</code></strong> 选择静态编译还是动态编译，静态编译不需要库文件，但是文件很大，动态编译则要求根文件系统中有动态库，文件小很多，这里使用动态编译的方式。</p>
+<blockquote>
+<p>正点原子教程：这里我们不能采用静态编译！因为采用静态编译的话 DNS 会出问题！无法进行域名解析</p>
+</blockquote>
+<p><img src="image-20240705145539453.png" alt="image-20240705145539453"></p>
+<p><strong>选择 <code>vi-style line editing commands</code></strong></p>
+<p><img src="image-20240705145719329.png" alt="image-20240705145719329"></p>
+<p><strong>取消勾选 <code>Simplified modutils</code></strong></p>
+<p><img src="image-20240705145759319.png" alt="image-20240705145759319"></p>
+<p>确保 <code>mdev</code> 配置项全部选中，默认都是选中的</p>
+<p><img src="image-20240705145844766.png" alt="image-20240705145844766"></p>
+<p>使能 unicode 编码以支持中文，确保两个选中</p>
+<p><img src="image-20240705150020698.png" alt="image-20240705150020698"></p>
+<h5 id="编译-busybox">编译 busybox</h5>
+<p>编译 busybox，CONFIG_PREFIX 指定编译结果存放目录。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">make -j8</span><br><span class="line">make install CONFIG_PREFIX=/home/router2/100ask_imx6ull-sdk/nfs_ubuntu/busybox1.29.0_rootfs</span><br></pre></td></tr></table></figure>
+<p>编译完成目录下内容如下：</p>
+<p><img src="image-20240705150624131.png" alt="image-20240705150624131"></p>
+<p>有 bin、sbin 和 usr 三个目录以及 linuxrc 文件。<strong>Linux 内核 init 进程</strong>最后会查找用户空间的 init 程序，找到以后就会运行这个<strong>用户空间的 init 程序</strong>，从而<strong>切换到用户态</strong>。如果 uboot 中 <strong>bootargs 环境变量设置 init=/linuxrc</strong>，那么 linuxrc 就是可以<strong>作为用户空间的 init 程序</strong>，所以用户态空间的 init 程序是 busybox 来生成的。</p>
+<h4 id="构建整个根文件系统">构建整个根文件系统</h4>
+<p>因为前面是使用动态编译，所以此时的根文件系统还不能使用，需要添加一些动态库文件等来完善。</p>
+<h5 id="添加-lib-目录并添加库文件">添加 lib/ 目录并添加库文件</h5>
+<p>添加 lib 目录，将交叉编译器目录下的 lib 库文件复制到该目录下。</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">// 创建 lib 文件夹</span><br><span class="line">mkdir lib</span><br><span class="line"></span><br><span class="line">// 进入目录</span><br><span class="line">cd /home/router2/100ask_imx6ull-sdk/ToolChain/arm-buildroot-linux-gnueabihf_sdk-buildroot/arm-buildroot-linux-gnueabihf/sysroot/lib</span><br><span class="line"></span><br><span class="line">// 拷贝</span><br><span class="line">cp *so* *.a /home/router2/100ask_imx6ull-sdk/nfs_ubuntu/busybox1.29.0_rootfs/lib -d </span><br></pre></td></tr></table></figure>
+<p>cp -d 表示拷贝符号连接，相当于 Windows 系统的快捷方式。<code>ld-linux-armhf.so.3</code> 库文件也是符号链接，会连接到其他库文件上，但是 ld-linux-armhf.so.3 不能作为符号链接，否则根文件系统中执行程序无法执行。</p>
+<p>我们可以通过先删除该文件，然后重新复制该文件到目录下（<strong>不使用 -d 参数</strong>），转换前后如下图：一开始作为符号链接时文件很小，去除掉就很大了，是一个实实在在的库文件。</p>
+<p><img src="/image-20240705152722827.png" alt="image-20240705152722827"></p>
+<h5 id="添加-usr-lib-目录并添加库文件">添加 usr/lib 目录并添加库文件</h5>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">// 进入目录</span><br><span class="line">cd /home/router2/100ask_imx6ull-sdk/ToolChain/arm-buildroot-linux-gnueabihf_sdk-buildroot/arm-buildroot-linux-gnueabihf/sysroot/usr/lib</span><br><span class="line"></span><br><span class="line">// 复制文件</span><br><span class="line">cp *so* *.a /home/router2/100ask_imx6ull-sdk/nfs_ubuntu/busybox1.29.0_rootfs/usr/lib -d</span><br></pre></td></tr></table></figure>
+<p>使用 du 命令查看目录大小：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">du lib/ usr/lib/ -sh、</span><br><span class="line"></span><br><span class="line">12M	lib/</span><br><span class="line">270M	usr/lib/</span><br></pre></td></tr></table></figure>
+<p>发现 usr/lib 目录很大，进入目录查看有哪些库文件发现有很多第三方库(qt 库、视频解码库等)，可以选择性删掉一些以减少文件大小，删除这些库方便后续自己交叉编译库学习，这里手动删除了一些库减少到了 70M。</p>
+<h5 id="创建其他文件夹">创建其他文件夹</h5>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">mkdir dev proc mmt sys tmp root</span><br></pre></td></tr></table></figure>
+<h5 id="测试根文件系统">测试根文件系统</h5>
+<p>uboot 命令行模式下设置 bootargs 环境变量，设置 root 值。</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">root=/dev/nfs nfsroot=[&lt;server-ip&gt;:]&lt;root-dir&gt;[,&lt;nfs-options&gt;] ip=&lt;client-ip&gt;:&lt;server-ip&gt;:&lt;gw-ip&gt;:&lt;netmask&gt;:&lt;hostname&gt;:&lt;device&gt;:&lt;autoconf&gt;:&lt;dns0-ip&gt;:&lt;dns1-ip&gt;</span><br></pre></td></tr></table></figure>
+<ul>
+<li>/dev/nfs：表示 nfs 挂载</li>
+<li>server-ip：服务器 IP 地址</li>
+<li>root-dir：根文件在服务器的存放目录</li>
+<li>nfs-options：nfs 的其他可选项</li>
+<li>client-ip：客户端 IP 地址，即开发板的 IP 地址</li>
+<li>gw-ip：网关地址</li>
+<li>netmask：子网掩码</li>
+<li>hostname：主机名，空着即可</li>
+<li>device：设备名，网卡名：eth0、eth1 等</li>
+<li>autoconf：自动配置，设置 off 即可</li>
+<li>dns0-ip：DNS0 服务器 IP 地址，不使用</li>
+<li>dns1-ip：DNS1服务器 IP 地址，不使用</li>
+</ul>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">setenv bootcmd &#x27;tftp 80800000 zImage; tftp 83000000 imx6ull-obito-emmc.dtb; bootz 80800000 - 83000000&#x27;</span><br><span class="line"></span><br><span class="line">setenv bootcmd &#x27;tftp 80800000 zImage; tftp 83000000 100ask_imx6ull-14x14.dtb; bootz 80800000 - 83000000&#x27;</span><br><span class="line"></span><br><span class="line">setenv bootargs &#x27;console=ttymxc0,115200 root=/dev/nfs nfsroot=192.168.1.5:/home/router2/100ask_imx6ull-sdk/nfs_ubuntu/busybox1.29.0_rootfs,proto=tcp rw ip=192.168.1.7:192.168.1.5:192.168.1.1:255.255.255.0::eth0:off&#x27;</span><br><span class="line"></span><br><span class="line">saveenv</span><br></pre></td></tr></table></figure>
+<p>proto=tcp”表示使用 TCP 协议，“rw”表示 nfs 挂载的根文件系统为可读可写.</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">tftp 80800000 zImage</span><br><span class="line">tftp 83000000 imx6ull-obito-emmc.dtb</span><br><span class="line">bootz 80800000 - 83000000</span><br></pre></td></tr></table></figure>
+<p><img src="image-20240705165000323.png" alt="image-20240705165000323"></p>
+<p>挂载成功，但提示 <code>can't run '/etc/init.d/rcS': No such file or directory</code>，这是一个脚本文件，用来规定启动哪些文件的脚本文件，接下来就是完善根文件系统了。</p>
+<h4 id="完善根文件系统">完善根文件系统</h4>
+<p>在内核挂载根文件系统后，运行的第一个程序是根目录下的 linuxrc，实际是一个指向 <code>/bin/busybox</code> 的链接, 也就是说系统起来后运行的第一个程序是 busybox 本身。先执行 <code>/etc/inittab</code>， 然后调用 <code>/etc/init.d/rcS</code>， 最后是执行 <code>/etc/profile</code>。</p>
+<p>根文件系统还缺少一些脚本文件，接下来添加几个脚本文件进行完善。</p>
+<blockquote>
+<p><a target="_blank" rel="noopener" href="https://blog.csdn.net/SuGuolin/article/details/85335965">/etc/inittab,/etc/init.d/rcS和/etc/profile分析_linux profile 和inttab谁先调用-CSDN博客</a></p>
+</blockquote>
+<h5 id="创建-etc-init-d-rcs-文件">创建 /etc/init.d/rcS 文件</h5>
+<p>rcS 是一个 shell 脚本文件，rcS 是用来规定 Linux 内核启动哪些文件的脚本文件。</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">mkdir /etc/init.d/rcS</span><br></pre></td></tr></table></figure>
+<p>rcS 文件添加以下内容：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_">#</span><span class="language-bash">!/bin/sh</span></span><br><span class="line"></span><br><span class="line">PATH=/sbin:/bin:/usr/sbin:/usr/bin:$PATH</span><br><span class="line">LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/lib:/usr/lib</span><br><span class="line">export PATH LD_LIBRARY_PATH</span><br><span class="line"></span><br><span class="line">mount -a</span><br><span class="line">mkdir /dev/pts</span><br><span class="line">mount -t devpts devpts /dev/pts</span><br><span class="line"></span><br><span class="line">echo /sbin/mdev &gt; /proc/sys/kernel/hotplug</span><br><span class="line">mdev -s</span><br></pre></td></tr></table></figure>
+<ul>
+<li>#!/bin/sh：表示这是一个 shell 脚本</li>
+<li>PATH：PATH 环境变量保存<strong>可执行文件</strong>可能存在的目录，冒号: 可以添加多个目录</li>
+<li>LD_LIBRARY_PATH：LD_LIBRARY_PATH 环境变量保存<strong>库文件</strong>所在的目录</li>
+<li>export：导出指定的环境变量，相当于声明一些全局变量</li>
+<li>mount 命令挂载所有的文件系统，这些文件系统由文件 <code>/etc/fstab</code> 来指定</li>
+<li>创建 <code>/dev/pts</code> 目录，将 devpts 挂载到 <code>/dev/pts</code> 目录下</li>
+<li>最后两行使用 mdev 来管理热插拔设备，让 linux 内核可以在 /dev 目录下自动创建设备节点</li>
+</ul>
+<p>最后给 rcS 文件加权限：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">chmod 777 rcS</span><br></pre></td></tr></table></figure>
+<h5 id="创建-etc-fstab-文件">创建 /etc/fstab 文件</h5>
+<p>fstab 在 Linux 开机以后自动配置哪些需要自动挂载的分区，格式如下：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&lt;file system&gt; &lt;mount point&gt; &lt;type&gt; &lt;options&gt; &lt;dump&gt; &lt;pass&gt;</span><br></pre></td></tr></table></figure>
+<ul>
+<li>file system：要挂载的特殊设备</li>
+<li>mount point：挂载点</li>
+<li>type：文件系统的类型，例如 ext2、ext3、proc、romfs、tmpfs 等</li>
+<li>options：挂载选项，一般使用 defaults，包含了 了 rw、suid、 dev、 exec、 auto、 nouser 和 async</li>
+<li>dump：1 表示允许备份，0 表示不备份，一般不备份</li>
+<li>pass：磁盘检查设置，0 表示不检查，根目录 ‘/’ 设置为 1，其他分区不能为 1，从 2 开始，一般不在 fstab 中挂载根目录</li>
+</ul>
+<p>在 fstab 文件添加以下内容：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_">#</span><span class="language-bash">&lt;file system&gt; &lt;mount point&gt; &lt;<span class="built_in">type</span>&gt; &lt;options&gt; &lt;dump&gt; &lt;pass&gt;</span></span><br><span class="line">proc /proc proc defaults 0 0</span><br><span class="line">tmpfs /tmp tmpfs defaults 0 0</span><br><span class="line">sysfs /sys sysfs defaults 0 0</span><br></pre></td></tr></table></figure>
+<h5 id="创建-etc-inittab-文件">创建 /etc/inittab 文件</h5>
+<p>init 程序会读取<code>/etc/inittab</code> 这个文件，inittab 由若干条指令组成。每条指令的结构都是一样的，由以“:”分隔的 4 个段组成，格式如下：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&lt;id&gt;:&lt;runlevels&gt;:&lt;action&gt;:&lt;process&gt;</span><br></pre></td></tr></table></figure>
+<ul>
+<li>id：每个指令的标识符，不能重复</li>
+<li>runlevels：对 busybox 没用</li>
+<li>action：动作，用于 process 可能用到的动作</li>
+<li>process：具体的动作，比如程序、脚本或命令等</li>
+</ul>
+<p>busybox 支持的动作如下：</p>
+<table>
+<thead>
+<tr>
+<th style="text-align:center">动作</th>
+<th style="text-align:center">描述</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center">sysinit</td>
+<td style="text-align:center">在系统初始化的时候 process 才会执行一次。</td>
+</tr>
+<tr>
+<td style="text-align:center">respawn</td>
+<td style="text-align:center">当 process 终止以后马上启动一个新的。</td>
+</tr>
+<tr>
+<td style="text-align:center">askfirst</td>
+<td style="text-align:center">和 respawn 类似，在运行 process 之前在控制台上显示“Please press Enter to activate this console.”。只要用户按下“Enter”键以后才会执行 process。</td>
+</tr>
+<tr>
+<td style="text-align:center">wait</td>
+<td style="text-align:center">告诉 init，要等待相应的进程执行完以后才能继续执行。</td>
+</tr>
+<tr>
+<td style="text-align:center">once</td>
+<td style="text-align:center">仅执行一次，而且不会等待 process 执行完成。</td>
+</tr>
+<tr>
+<td style="text-align:center">restart</td>
+<td style="text-align:center">当 init 重启的时候才会执行 procee。</td>
+</tr>
+<tr>
+<td style="text-align:center">ctrlaltdel</td>
+<td style="text-align:center">当按下 ctrl+alt+del 组合键才会执行 process。</td>
+</tr>
+<tr>
+<td style="text-align:center">shutdown</td>
+<td style="text-align:center">关机的时候执行process。</td>
+</tr>
+</tbody>
+</table>
+<p>在 inittab 文件添加以下内容：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_">#</span><span class="language-bash">etc/inittab</span></span><br><span class="line">::sysinit:/etc/init.d/rcS</span><br><span class="line">console::askfirst:-/bin/sh</span><br><span class="line">::restart:/sbin/init</span><br><span class="line">::ctrlaltdel:/sbin/reboot</span><br><span class="line">::shutdown:/bin/umount -a -r</span><br><span class="line">::shutdown:/sbin/swapoff -a</span><br></pre></td></tr></table></figure>
+<ul>
+<li>系统启动以后运行 <code>/etc/init.d/rcS</code> 脚本文件</li>
+<li>将 console 作为控制台终端，也就是 ttymxc0，串口</li>
+<li>重启时运行 <code>/sbin/init</code> 脚本文件</li>
+<li>按下组合键就运行 <code>/sbin/reboot</code></li>
+<li>关机时执行 <code>/bin/umount -a -r</code> 命令，卸载各个文件系统</li>
+<li>关机时执行 <code>/sbin/swapoff -a</code> 命令，关闭交换分区</li>
+</ul>
+<h4 id="测试根文件系统">测试根文件系统</h4>
+<p>测试制作好的根文件系统，测试自己编写的程序是否能运行，是否支持程序开机自启动，中文支持是否正常，能不能链接等功能。</p>
+<h5 id="编译测试-hello-c">编译测试 hello.c</h5>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;stdio.h&gt;</span></span></span><br><span class="line"><span class="type">int</span> <span class="title function_">main</span><span class="params">(<span class="type">void</span>)</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="keyword">while</span>(<span class="number">1</span>) &#123;</span><br><span class="line">        <span class="built_in">printf</span>(<span class="string">&quot;hello world!\r\n&quot;</span>);</span><br><span class="line">        sleep(<span class="number">2</span>);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>执行文件能够正常循环打印，则证明测试成功。</p>
+<h5 id="中文显示测试">中文显示测试</h5>
+<p>新建中文名字的目录并在文件中写入中文，看显示是否正常。</p>
+<p><img src="image-20240705182649176.png" alt="image-20240705182649176"></p>
+<p>可以看到根文件系统可以正常支持中文显示。</p>
+<h5 id="开机自启动测试">开机自启动测试</h5>
+<p>这里以开机自动执行 hello 程序为例子在 /etc/init.d/rcS 文件添加内容：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_">#</span><span class="language-bash">添加开启自动程序</span></span><br><span class="line">cd /drivers</span><br><span class="line">./hello &amp;</span><br><span class="line">cd /</span><br></pre></td></tr></table></figure>
+<p>重启开发板，看是否自动运行。</p>
+<p><img src="image-20240705183828147.png" alt="image-20240705183828147"></p>
+<p>输入 ps 查看 hello 程序的进程 pid 号，输入命令关闭程序：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">kill -9 pid</span><br></pre></td></tr></table></figure>
+<h5 id="网络连接测试">网络连接测试</h5>
+<p>测试开发板能不能上网，对百度官网进行 ping 命令：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ping baidu.com</span><br></pre></td></tr></table></figure>
+<p>会发现提示 <code>ping: bad address 'baidu.com'</code>，这是域名解析错误的原因，因为我们还没有配置域名解析服务器，也就是 DNS 的 IP 地址。在根文件目录下新建 <code>/etc/resolv.conf</code> 文件，添加 DNS 服务器，一般填写自己的网关即可。</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">namserver 192.168.1.1</span><br><span class="line">nameserver 114.114.114.114</span><br></pre></td></tr></table></figure>
+<p>重新 ping 百度网站测试是否成功。</p>
+<h2 id="烧写系统">烧写系统</h2>
+<p>前面测试系统时都是通过网络连接进行测试，等系统测试稳定后，就将系统烧录到 EMMC 或 NAND 中，就不用每次都进行网络连接了。</p>
+<p><img src="image-20240713152901946.png" alt="image-20240713152901946"></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br></pre></td><td class="code"><pre><span class="line"># /etc/inittab</span><br><span class="line">#</span><br><span class="line"># Copyright (C) 2001 Erik Andersen &lt;andersen@codepoet.org&gt;</span><br><span class="line">#</span><br><span class="line"># Note: BusyBox init doesn&#x27;t support runlevels.  The runlevels field is</span><br><span class="line"># completely ignored by BusyBox init. If you want runlevels, use</span><br><span class="line"># sysvinit.</span><br><span class="line">#</span><br><span class="line"># Format for each entry: &lt;id&gt;:&lt;runlevels&gt;:&lt;action&gt;:&lt;process&gt;</span><br><span class="line">#</span><br><span class="line"># id        == tty to run on, or empty for /dev/console</span><br><span class="line"># runlevels == ignored</span><br><span class="line"># action    == one of sysinit, respawn, askfirst, wait, and once</span><br><span class="line"># process   == program to run</span><br><span class="line"></span><br><span class="line"># Startup the system</span><br><span class="line">::sysinit:/bin/mount -t proc proc /proc</span><br><span class="line">::sysinit:/bin/mount -o remount,rw /</span><br><span class="line">::sysinit:/bin/mkdir -p /dev/pts /dev/shm</span><br><span class="line">::sysinit:/bin/mount -a</span><br><span class="line">::sysinit:/sbin/swapon -a</span><br><span class="line">null::sysinit:/bin/ln -sf /proc/self/fd /dev/fd</span><br><span class="line">null::sysinit:/bin/ln -sf /proc/self/fd/0 /dev/stdin</span><br><span class="line">null::sysinit:/bin/ln -sf /proc/self/fd/1 /dev/stdout</span><br><span class="line">null::sysinit:/bin/ln -sf /proc/self/fd/2 /dev/stderr</span><br><span class="line">::sysinit:/bin/hostname -F /etc/hostname</span><br><span class="line"># now run any rc scripts</span><br><span class="line">::sysinit:/etc/init.d/rcS</span><br><span class="line"></span><br><span class="line"># Put a getty on the serial port</span><br><span class="line">ttymxc0::respawn:/sbin/getty -L  ttymxc0 0 vt100 # GENERIC_SERIAL</span><br><span class="line"></span><br><span class="line"># Stuff to do for the 3-finger salute</span><br><span class="line">#::ctrlaltdel:/sbin/reboot</span><br><span class="line"></span><br><span class="line"># Stuff to do before rebooting</span><br><span class="line">::shutdown:/etc/init.d/rcK</span><br><span class="line">::shutdown:/sbin/swapoff -a</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br></pre></td><td class="code"><pre><span class="line">export PATH=/bin:/sbin:/usr/bin:/usr/sbin</span><br><span class="line"></span><br><span class="line">export LD_LIBRARY_PATH=/opt/qt5.15.13/lib:/opt/opencv-4.5.4-arm/lib</span><br><span class="line"></span><br><span class="line">if [ &quot;$PS1&quot; ]; then</span><br><span class="line">        if [ &quot;`id -u`&quot; -eq 0 ]; then</span><br><span class="line">                export PS1=&#x27;# &#x27;</span><br><span class="line">        else</span><br><span class="line">                export PS1=&#x27;$ &#x27;</span><br><span class="line">        fi</span><br><span class="line">fi</span><br><span class="line"></span><br><span class="line">export PAGER=&#x27;/bin/more&#x27;</span><br><span class="line">export EDITOR=&#x27;/bin/vi&#x27;</span><br><span class="line"></span><br><span class="line"># Source configuration files from /etc/profile.d</span><br><span class="line">for i in /etc/profile.d/*.sh ; do</span><br><span class="line">        if [ -r &quot;$i&quot; ]; then</span><br><span class="line">                . $i</span><br><span class="line">        fi</span><br><span class="line">done</span><br><span class="line">unset i</span><br><span class="line">#export QT_QPA_PLATFORM=linuxfb:fb=/dev/fb0</span><br><span class="line">#export QT_QPA_FONTDIR=/usr/lib/fonts</span><br><span class="line">EVENT=$(cat /proc/bus/input/devices | grep -E &#x27;TSC2007|ft5x0x_ts|goodix-ts&#x27; -A4</span><br><span class="line">export TSLIB_ROOT=/opt/tslib1.21</span><br><span class="line">export TSLIB_TSDEVICE=/dev/input/$EVENT</span><br><span class="line">export TSLIB_CONFFILE=/opt/tslib1.21/etc/ts.conf</span><br><span class="line">export TSLIB_CALIBFILE=/etc/pointercal</span><br><span class="line">export TSLIB_PLUGINDIR=/opt/tslib1.21/lib/ts</span><br><span class="line">export TSLIB_CONSOLEDEVICE=none</span><br><span class="line">export QT_ROOT=/opt/qt5.15.13</span><br><span class="line">export QT_QPA_FONTDIR=$QT_ROOT/lib/fonts</span><br><span class="line">export QT_QPA_PLATFORM_PLUGIN_PATH=$QT_ROOT/plugins</span><br><span class="line">export QT_QPA_PLATFORM=linuxfb:fb=/dev/fb0</span><br><span class="line"></span><br><span class="line">export QT_QPA_GENERIC_PLUGINS=tslib:/dev/input/event1</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">HOSTNAME=&#x27;/bin/hostname:&#x27;</span><br><span class="line">PS1=&#x27;\[\e[0;32m\][\u@\h:\w]\$ \[\e[m\]&#x27;</span><br><span class="line">shopt -s checkwinsize</span><br><span class="line">resize</span><br><span class="line">export PS1 HOSTNAME</span><br><span class="line">~</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line">#!/bin/sh</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"># Start all init scripts in /etc/init.d</span><br><span class="line"># executing them in numerical order.</span><br><span class="line">#</span><br><span class="line">psplash -n &amp;</span><br><span class="line">for i in /etc/init.d/S??* ;do</span><br><span class="line"></span><br><span class="line">     # Ignore dangling symlinks (if any).</span><br><span class="line">     [ ! -f &quot;$i&quot; ] &amp;&amp; continue</span><br><span class="line"></span><br><span class="line">     case &quot;$i&quot; in</span><br><span class="line">        *.sh)</span><br><span class="line">            # Source shell script for speed.</span><br><span class="line">            (</span><br><span class="line">                trap - INT QUIT TSTP</span><br><span class="line">                set start</span><br><span class="line">                . $i</span><br><span class="line">            )</span><br><span class="line">            ;;</span><br><span class="line">        *)</span><br><span class="line">            # No sh extension, so fork subprocess.</span><br><span class="line">            $i start</span><br><span class="line">            ;;</span><br><span class="line">    esac</span><br><span class="line">done</span><br><span class="line"></span><br><span class="line">/bin/hostname -F /etc/hostnames</span><br></pre></td></tr></table></figure>
+</article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta">文章作者: </span><span class="post-copyright-info"><a href="obito.top">Obito</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta">文章链接: </span><span class="post-copyright-info"><a href="http://www.obito.top/2024/06/30/Linux%E7%B3%BB%E7%BB%9F%E7%A7%BB%E6%A4%8D/">http://www.obito.top/2024/06/30/Linux系统移植/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta">版权声明: </span><span class="post-copyright-info">本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">CC BY-NC-SA 4.0</a> 许可协议。转载请注明来自 <a href="http://www.obito.top" target="_blank">Obito Blog</a>！</span></div></div><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/Linux-%E5%B5%8C%E5%85%A5%E5%BC%8F/">Linux 嵌入式</a></div><div class="post_share"><div class="social-share" data-image="/img/scenery_11.jpg" data-sites="facebook,twitter,wechat,weibo,qq"></div><link rel="stylesheet" href="/pluginsSrc/butterfly-extsrc/sharejs/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="/pluginsSrc/butterfly-extsrc/sharejs/dist/js/social-share.min.js" defer></script></div></div><nav class="pagination-post" id="pagination"><div class="prev-post pull-left"><a href="/2024/07/07/Linux-%E8%A7%A6%E6%91%B8%E5%B1%8F%E9%A9%B1%E5%8A%A8/" title="Linux-触摸屏驱动"><img class="cover" src="/img/scenery_01.webp" onerror="onerror=null;src='/img/error.png'" alt="cover of previous post"><div class="pagination-info"><div class="label">上一篇</div><div class="prev_info">Linux-触摸屏驱动</div></div></a></div><div class="next-post pull-right"><a href="/2024/06/30/Linux-LCD%E9%A9%B1%E5%8A%A8/" title="Linux-LCD驱动"><img class="cover" src="/img/background.jpg" onerror="onerror=null;src='/img/error.png'" alt="cover of next post"><div class="pagination-info"><div class="label">下一篇</div><div class="next_info">Linux-LCD驱动</div></div></a></div></nav><div class="relatedPosts"><div class="headline"><i class="fas fa-thumbs-up fa-fw"></i><span>相关推荐</span></div><div class="relatedPosts-list"><div><a href="/2024/06/30/Linux-LCD%E9%A9%B1%E5%8A%A8/" title="Linux-LCD驱动"><img class="cover" src="/img/background.jpg" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2024-06-30</div><div class="title">Linux-LCD驱动</div></div></a></div><div><a href="/2024/07/07/Linux-%E8%A7%A6%E6%91%B8%E5%B1%8F%E9%A9%B1%E5%8A%A8/" title="Linux-触摸屏驱动"><img class="cover" src="/img/scenery_01.webp" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2024-07-07</div><div class="title">Linux-触摸屏驱动</div></div></a></div><div><a href="/2024/08/24/Linux%E5%86%85%E6%A0%B8%E9%94%81%E6%9C%BA%E5%88%B6/" title="Linux内核锁机制"><img class="cover" src="/img/scenery_11.jpg" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2024-08-24</div><div class="title">Linux内核锁机制</div></div></a></div></div></div><hr class="custom-hr"/><div id="post-comment"><div class="comment-head"><div class="comment-headline"><i class="fas fa-comments fa-fw"></i><span> 评论</span></div></div><div class="comment-wrap"><div><div id="twikoo-wrap"></div></div></div></div></div><div class="aside-content" id="aside-content"><div class="card-widget card-info"><div class="is-center"><div class="avatar-img"><img src="/img/head.jpg" onerror="this.onerror=null;this.src='/null'" alt="avatar"/></div><div class="author-info__name">Obito</div><div class="author-info__description">保持初心</div></div><div class="card-info-data site-data is-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">43</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">13</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">13</div></a></div><a id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/OBITOoaoa"><i class="fab fa-github"></i><span>Follow Me</span></a></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>目录</span><span class="toc-percentage"></span></div><div class="toc-content"><ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#linux-%E7%B3%BB%E7%BB%9F%E7%A7%BB%E6%A4%8D"><span class="toc-text">Linux 系统移植</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%BA%8F%E8%A8%80"><span class="toc-text">序言</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%8E%AF%E5%A2%83"><span class="toc-text">环境</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%A1%AC%E4%BB%B6%E7%8E%AF%E5%A2%83"><span class="toc-text">硬件环境</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%BD%AF%E4%BB%B6%E7%8E%AF%E5%A2%83"><span class="toc-text">软件环境</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#linux-%E7%B3%BB%E7%BB%9F%E7%A7%BB%E6%A4%8D%E8%BF%87%E7%A8%8B%E6%A6%82%E8%BF%B0"><span class="toc-text">Linux 系统移植过程概述</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#u-boot"><span class="toc-text">U-Boot</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#u-boot-%E7%A7%BB%E6%A4%8D"><span class="toc-text">U-Boot 移植</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E7%BC%96%E8%AF%91-nxp-%E5%AE%98%E6%96%B9%E5%BC%80%E5%8F%91%E6%9D%BF%E7%9A%84-u-boot"><span class="toc-text">编译 NXP 官方开发板的 U-Boot</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E7%83%A7%E5%BD%95%E5%88%B0-sd-%E5%8D%A1%E6%B5%8B%E8%AF%95"><span class="toc-text">烧录到 SD 卡测试</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#%E6%96%B9%E6%B3%95%E4%B8%80%EF%BC%9A%E4%BD%BF%E7%94%A8-imxdownload-%E7%A8%8B%E5%BA%8F"><span class="toc-text">方法一：使用 imxdownload 程序</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#%E6%96%B9%E6%B3%95%E4%BA%8C%EF%BC%9A%E4%BD%BF%E7%94%A8-dd-%E5%91%BD%E4%BB%A4"><span class="toc-text">方法二：使用 dd 命令</span></a></li></ol></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%A3%80%E6%9F%A5%E9%A9%B1%E5%8A%A8"><span class="toc-text">检查驱动</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#sd-%E5%8D%A1%E5%92%8C-emmc-%E9%A9%B1%E5%8A%A8%E6%A3%80%E6%9F%A5"><span class="toc-text">SD 卡和 EMMC 驱动检查</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#lcd-%E9%A9%B1%E5%8A%A8%E6%A3%80%E6%9F%A5"><span class="toc-text">LCD 驱动检查</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#%E7%BD%91%E7%BB%9C%E9%A9%B1%E5%8A%A8"><span class="toc-text">网络驱动</span></a></li></ol></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%9C%A8-u-boot-%E4%B8%AD%E6%B7%BB%E5%8A%A0%E8%87%AA%E5%B7%B1%E7%9A%84%E5%BC%80%E5%8F%91%E6%9D%BF"><span class="toc-text">在 U-Boot 中添加自己的开发板</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#%E6%B7%BB%E5%8A%A0%E5%BC%80%E5%8F%91%E6%9D%BF%E9%BB%98%E8%AE%A4%E9%85%8D%E7%BD%AE%E6%96%87%E4%BB%B6"><span class="toc-text">添加开发板默认配置文件</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#%E6%B7%BB%E5%8A%A0%E5%BC%80%E5%8F%91%E6%9D%BF%E5%AF%B9%E5%BA%94%E7%9A%84%E5%A4%B4%E6%96%87%E4%BB%B6"><span class="toc-text">添加开发板对应的头文件</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#%E6%B7%BB%E5%8A%A0%E5%BC%80%E5%8F%91%E6%9D%BF%E5%AF%B9%E5%BA%94%E7%9A%84%E6%9D%BF%E7%BA%A7%E6%96%87%E4%BB%B6%E5%A4%B9"><span class="toc-text">添加开发板对应的板级文件夹</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#%E4%BF%AE%E6%94%B9-u-boot-%E5%9B%BE%E5%BD%A2%E7%95%8C%E9%9D%A2%E9%85%8D%E7%BD%AE%E6%96%87%E4%BB%B6"><span class="toc-text">修改 U-Boot 图形界面配置文件</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#%E7%BC%96%E8%AF%91%E6%96%B0%E7%9A%84-u-boot-%E6%B5%8B%E8%AF%95"><span class="toc-text">编译新的 U-Boot 测试</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#%E4%BF%AE%E6%94%B9-lcd-%E9%A9%B1%E5%8A%A8"><span class="toc-text">修改 LCD 驱动</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#%E4%BF%AE%E6%94%B9%E6%9C%89%E7%BA%BF%E7%BD%91%E7%BB%9C%E9%A9%B1%E5%8A%A8"><span class="toc-text">修改有线网络驱动</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#%E5%86%8D%E6%AC%A1%E7%BC%96%E8%AF%91%E7%83%A7%E5%BD%95-u-boot"><span class="toc-text">再次编译烧录 U-Boot</span></a></li></ol></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#u-boot-%E4%B8%80%E4%BA%9B%E9%87%8D%E8%A6%81%E7%9A%84%E7%8E%AF%E5%A2%83%E5%8F%98%E9%87%8F"><span class="toc-text">U-Boot 一些重要的环境变量</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#bootcmd-%E7%8E%AF%E5%A2%83%E5%8F%98%E9%87%8F"><span class="toc-text">bootcmd 环境变量</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#bootargs-%E7%8E%AF%E5%A2%83%E5%8F%98%E9%87%8F"><span class="toc-text">bootargs 环境变量</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#u-boot-%E5%90%AF%E5%8A%A8-linux-%E6%B5%8B%E8%AF%95"><span class="toc-text">U-Boot 启动 Linux 测试</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E7%BD%91%E7%BB%9C%E5%90%AF%E5%8A%A8"><span class="toc-text">网络启动</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#emmc-%E5%90%AF%E5%8A%A8"><span class="toc-text">EMMC 启动</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#linux-%E5%86%85%E6%A0%B8%E7%A7%BB%E6%A4%8D"><span class="toc-text">Linux 内核移植</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%BC%96%E8%AF%91-nxp-%E5%AE%98%E6%96%B9%E5%BC%80%E5%8F%91%E6%9D%BF%E7%9A%84-linux-%E5%86%85%E6%A0%B8"><span class="toc-text">编译 NXP 官方开发板的 Linux 内核</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E7%BC%96%E8%AF%91%E6%B5%8B%E8%AF%95"><span class="toc-text">编译测试</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%B7%BB%E5%8A%A0%E8%87%AA%E5%B7%B1%E7%9A%84%E5%BC%80%E5%8F%91%E6%9D%BF"><span class="toc-text">添加自己的开发板</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%B7%BB%E5%8A%A0%E5%BC%80%E5%8F%91%E6%9D%BF%E9%BB%98%E8%AE%A4%E9%85%8D%E7%BD%AE%E6%96%87%E4%BB%B6"><span class="toc-text">添加开发板默认配置文件</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%B7%BB%E5%8A%A0%E5%BC%80%E5%8F%91%E6%9D%BF%E5%AF%B9%E5%BA%94%E7%9A%84%E8%AE%BE%E5%A4%87%E6%A0%91%E6%96%87%E4%BB%B6"><span class="toc-text">添加开发板对应的设备树文件</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E7%BC%96%E8%AF%91%E6%B5%8B%E8%AF%95"><span class="toc-text">编译测试</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BF%AE%E6%94%B9%E9%A9%B1%E5%8A%A8"><span class="toc-text">修改驱动</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#cpu-%E4%B8%BB%E9%A2%91"><span class="toc-text">CPU 主频</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E4%BF%AE%E6%94%B9-emmc-%E9%A9%B1%E5%8A%A8"><span class="toc-text">修改 EMMC 驱动</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E4%BF%AE%E6%94%B9%E7%BD%91%E7%BB%9C%E9%A9%B1%E5%8A%A8"><span class="toc-text">修改网络驱动</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#%E6%B7%BB%E5%8A%A0%E5%A4%8D%E4%BD%8D%E5%BC%95%E8%84%9A"><span class="toc-text">添加复位引脚</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#%E4%BF%AE%E6%94%B9-fec1-%E5%92%8C-fec2-%E8%8A%82%E7%82%B9"><span class="toc-text">修改 fec1 和 fec2 节点</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#%E9%85%8D%E7%BD%AE-linux-%E5%86%85%E6%A0%B8-%E4%BD%BF%E8%83%BD-lan8720-%E9%A9%B1%E5%8A%A8"><span class="toc-text">配置 Linux 内核，使能 LAN8720 驱动</span></a></li></ol></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%A0%B9%E6%96%87%E4%BB%B6%E7%B3%BB%E7%BB%9F%E6%9E%84%E5%BB%BA"><span class="toc-text">根文件系统构建</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%A0%B9%E6%96%87%E4%BB%B6%E7%B3%BB%E7%BB%9F%E6%A6%82%E8%BF%B0"><span class="toc-text">根文件系统概述</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#busybox-%E6%9E%84%E5%BB%BA%E6%A0%B9%E6%96%87%E4%BB%B6%E7%B3%BB%E7%BB%9F"><span class="toc-text">BusyBox 构建根文件系统</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%88%9D%E6%AD%A5%E7%BC%96%E8%AF%91-busybox"><span class="toc-text">初步编译 BusyBox</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#%E4%BF%AE%E6%94%B9%E9%A1%B6%E5%B1%82-makefile"><span class="toc-text">修改顶层 Makefile</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#busybox-%E4%B8%AD%E6%96%87%E5%AD%97%E7%AC%A6%E6%94%AF%E6%8C%81"><span class="toc-text">BusyBox 中文字符支持</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#%E9%85%8D%E7%BD%AE-busybox"><span class="toc-text">配置 busybox</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#%E7%BC%96%E8%AF%91-busybox"><span class="toc-text">编译 busybox</span></a></li></ol></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%9E%84%E5%BB%BA%E6%95%B4%E4%B8%AA%E6%A0%B9%E6%96%87%E4%BB%B6%E7%B3%BB%E7%BB%9F"><span class="toc-text">构建整个根文件系统</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#%E6%B7%BB%E5%8A%A0-lib-%E7%9B%AE%E5%BD%95%E5%B9%B6%E6%B7%BB%E5%8A%A0%E5%BA%93%E6%96%87%E4%BB%B6"><span class="toc-text">添加 lib&#x2F; 目录并添加库文件</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#%E6%B7%BB%E5%8A%A0-usr-lib-%E7%9B%AE%E5%BD%95%E5%B9%B6%E6%B7%BB%E5%8A%A0%E5%BA%93%E6%96%87%E4%BB%B6"><span class="toc-text">添加 usr&#x2F;lib 目录并添加库文件</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#%E5%88%9B%E5%BB%BA%E5%85%B6%E4%BB%96%E6%96%87%E4%BB%B6%E5%A4%B9"><span class="toc-text">创建其他文件夹</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#%E6%B5%8B%E8%AF%95%E6%A0%B9%E6%96%87%E4%BB%B6%E7%B3%BB%E7%BB%9F"><span class="toc-text">测试根文件系统</span></a></li></ol></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%AE%8C%E5%96%84%E6%A0%B9%E6%96%87%E4%BB%B6%E7%B3%BB%E7%BB%9F"><span class="toc-text">完善根文件系统</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#%E5%88%9B%E5%BB%BA-etc-init-d-rcs-%E6%96%87%E4%BB%B6"><span class="toc-text">创建 &#x2F;etc&#x2F;init.d&#x2F;rcS 文件</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#%E5%88%9B%E5%BB%BA-etc-fstab-%E6%96%87%E4%BB%B6"><span class="toc-text">创建 &#x2F;etc&#x2F;fstab 文件</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#%E5%88%9B%E5%BB%BA-etc-inittab-%E6%96%87%E4%BB%B6"><span class="toc-text">创建 &#x2F;etc&#x2F;inittab 文件</span></a></li></ol></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%B5%8B%E8%AF%95%E6%A0%B9%E6%96%87%E4%BB%B6%E7%B3%BB%E7%BB%9F"><span class="toc-text">测试根文件系统</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#%E7%BC%96%E8%AF%91%E6%B5%8B%E8%AF%95-hello-c"><span class="toc-text">编译测试 hello.c</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#%E4%B8%AD%E6%96%87%E6%98%BE%E7%A4%BA%E6%B5%8B%E8%AF%95"><span class="toc-text">中文显示测试</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#%E5%BC%80%E6%9C%BA%E8%87%AA%E5%90%AF%E5%8A%A8%E6%B5%8B%E8%AF%95"><span class="toc-text">开机自启动测试</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#%E7%BD%91%E7%BB%9C%E8%BF%9E%E6%8E%A5%E6%B5%8B%E8%AF%95"><span class="toc-text">网络连接测试</span></a></li></ol></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%83%A7%E5%86%99%E7%B3%BB%E7%BB%9F"><span class="toc-text">烧写系统</span></a></li></ol></li></ol></div></div></div></div></main><footer id="footer" style="background-image: url('/img/scenery_11.jpg')"><div id="footer-wrap"><div class="copyright">&copy;2020 - 2024 By Obito</div><div class="framework-info"><span>框架 </span><a target="_blank" rel="noopener" href="https://hexo.io">Hexo</a><span class="footer-separator">|</span><span>主题 </span><a target="_blank" rel="noopener" href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly</a></div><div class="footer_custom_text">I wish you to become your own sun, no need to rely on who's light.</div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="阅读模式"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="浅色和深色模式转换"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="单栏和双栏切换"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside_config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="目录"><i class="fas fa-list-ul"></i></button><a id="to_comment" href="#post-comment" title="直达评论"><i class="fas fa-comments"></i></a><button id="go-up" type="button" title="回到顶部"><span class="scroll-percent"></span><i class="fas fa-arrow-up"></i></button><button id="go-down" type="button" title="直达底部" onclick="btf.scrollToDest(document.body.scrollHeight, 500)"><i class="fas fa-arrow-down"></i></button></div></div><div id="rightMenu"><div class="rightMenu-group rightMenu-small"><a class="rightMenu-item" href="javascript:window.history.back();"><i class="fa-solid fa-arrow-left"></i></a><a class="rightMenu-item" href="javascript:window.location.reload();"><i class="fa-solid fa-arrow-rotate-right"></i></a><a class="rightMenu-item" href="javascript:window.history.forward();"><i class="fa-solid fa-arrow-right"></i></a><a class="rightMenu-item" id="menu-radompage" href="javascript:window.location.href = window.location.origin;"><i class="fa-solid fa-house"></i></a></div><div class="rightMenu-group rightMenu-line hide" id="menu-text"><a class="rightMenu-item" href="javascript:rmf.copySelect();"><i class="fa-solid fa-copy"></i><span>复制</span></a></div><div class="rightMenu-group rightMenu-line"><a class="rightMenu-item" href="javascript:rmf.switchDarkMode();"><i class="fa-solid fa-circle-half-stroke"></i><span>昼夜切换</span></a><a class="rightMenu-item" href="javascript:toRandomPost();"><i class="fa-solid fa-bus"></i><span>随便逛逛</span></a><a class="rightMenu-item" href="javascript:rmf.switchReadMode();"><i class="fa-solid fa-book"></i><span>阅读模式</span></a><a class="rightMenu-item" href="javascript:window.location.href = window.location.origin + '/archives/';"><i class="fa-solid fa-archive"></i><span>文章归档</span></a><a class="rightMenu-item" href="javascript:window.location.href = window.location.origin + '/categories/';"><i class="fa-solid fa-folder-open"></i><span>文章分类</span></a><a class="rightMenu-item" href="javascript:window.location.href = window.location.origin + '/tags/';"><i class="fa-solid fa-tags"></i><span>文章标签</span></a><a class="rightMenu-item" href="javascript:window.location.href = window.location.origin + '/about-website/';"><i class="fa-solid fa-envelope-open-text"></i><span>网站声明</span></a></div></div><div><script src="/js/utils.js"></script><script src="/js/main.js"></script><script src="/pluginsSrc/@fancyapps/ui/dist/fancybox/fancybox.umd.js"></script><div class="js-pjax"><script>(()=>{
+  const init = () => {
+    twikoo.init(Object.assign({
+      el: '#twikoo-wrap',
+      envId: 'https://twikoo.obito.top/',
+      region: '',
+      onCommentLoaded: function () {
+        btf.loadLightbox(document.querySelectorAll('#twikoo .tk-content img:not(.tk-owo-emotion)'))
+      }
+    }, null))
+  }
+
+  const getCount = () => {
+    const countELement = document.getElementById('twikoo-count')
+    if(!countELement) return
+    twikoo.getCommentsCount({
+      envId: 'https://twikoo.obito.top/',
+      region: '',
+      urls: [window.location.pathname],
+      includeReply: false
+    }).then(function (res) {
+      countELement.textContent = res[0].count
+    }).catch(function (err) {
+      console.error(err);
+    });
+  }
+
+  const runFn = () => {
+    init()
+    
+  }
+
+  const loadTwikoo = () => {
+    if (typeof twikoo === 'object') {
+      setTimeout(runFn,0)
+      return
+    } 
+    getScript('/pluginsSrc/twikoo/dist/twikoo.all.min.js').then(runFn)
+  }
+
+  if ('Twikoo' === 'Twikoo' || !true) {
+    if (true) btf.loadComment(document.getElementById('twikoo-wrap'), loadTwikoo)
+    else loadTwikoo()
+  } else {
+    window.loadOtherComment = () => {
+      loadTwikoo()
+    }
+  }
+})()</script></div><canvas id="universe"></canvas><script src="/js/universe.js"></script><script defer src="https://npm.elemecdn.com/jquery@latest/dist/jquery.min.js"></script><script src="/js/rightmenu.js"></script><script async src="/js/fps.js"></script><script src="/random.js"></script><script id="click-heart" src="/pluginsSrc/butterfly-extsrc/dist/click-heart.min.js" async="async" mobile="false"></script><script src="/pluginsSrc/pjax/pjax.min.js"></script><script>let pjaxSelectors = ["head > title","#config-diff","#body-wrap","#rightside-config-hide","#rightside-config-show",".js-pjax"]
+
+var pjax = new Pjax({
+  elements: 'a:not([target="_blank"])',
+  selectors: pjaxSelectors,
+  cacheBust: false,
+  analytics: false,
+  scrollRestoration: false
+})
+
+document.addEventListener('pjax:send', function () {
+
+  // removeEventListener scroll 
+  window.tocScrollFn && window.removeEventListener('scroll', window.tocScrollFn)
+  window.scrollCollect && window.removeEventListener('scroll', scrollCollect)
+
+  document.getElementById('rightside').style.cssText = "opacity: ''; transform: ''"
+  
+  if (window.aplayers) {
+    for (let i = 0; i < window.aplayers.length; i++) {
+      if (!window.aplayers[i].options.fixed) {
+        window.aplayers[i].destroy()
+      }
+    }
+  }
+
+  typeof typed === 'object' && typed.destroy()
+
+  //reset readmode
+  const $bodyClassList = document.body.classList
+  $bodyClassList.contains('read-mode') && $bodyClassList.remove('read-mode')
+
+  typeof disqusjs === 'object' && disqusjs.destroy()
+})
+
+document.addEventListener('pjax:complete', function () {
+  window.refreshFn()
+
+  document.querySelectorAll('script[data-pjax]').forEach(item => {
+    const newScript = document.createElement('script')
+    const content = item.text || item.textContent || item.innerHTML || ""
+    Array.from(item.attributes).forEach(attr => newScript.setAttribute(attr.name, attr.value))
+    newScript.appendChild(document.createTextNode(content))
+    item.parentNode.replaceChild(newScript, item)
+  })
+
+  GLOBAL_CONFIG.islazyload && window.lazyLoadInstance.update()
+
+  typeof panguInit === 'function' && panguInit()
+
+  // google analytics
+  typeof gtag === 'function' && gtag('config', '', {'page_path': window.location.pathname});
+
+  // baidu analytics
+  typeof _hmt === 'object' && _hmt.push(['_trackPageview',window.location.pathname]);
+
+  typeof loadMeting === 'function' && document.getElementsByClassName('aplayer').length && loadMeting()
+
+  // prismjs
+  typeof Prism === 'object' && Prism.highlightAll()
+})
+
+document.addEventListener('pjax:error', (e) => {
+  if (e.request.status === 404) {
+    pjax.loadUrl('/404.html')
+  }
+})</script><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script></div><!-- hexo injector body_end start --><script data-pjax>
+  function butterfly_clock_anzhiyu_injector_config(){
+    var parent_div_git = document.getElementsByClassName('sticky_layout')[0];
+    var item_html = '<div class="card-widget card-clock"><div class="card-glass"><div class="card-background"><div class="card-content"><div id="hexo_electric_clock"><img class="entered loading" id="card-clock-loading" src="https://cdn.cbd.int/hexo-butterfly-clock-anzhiyu/lib/loading.gif" style="height: 120px; width: 100%;" data-ll-status="loading"/></div></div></div></div></div>';
+    console.log('已挂载butterfly_clock_anzhiyu')
+    if(parent_div_git) {
+      parent_div_git.insertAdjacentHTML("afterbegin",item_html)
+    }
+  }
+  var elist = 'null'.split(',');
+  var cpage = location.pathname;
+  var epage = '/';
+  var qweather_key = 'b16a1fa0e63c46a4b8f28abfb06ae3fe';
+  var gaud_map_key = 'e2b04289e870b005374ee030148d64fd&s=rsv3';
+  var baidu_ak_key = 'undefined';
+  var flag = 0;
+  var clock_rectangle = '113.34532,23.15624';
+  var clock_default_rectangle_enable = 'false';
+
+  for (var i=0;i<elist.length;i++){
+    if (cpage.includes(elist[i])){
+      flag++;
+    }
+  }
+
+  if ((epage ==='all')&&(flag == 0)){
+    butterfly_clock_anzhiyu_injector_config();
+  }
+  else if (epage === cpage){
+    butterfly_clock_anzhiyu_injector_config();
+  }
+  </script><script src="https://widget.qweather.net/simple/static/js/he-simple-common.js?v=2.0"></script><script data-pjax src="https://cdn.cbd.int/hexo-butterfly-clock-anzhiyu/lib/clock.min.js"></script><!-- hexo injector body_end end --></body></html>

@@ -1,0 +1,479 @@
+<!DOCTYPE html><html lang="zh-CN" data-theme="dark"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0,viewport-fit=cover"><title>基于Opencv的人体肤色检测 | Obito Blog</title><meta name="author" content="Obito"><meta name="copyright" content="Obito"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#0d0d0d"><meta name="description" content="前言 opencv 中进行肤色检测的方法大致为以下五种方法。本文中的人体肤色以黄种人为例。 三种图像颜色空间 RGB RGB（红绿蓝）是依据人眼识别的颜色定义出的空间，可表示大部分颜色。但在科学研究一般不采用RGB颜色空间，因为它的细节难以进行数字化的调整。它将色调，亮度，饱和度三个量放在一起表示，很难分开。它是最通用的面向硬件的彩色模型。该模型用于彩色监视器和一大类彩色视频摄像。 Opencv">
+<meta property="og:type" content="article">
+<meta property="og:title" content="基于Opencv的人体肤色检测">
+<meta property="og:url" content="http://www.obito.top/2023/08/11/%E5%9F%BA%E4%BA%8EOpencv%E7%9A%84%E4%BA%BA%E4%BD%93%E8%82%A4%E8%89%B2%E6%A3%80%E6%B5%8B/index.html">
+<meta property="og:site_name" content="Obito Blog">
+<meta property="og:description" content="前言 opencv 中进行肤色检测的方法大致为以下五种方法。本文中的人体肤色以黄种人为例。 三种图像颜色空间 RGB RGB（红绿蓝）是依据人眼识别的颜色定义出的空间，可表示大部分颜色。但在科学研究一般不采用RGB颜色空间，因为它的细节难以进行数字化的调整。它将色调，亮度，饱和度三个量放在一起表示，很难分开。它是最通用的面向硬件的彩色模型。该模型用于彩色监视器和一大类彩色视频摄像。 Opencv">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="http://www.obito.top/img/scenery_01.webp">
+<meta property="article:published_time" content="2023-08-11T14:43:19.000Z">
+<meta property="article:modified_time" content="2023-08-12T16:25:51.414Z">
+<meta property="article:author" content="Obito">
+<meta property="article:tag" content="opencv">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://www.obito.top/img/scenery_01.webp"><link rel="shortcut icon" href="/img/favicon.png"><link rel="canonical" href="http://www.obito.top/2023/08/11/%E5%9F%BA%E4%BA%8EOpencv%E7%9A%84%E4%BA%BA%E4%BD%93%E8%82%A4%E8%89%B2%E6%A3%80%E6%B5%8B/index.html"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="stylesheet" href="/css/index.css"><link rel="stylesheet" href="/pluginsSrc/@fortawesome/fontawesome-free/css/all.min.css" media="print" onload="this.media='all'"><link rel="stylesheet" href="/pluginsSrc/@fancyapps/ui/dist/fancybox/fancybox.css" media="print" onload="this.media='all'"><script>const GLOBAL_CONFIG = {
+  root: '/',
+  algolia: undefined,
+  localSearch: undefined,
+  translate: undefined,
+  noticeOutdate: {"limitDay":60,"position":"top","messagePrev":"It has been","messageNext":"days since the last update, the content of the article may be outdated."},
+  highlight: {"plugin":"highlighjs","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":300},
+  copy: {
+    success: '复制成功',
+    error: '复制错误',
+    noSupport: '浏览器不支持'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '天',
+  dateSuffix: {
+    just: '刚刚',
+    min: '分钟前',
+    hour: '小时前',
+    day: '天前',
+    month: '个月前'
+  },
+  copyright: undefined,
+  lightbox: 'fancybox',
+  Snackbar: undefined,
+  source: {
+    justifiedGallery: {
+      js: '/pluginsSrc/flickr-justified-gallery/dist/fjGallery.min.js',
+      css: '/pluginsSrc/flickr-justified-gallery/dist/fjGallery.css'
+    }
+  },
+  isPhotoFigcaption: false,
+  islazyload: false,
+  isAnchor: false,
+  percent: {
+    toc: true,
+    rightside: false,
+  },
+  autoDarkmode: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: '基于Opencv的人体肤色检测',
+  isPost: true,
+  isHome: false,
+  isHighlightShrink: false,
+  isToc: true,
+  postUpdate: '2023-08-13 00:25:51'
+}</script><noscript><style type="text/css">
+  #nav {
+    opacity: 1
+  }
+  .justified-gallery img {
+    opacity: 1
+  }
+
+  #recent-posts time,
+  #post-meta time {
+    display: inline !important
+  }
+</style></noscript><script>(win=>{
+    win.saveToLocal = {
+      set: function setWithExpiry(key, value, ttl) {
+        if (ttl === 0) return
+        const now = new Date()
+        const expiryDay = ttl * 86400000
+        const item = {
+          value: value,
+          expiry: now.getTime() + expiryDay,
+        }
+        localStorage.setItem(key, JSON.stringify(item))
+      },
+
+      get: function getWithExpiry(key) {
+        const itemStr = localStorage.getItem(key)
+
+        if (!itemStr) {
+          return undefined
+        }
+        const item = JSON.parse(itemStr)
+        const now = new Date()
+
+        if (now.getTime() > item.expiry) {
+          localStorage.removeItem(key)
+          return undefined
+        }
+        return item.value
+      }
+    }
+  
+    win.getScript = url => new Promise((resolve, reject) => {
+      const script = document.createElement('script')
+      script.src = url
+      script.async = true
+      script.onerror = reject
+      script.onload = script.onreadystatechange = function() {
+        const loadState = this.readyState
+        if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
+        script.onload = script.onreadystatechange = null
+        resolve()
+      }
+      document.head.appendChild(script)
+    })
+  
+    win.getCSS = (url,id = false) => new Promise((resolve, reject) => {
+      const link = document.createElement('link')
+      link.rel = 'stylesheet'
+      link.href = url
+      if (id) link.id = id
+      link.onerror = reject
+      link.onload = link.onreadystatechange = function() {
+        const loadState = this.readyState
+        if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
+        link.onload = link.onreadystatechange = null
+        resolve()
+      }
+      document.head.appendChild(link)
+    })
+  
+      win.activateDarkMode = function () {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      win.activateLightMode = function () {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+        }
+      }
+      const t = saveToLocal.get('theme')
+    
+          if (t === 'dark') activateDarkMode()
+          else if (t === 'light') activateLightMode()
+        
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        if (asideStatus === 'hide') {
+          document.documentElement.classList.add('hide-aside')
+        } else {
+          document.documentElement.classList.remove('hide-aside')
+        }
+      }
+    
+    const detectApple = () => {
+      if(/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)){
+        document.documentElement.classList.add('apple')
+      }
+    }
+    detectApple()
+    })(window)</script><link rel="stylesheet" href="/css/universe.css"><link rel="stylesheet" href="/css/rightmenu.css"><span id="fps"></span><link rel="stylesheet" href="/css/custom.css"><!-- hexo injector head_end start --><link rel="stylesheet" href="https://cdn.cbd.int/hexo-butterfly-clock-anzhiyu/lib/clock.min.css" /><!-- hexo injector head_end end --><meta name="generator" content="Hexo 6.3.0"><link rel="alternate" href="/atom.xml" title="Obito Blog" type="application/atom+xml">
+<link href="https://cdn.bootcss.com/KaTeX/0.11.1/katex.min.css" rel="stylesheet" /></head><body><div id="loading-box"><div class="loading-left-bg"></div><div class="loading-right-bg"></div><div class="spinner-box"><div class="configure-border-1"><div class="configure-core"></div></div><div class="configure-border-2"><div class="configure-core"></div></div><div class="loading-word">加载中...</div></div></div><script>(()=>{
+  const $loadingBox = document.getElementById('loading-box')
+  const $body = document.body
+  const preloader = {
+    endLoading: () => {
+      $body.style.overflow = ''
+      $loadingBox.classList.add('loaded')
+    },
+    initLoading: () => {
+      $body.style.overflow = 'hidden'
+      $loadingBox.classList.remove('loaded')
+    }
+  }
+
+  preloader.initLoading()
+  window.addEventListener('load',() => { preloader.endLoading() })
+
+  if (true) {
+    document.addEventListener('pjax:send', () => { preloader.initLoading() })
+    document.addEventListener('pjax:complete', () => { preloader.endLoading() })
+  }
+})()</script><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img is-center"><img src="/img/head.jpg" onerror="onerror=null;src='null'" alt="avatar"/></div><div class="sidebar-site-data site-data is-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">43</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">13</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">13</div></a></div><hr class="custom-hr"/><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> Home</span></a></div><div class="menus_item"><a class="site-page" href="/notes/"><i class="fa-fw fa fa-sticky-note"></i><span> Notes</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> Archives</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> Tags</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> Categories</span></a></div><div class="menus_item"><a class="site-page group" href="javascript:void(0);"><i class="fa-fw fas fa-list"></i><span> List</span><i class="fas fa-chevron-down"></i></a><ul class="menus_item_child"><li><a class="site-page child" href="/music/"><i class="fa-fw fas fa-music"></i><span> Music</span></a></li><li><a class="site-page child" href="/movies/"><i class="fa-fw fas fa-video"></i><span> Movie</span></a></li></ul></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fas fa-link"></i><span> Link</span></a></div><div class="menus_item"><a class="site-page group" href="javascript:void(0);"><i class="fa-fw fas fa-heart"></i><span> About</span><i class="fas fa-chevron-down"></i></a><ul class="menus_item_child"><li><a class="site-page child" href="/about-me/"><i class="fa-fw fa-fw fas fa-medal"></i><span> AboutMe</span></a></li><li><a class="site-page child" href="/about-website/"><i class="fa-fw fa-fw fas fa-envelope-open-text"></i><span> Statement</span></a></li></ul></div></div></div></div><div class="post" id="body-wrap"><header class="post-bg" id="page-header" style="background-image: url('/img/scenery_01.webp')"><nav id="nav"><span id="blog-info"><a href="/" title="Obito Blog"><span class="site-name">Obito Blog</span></a></span><div id="menus"><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> Home</span></a></div><div class="menus_item"><a class="site-page" href="/notes/"><i class="fa-fw fa fa-sticky-note"></i><span> Notes</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> Archives</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> Tags</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> Categories</span></a></div><div class="menus_item"><a class="site-page group" href="javascript:void(0);"><i class="fa-fw fas fa-list"></i><span> List</span><i class="fas fa-chevron-down"></i></a><ul class="menus_item_child"><li><a class="site-page child" href="/music/"><i class="fa-fw fas fa-music"></i><span> Music</span></a></li><li><a class="site-page child" href="/movies/"><i class="fa-fw fas fa-video"></i><span> Movie</span></a></li></ul></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fas fa-link"></i><span> Link</span></a></div><div class="menus_item"><a class="site-page group" href="javascript:void(0);"><i class="fa-fw fas fa-heart"></i><span> About</span><i class="fas fa-chevron-down"></i></a><ul class="menus_item_child"><li><a class="site-page child" href="/about-me/"><i class="fa-fw fa-fw fas fa-medal"></i><span> AboutMe</span></a></li><li><a class="site-page child" href="/about-website/"><i class="fa-fw fa-fw fas fa-envelope-open-text"></i><span> Statement</span></a></li></ul></div></div><div id="toggle-menu"><a class="site-page" href="javascript:void(0);"><i class="fas fa-bars fa-fw"></i></a></div></div></nav><div id="post-info"><h1 class="post-title">基于Opencv的人体肤色检测</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">发表于</span><time class="post-meta-date-created" datetime="2023-08-11T14:43:19.000Z" title="发表于 2023-08-11 22:43:19">2023-08-11</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">更新于</span><time class="post-meta-date-updated" datetime="2023-08-12T16:25:51.414Z" title="更新于 2023-08-13 00:25:51">2023-08-13</time></span><span class="post-meta-categories"><span class="post-meta-separator">|</span><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/%E5%9B%BE%E5%83%8F%E5%A4%84%E7%90%86/">图像处理</a><i class="fas fa-angle-right post-meta-separator"></i><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/%E5%9B%BE%E5%83%8F%E5%A4%84%E7%90%86/opencv/">opencv</a></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-wordcount"><i class="far fa-file-word fa-fw post-meta-icon"></i><span class="post-meta-label">字数总计:</span><span class="word-count">3.6k</span><span class="post-meta-separator">|</span><i class="far fa-clock fa-fw post-meta-icon"></i><span class="post-meta-label">阅读时长:</span><span>13分钟</span></span><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title="基于Opencv的人体肤色检测"><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">阅读量:</span><span id="busuanzi_value_page_pv"><i class="fa-solid fa-spinner fa-spin"></i></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="post-content" id="article-container"><h2 id="前言">前言</h2>
+<p>opencv 中进行肤色检测的方法大致为以下五种方法。本文中的人体肤色以黄种人为例。</p>
+<h2 id="三种图像颜色空间">三种图像颜色空间</h2>
+<h3 id="rgb">RGB</h3>
+<p>RGB（红绿蓝）是依据人眼识别的颜色定义出的空间，可表示大部分颜色。但在科学研究一般不采用RGB颜色空间，因为它的细节难以进行数字化的调整。它将色调，亮度，饱和度三个量放在一起表示，很难分开。它是最通用的面向硬件的彩色模型。该模型用于彩色监视器和一大类彩色视频摄像。</p>
+<p>Opencv 采用的是 BGR，顺序不一样了而已。</p>
+<h3 id="hsv">HSV</h3>
+<p>RGB 是从<strong>硬件</strong>的角度提出的颜色模型，在与人眼匹配的过程中可能存在一定的差异，HSV色彩空间是一种<strong>面向视觉感知</strong>的颜色模型。</p>
+<p>HSV色彩空间从心理学和视觉的角度出发，指出人眼的色彩知觉主要包含三要素：色调（Hue，也称为色相）、饱和度（Saturation）、亮度（Value），色调指光的颜色，饱和度是指色彩的深浅程度，亮度指人眼感受到的光的明暗程度。</p>
+<p>HSV范围H：0~180  S：0~255  V：0~255</p>
+<p>**色调：**色调与混合光谱中的主要光波长相关，例如“赤橙黄绿青蓝紫”分别表示不同的色调。如果从波长的角度考虑，不同波长的光表现为不同的颜色，实际上它们体现的是色调的差异。</p>
+<p>**饱和度：**指相对纯净度，或一种颜色混合白光的数量。纯谱色是全饱和的，像深红色（红加白）和淡紫色（紫加白）这样的彩色是欠饱和的，饱和度与所加白光的数量成反比。</p>
+<p>**亮度：**反映的是人眼感受到的光的明暗程度，该指标与物体的反射度有关。对于色彩来讲，如果在其中掺入的白色越多，则其亮度越高；如果在其中掺入的黑色越多，则其亮度越低。</p>
+<h3 id="ycrcb">YCrCb</h3>
+<p>人眼视觉系统（HVS, Human Visual System）对颜色的敏感度要低于对亮度的敏感度。在传统的 RGB色彩空间内，RGB三原色具有相同的重要性，但是忽略了亮度信息。</p>
+<p>YCbCr 进行了图像子采样，是视频图像和数字图像中常用的色彩空间。Y 代表亮度，Cb 和 Cr 代表蓝色分量和红色分量。该模型的数据可以是双精度类型的，但存储空间为8位无符号整形数据空间。Y的取值范围为16~235，蓝红分量的取值范围为16~240。在通用的图像压缩算法中（如JPEG算法），首要的步骤就是将图像的颜色空间转换为YCbCr空间。</p>
+<h2 id="基于rgb颜色空间的阈值肤色识别">基于RGB颜色空间的阈值肤色识别</h2>
+<p>根据肤色在 RGB 颜色空间的分布，将满足点设为白色，范围外设为黑色，即可提取。</p>
+<p>在[human skin color clustering for face detection](<a target="_blank" rel="noopener" href="http://eprints.fri.uni-lj.si/2113/1/Human_Skin_Colour_Clustering_for_Face_Detection.pdf">EUROCON03.TEX (uni-lj.si)</a>)一文中 Jure Kovac, Peter Peer, and Franc Solina三人提出了肤色在 RGB 颜色空间的大致范围。</p>
+<p>在均匀光照下的肤色：</p>
+<p class='katex-block'><span class="katex-display"><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo fence="true">{</mo><mtable rowspacing="0.3599999999999999em" columnalign="left left" columnspacing="1em"><mtr><mtd><mstyle scriptlevel="0" displaystyle="false"><mrow><mi>R</mi><mo>&gt;</mo><mn>95</mn><mo separator="true">,</mo><mi>G</mi><mo>&gt;</mo><mn>40</mn><mo separator="true">,</mo><mi>B</mi><mo>&gt;</mo><mn>20</mn></mrow></mstyle></mtd></mtr><mtr><mtd><mstyle scriptlevel="0" displaystyle="false"><mrow><mi>R</mi><mo>&gt;</mo><mi>G</mi><mo separator="true">,</mo><mi>R</mi><mo>&gt;</mo><mi>B</mi></mrow></mstyle></mtd></mtr><mtr><mtd><mstyle scriptlevel="0" displaystyle="false"><mrow><mi>m</mi><mi>a</mi><mi>x</mi><mo stretchy="false">{</mo><mi>R</mi><mo separator="true">,</mo><mi>G</mi><mo separator="true">,</mo><mi>B</mi><mo stretchy="false">}</mo><mo>−</mo><mi>m</mi><mi>i</mi><mi>n</mi><mo stretchy="false">{</mo><mi>R</mi><mo separator="true">,</mo><mi>G</mi><mo separator="true">,</mo><mi>B</mi><mo stretchy="false">}</mo><mo>&gt;</mo><mn>15</mn></mrow></mstyle></mtd></mtr><mtr><mtd><mstyle scriptlevel="0" displaystyle="false"><mrow><mi mathvariant="normal">∣</mi><mi>R</mi><mo>−</mo><mi>G</mi><mi mathvariant="normal">∣</mi><mo>&gt;</mo><mn>15</mn></mrow></mstyle></mtd></mtr></mtable></mrow><annotation encoding="application/x-tex">\begin{cases} 
+
+R &gt; 95, G &gt; 40, B &gt; 20 \\[2ex]	
+R &gt; G, R &gt; B		   \\[2ex]
+max\{R,G,B\} - min\{R,G,B\} &gt; 15 \\[2ex]
+\vert R - G \vert &gt; 15
+
+\end{cases}
+</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:8.40004em;vertical-align:-3.9500200000000003em;"></span><span class="minner"><span class="mopen"><span class="delimsizing mult"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:4.45002em;"><span style="top:-0.09998999999999958em;"><span class="pstrut" style="height:3.15em;"></span><span class="delimsizinginner delim-size4"><span>⎩</span></span></span><span style="top:-0.09498999999999969em;"><span class="pstrut" style="height:3.15em;"></span><span class="delimsizinginner delim-size4"><span>⎪</span></span></span><span style="top:-0.3899899999999996em;"><span class="pstrut" style="height:3.15em;"></span><span class="delimsizinginner delim-size4"><span>⎪</span></span></span><span style="top:-0.6849899999999995em;"><span class="pstrut" style="height:3.15em;"></span><span class="delimsizinginner delim-size4"><span>⎪</span></span></span><span style="top:-0.9799899999999995em;"><span class="pstrut" style="height:3.15em;"></span><span class="delimsizinginner delim-size4"><span>⎪</span></span></span><span style="top:-1.2749899999999996em;"><span class="pstrut" style="height:3.15em;"></span><span class="delimsizinginner delim-size4"><span>⎪</span></span></span><span style="top:-1.5699899999999998em;"><span class="pstrut" style="height:3.15em;"></span><span class="delimsizinginner delim-size4"><span>⎪</span></span></span><span style="top:-1.86499em;"><span class="pstrut" style="height:3.15em;"></span><span class="delimsizinginner delim-size4"><span>⎪</span></span></span><span style="top:-2.15999em;"><span class="pstrut" style="height:3.15em;"></span><span class="delimsizinginner delim-size4"><span>⎪</span></span></span><span style="top:-2.20499em;"><span class="pstrut" style="height:3.15em;"></span><span class="delimsizinginner delim-size4"><span>⎪</span></span></span><span style="top:-3.15001em;"><span class="pstrut" style="height:3.15em;"></span><span class="delimsizinginner delim-size4"><span>⎨</span></span></span><span style="top:-4.2950099999999996em;"><span class="pstrut" style="height:3.15em;"></span><span class="delimsizinginner delim-size4"><span>⎪</span></span></span><span style="top:-4.59001em;"><span class="pstrut" style="height:3.15em;"></span><span class="delimsizinginner delim-size4"><span>⎪</span></span></span><span style="top:-4.88501em;"><span class="pstrut" style="height:3.15em;"></span><span class="delimsizinginner delim-size4"><span>⎪</span></span></span><span style="top:-5.18001em;"><span class="pstrut" style="height:3.15em;"></span><span class="delimsizinginner delim-size4"><span>⎪</span></span></span><span style="top:-5.47501em;"><span class="pstrut" style="height:3.15em;"></span><span class="delimsizinginner delim-size4"><span>⎪</span></span></span><span style="top:-5.77001em;"><span class="pstrut" style="height:3.15em;"></span><span class="delimsizinginner delim-size4"><span>⎪</span></span></span><span style="top:-6.06501em;"><span class="pstrut" style="height:3.15em;"></span><span class="delimsizinginner delim-size4"><span>⎪</span></span></span><span style="top:-6.36001em;"><span class="pstrut" style="height:3.15em;"></span><span class="delimsizinginner delim-size4"><span>⎪</span></span></span><span style="top:-6.40501em;"><span class="pstrut" style="height:3.15em;"></span><span class="delimsizinginner delim-size4"><span>⎪</span></span></span><span style="top:-6.700019999999999em;"><span class="pstrut" style="height:3.15em;"></span><span class="delimsizinginner delim-size4"><span>⎧</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:3.9500200000000003em;"><span></span></span></span></span></span></span><span class="mord"><span class="mtable"><span class="col-align-l"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:4.423em;"><span style="top:-6.423em;"><span class="pstrut" style="height:3.008em;"></span><span class="mord"><span class="mord mathdefault" style="margin-right:0.00773em;">R</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span><span class="mrel">&gt;</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span><span class="mord">9</span><span class="mord">5</span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.16666666666666666em;"></span><span class="mord mathdefault">G</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span><span class="mrel">&gt;</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span><span class="mord">4</span><span class="mord">0</span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.16666666666666666em;"></span><span class="mord mathdefault" style="margin-right:0.05017em;">B</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span><span class="mrel">&gt;</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span><span class="mord">2</span><span class="mord">0</span></span></span><span style="top:-4.121em;"><span class="pstrut" style="height:3.008em;"></span><span class="mord"><span class="mord mathdefault" style="margin-right:0.00773em;">R</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span><span class="mrel">&gt;</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span><span class="mord mathdefault">G</span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.16666666666666666em;"></span><span class="mord mathdefault" style="margin-right:0.00773em;">R</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span><span class="mrel">&gt;</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span><span class="mord mathdefault" style="margin-right:0.05017em;">B</span></span></span><span style="top:-1.819em;"><span class="pstrut" style="height:3.008em;"></span><span class="mord"><span class="mord mathdefault">m</span><span class="mord mathdefault">a</span><span class="mord mathdefault">x</span><span class="mopen">{</span><span class="mord mathdefault" style="margin-right:0.00773em;">R</span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.16666666666666666em;"></span><span class="mord mathdefault">G</span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.16666666666666666em;"></span><span class="mord mathdefault" style="margin-right:0.05017em;">B</span><span class="mclose">}</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span><span class="mbin">−</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span><span class="mord mathdefault">m</span><span class="mord mathdefault">i</span><span class="mord mathdefault">n</span><span class="mopen">{</span><span class="mord mathdefault" style="margin-right:0.00773em;">R</span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.16666666666666666em;"></span><span class="mord mathdefault">G</span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.16666666666666666em;"></span><span class="mord mathdefault" style="margin-right:0.05017em;">B</span><span class="mclose">}</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span><span class="mrel">&gt;</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span><span class="mord">1</span><span class="mord">5</span></span></span><span style="top:0.48300000000000043em;"><span class="pstrut" style="height:3.008em;"></span><span class="mord"><span class="mord">∣</span><span class="mord mathdefault" style="margin-right:0.00773em;">R</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span><span class="mbin">−</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span><span class="mord mathdefault">G</span><span class="mord">∣</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span><span class="mrel">&gt;</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span><span class="mord">1</span><span class="mord">5</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:3.9230000000000005em;"><span></span></span></span></span></span></span></span><span class="mclose nulldelimiter"></span></span></span></span></span></span></p>
+<p>在强光下的肤色：</p>
+<p class='katex-block'><span class="katex-display"><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo fence="true">{</mo><mtable rowspacing="0.3599999999999999em" columnalign="left left" columnspacing="1em"><mtr><mtd><mstyle scriptlevel="0" displaystyle="false"><mrow><mi>R</mi><mo>&gt;</mo><mn>220</mn><mo separator="true">,</mo><mi>G</mi><mo>&gt;</mo><mn>210</mn><mo separator="true">,</mo><mi>B</mi><mo>&gt;</mo><mn>170</mn></mrow></mstyle></mtd></mtr><mtr><mtd><mstyle scriptlevel="0" displaystyle="false"><mrow><mi>R</mi><mo>&gt;</mo><mi>B</mi><mo separator="true">,</mo><mi>G</mi><mo>&gt;</mo><mi>B</mi></mrow></mstyle></mtd></mtr><mtr><mtd><mstyle scriptlevel="0" displaystyle="false"><mrow><mi mathvariant="normal">∣</mi><mi>R</mi><mo>−</mo><mi>G</mi><mi mathvariant="normal">∣</mi><mo>≤</mo><mn>15</mn></mrow></mstyle></mtd></mtr></mtable></mrow><annotation encoding="application/x-tex">\begin{cases} 
+R &gt; 220, G &gt; 210, B &gt; 170 \\[2ex]
+R &gt; B, G &gt; B			  \\[2ex]
+\vert R - G \vert \leq15  \\[2ex]
+\end{cases}
+</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:6.906000000000001em;vertical-align:-3.203em;"></span><span class="minner"><span class="mopen"><span class="delimsizing mult"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:3.5500200000000004em;"><span style="top:-0.9999899999999999em;"><span class="pstrut" style="height:3.15em;"></span><span class="delimsizinginner delim-size4"><span>⎩</span></span></span><span style="top:-0.99499em;"><span class="pstrut" style="height:3.15em;"></span><span class="delimsizinginner delim-size4"><span>⎪</span></span></span><span style="top:-1.2899900000000002em;"><span class="pstrut" style="height:3.15em;"></span><span class="delimsizinginner delim-size4"><span>⎪</span></span></span><span style="top:-1.5849900000000003em;"><span class="pstrut" style="height:3.15em;"></span><span class="delimsizinginner delim-size4"><span>⎪</span></span></span><span style="top:-1.8799900000000005em;"><span class="pstrut" style="height:3.15em;"></span><span class="delimsizinginner delim-size4"><span>⎪</span></span></span><span style="top:-2.1749900000000006em;"><span class="pstrut" style="height:3.15em;"></span><span class="delimsizinginner delim-size4"><span>⎪</span></span></span><span style="top:-2.2049900000000004em;"><span class="pstrut" style="height:3.15em;"></span><span class="delimsizinginner delim-size4"><span>⎪</span></span></span><span style="top:-3.1500100000000004em;"><span class="pstrut" style="height:3.15em;"></span><span class="delimsizinginner delim-size4"><span>⎨</span></span></span><span style="top:-4.29501em;"><span class="pstrut" style="height:3.15em;"></span><span class="delimsizinginner delim-size4"><span>⎪</span></span></span><span style="top:-4.59001em;"><span class="pstrut" style="height:3.15em;"></span><span class="delimsizinginner delim-size4"><span>⎪</span></span></span><span style="top:-4.885010000000001em;"><span class="pstrut" style="height:3.15em;"></span><span class="delimsizinginner delim-size4"><span>⎪</span></span></span><span style="top:-5.180010000000001em;"><span class="pstrut" style="height:3.15em;"></span><span class="delimsizinginner delim-size4"><span>⎪</span></span></span><span style="top:-5.475010000000001em;"><span class="pstrut" style="height:3.15em;"></span><span class="delimsizinginner delim-size4"><span>⎪</span></span></span><span style="top:-5.50501em;"><span class="pstrut" style="height:3.15em;"></span><span class="delimsizinginner delim-size4"><span>⎪</span></span></span><span style="top:-5.80002em;"><span class="pstrut" style="height:3.15em;"></span><span class="delimsizinginner delim-size4"><span>⎧</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:3.05002em;"><span></span></span></span></span></span></span><span class="mord"><span class="mtable"><span class="col-align-l"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:3.7030000000000003em;"><span style="top:-5.703000000000001em;"><span class="pstrut" style="height:3.008em;"></span><span class="mord"><span class="mord mathdefault" style="margin-right:0.00773em;">R</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span><span class="mrel">&gt;</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span><span class="mord">2</span><span class="mord">2</span><span class="mord">0</span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.16666666666666666em;"></span><span class="mord mathdefault">G</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span><span class="mrel">&gt;</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span><span class="mord">2</span><span class="mord">1</span><span class="mord">0</span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.16666666666666666em;"></span><span class="mord mathdefault" style="margin-right:0.05017em;">B</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span><span class="mrel">&gt;</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span><span class="mord">1</span><span class="mord">7</span><span class="mord">0</span></span></span><span style="top:-3.4010000000000002em;"><span class="pstrut" style="height:3.008em;"></span><span class="mord"><span class="mord mathdefault" style="margin-right:0.00773em;">R</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span><span class="mrel">&gt;</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span><span class="mord mathdefault" style="margin-right:0.05017em;">B</span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.16666666666666666em;"></span><span class="mord mathdefault">G</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span><span class="mrel">&gt;</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span><span class="mord mathdefault" style="margin-right:0.05017em;">B</span></span></span><span style="top:-1.0990000000000002em;"><span class="pstrut" style="height:3.008em;"></span><span class="mord"><span class="mord">∣</span><span class="mord mathdefault" style="margin-right:0.00773em;">R</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span><span class="mbin">−</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span><span class="mord mathdefault">G</span><span class="mord">∣</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span><span class="mrel">≤</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span><span class="mord">1</span><span class="mord">5</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:3.203em;"><span></span></span></span></span></span></span></span><span class="mclose nulldelimiter"></span></span></span></span></span></span></p>
+<h3 id="代码">代码</h3>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="type">void</span> <span class="title">RGB_Detect</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">	Mat mask = Mat::<span class="built_in">zeros</span>(src.<span class="built_in">size</span>(), CV_8UC1);</span><br><span class="line"></span><br><span class="line">	<span class="keyword">for</span> (<span class="type">int</span> i = <span class="number">0</span>; i &lt; rows; i++)</span><br><span class="line">	&#123;</span><br><span class="line">		Vec3b* p_src = src.<span class="built_in">ptr</span>&lt;Vec3b&gt;(i);</span><br><span class="line">		<span class="keyword">for</span> (<span class="type">int</span> j = <span class="number">0</span>; j &lt; cols; j++)</span><br><span class="line">		&#123;</span><br><span class="line">			<span class="keyword">if</span> ((p_src[j](<span class="number">2</span>) &gt; <span class="number">95</span> &amp;&amp; p_src[j](<span class="number">1</span>) &gt; <span class="number">40</span> &amp;&amp; p_src[j](<span class="number">0</span>) &gt; <span class="number">20</span></span><br><span class="line">				&amp;&amp; p_src[j](<span class="number">2</span>) &gt; p_src[j](<span class="number">1</span>) &amp;&amp; p_src[j](<span class="number">2</span>) &gt; p_src[j](<span class="number">0</span>)</span><br><span class="line">				&amp;&amp; <span class="built_in">abs</span>(p_src[j](<span class="number">2</span>) - p_src[j](<span class="number">1</span>)) &gt; <span class="number">15</span></span><br><span class="line">				&amp;&amp; (<span class="built_in">MAX</span>(p_src[j](<span class="number">0</span>), <span class="built_in">MAX</span>(p_src[j](<span class="number">1</span>), p_src[j](<span class="number">2</span>))) - <span class="built_in">MIN</span>(p_src[j](<span class="number">0</span>), 							    			<span class="built_in">MIN</span>(p_src[j](<span class="number">1</span>), p_src[j](<span class="number">2</span>)))) &gt; <span class="number">15</span>)</span><br><span class="line">				|| (p_src[j](<span class="number">2</span>) &gt; <span class="number">220</span> &amp;&amp; p_src[j](<span class="number">1</span>) &gt; <span class="number">210</span> &amp;&amp; p_src[j](<span class="number">0</span>) &gt; <span class="number">170</span></span><br><span class="line">					&amp;&amp; p_src[j](<span class="number">2</span>) &gt; p_src[j](<span class="number">0</span>) &amp;&amp; p_src[j](<span class="number">1</span>) &gt; p_src[j](<span class="number">0</span>)</span><br><span class="line">					&amp;&amp; <span class="built_in">abs</span>(p_src[j](<span class="number">2</span>) - p_src[j](<span class="number">1</span>)) &lt;= <span class="number">15</span></span><br><span class="line">					))</span><br><span class="line">			&#123;</span><br><span class="line">				mask.<span class="built_in">at</span>&lt;uchar&gt;(i, j) = <span class="number">255</span>;</span><br><span class="line">			&#125;</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">	Mat rgb_detect;</span><br><span class="line">	src.<span class="built_in">copyTo</span>(rgb_detect, mask);</span><br><span class="line"></span><br><span class="line">	<span class="built_in">imshow</span>(<span class="string">&quot;rgb_mask&quot;</span>, mask);</span><br><span class="line">	<span class="built_in">imshow</span>(<span class="string">&quot;rgb_detect&quot;</span>, rgb_detect);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="基于hsv颜色空间的阈值肤色识别">基于HSV颜色空间的阈值肤色识别</h2>
+<p>在均匀光照下的肤色：</p>
+<p class='katex-block'><span class="katex-display"><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo fence="true">{</mo><mtable rowspacing="0.3599999999999999em" columnalign="left left" columnspacing="1em"><mtr><mtd><mstyle scriptlevel="0" displaystyle="false"><mrow><mn>0</mn><mo>≤</mo><mi>H</mi><mo>≤</mo><mn>20</mn></mrow></mstyle></mtd></mtr><mtr><mtd><mstyle scriptlevel="0" displaystyle="false"><mrow><mi>S</mi><mo>≥</mo><mn>48</mn></mrow></mstyle></mtd></mtr><mtr><mtd><mstyle scriptlevel="0" displaystyle="false"><mrow><mi>V</mi><mo>≥</mo><mn>50</mn></mrow></mstyle></mtd></mtr></mtable></mrow><annotation encoding="application/x-tex">\begin{cases}
+
+0 \leq H \leq 20 \\[2ex]
+S \geq 48        \\[2ex]
+V \geq 50
+
+\end{cases}
+</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:6.0440000000000005em;vertical-align:-2.772em;"></span><span class="minner"><span class="mopen"><span class="delimsizing mult"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:3.2500200000000006em;"><span style="top:-1.2999899999999998em;"><span class="pstrut" style="height:3.15em;"></span><span class="delimsizinginner delim-size4"><span>⎩</span></span></span><span style="top:-1.2949899999999999em;"><span class="pstrut" style="height:3.15em;"></span><span class="delimsizinginner delim-size4"><span>⎪</span></span></span><span style="top:-1.58999em;"><span class="pstrut" style="height:3.15em;"></span><span class="delimsizinginner delim-size4"><span>⎪</span></span></span><span style="top:-1.8849900000000002em;"><span class="pstrut" style="height:3.15em;"></span><span class="delimsizinginner delim-size4"><span>⎪</span></span></span><span style="top:-2.17999em;"><span class="pstrut" style="height:3.15em;"></span><span class="delimsizinginner delim-size4"><span>⎪</span></span></span><span style="top:-2.2049900000000004em;"><span class="pstrut" style="height:3.15em;"></span><span class="delimsizinginner delim-size4"><span>⎪</span></span></span><span style="top:-3.1500100000000004em;"><span class="pstrut" style="height:3.15em;"></span><span class="delimsizinginner delim-size4"><span>⎨</span></span></span><span style="top:-4.29501em;"><span class="pstrut" style="height:3.15em;"></span><span class="delimsizinginner delim-size4"><span>⎪</span></span></span><span style="top:-4.59001em;"><span class="pstrut" style="height:3.15em;"></span><span class="delimsizinginner delim-size4"><span>⎪</span></span></span><span style="top:-4.885010000000001em;"><span class="pstrut" style="height:3.15em;"></span><span class="delimsizinginner delim-size4"><span>⎪</span></span></span><span style="top:-5.180010000000001em;"><span class="pstrut" style="height:3.15em;"></span><span class="delimsizinginner delim-size4"><span>⎪</span></span></span><span style="top:-5.205010000000001em;"><span class="pstrut" style="height:3.15em;"></span><span class="delimsizinginner delim-size4"><span>⎪</span></span></span><span style="top:-5.50002em;"><span class="pstrut" style="height:3.15em;"></span><span class="delimsizinginner delim-size4"><span>⎧</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:2.75002em;"><span></span></span></span></span></span></span><span class="mord"><span class="mtable"><span class="col-align-l"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:3.2720000000000002em;"><span style="top:-5.272em;"><span class="pstrut" style="height:3.008em;"></span><span class="mord"><span class="mord">0</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span><span class="mrel">≤</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span><span class="mord mathdefault" style="margin-right:0.08125em;">H</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span><span class="mrel">≤</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span><span class="mord">2</span><span class="mord">0</span></span></span><span style="top:-2.97em;"><span class="pstrut" style="height:3.008em;"></span><span class="mord"><span class="mord mathdefault" style="margin-right:0.05764em;">S</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span><span class="mrel">≥</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span><span class="mord">4</span><span class="mord">8</span></span></span><span style="top:-0.6680000000000003em;"><span class="pstrut" style="height:3.008em;"></span><span class="mord"><span class="mord mathdefault" style="margin-right:0.22222em;">V</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span><span class="mrel">≥</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span><span class="mord">5</span><span class="mord">0</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:2.772em;"><span></span></span></span></span></span></span></span><span class="mclose nulldelimiter"></span></span></span></span></span></span></p>
+<h3 id="代码">代码</h3>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="type">void</span> <span class="title">HSV_Detect</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">	Mat hsv_img;</span><br><span class="line">	<span class="built_in">cvtColor</span>(src, hsv_img, COLOR_BGR2HSV);</span><br><span class="line">	<span class="comment">//imshow(&quot;hsv&quot;, hsv_img);</span></span><br><span class="line">	Mat mask = Mat::<span class="built_in">zeros</span>(src.<span class="built_in">size</span>(), CV_8UC1);</span><br><span class="line"></span><br><span class="line">	<span class="keyword">for</span> (<span class="type">int</span> i = <span class="number">0</span>; i &lt; rows; i++)</span><br><span class="line">	&#123;</span><br><span class="line">		Vec3b* p_src = hsv_img.<span class="built_in">ptr</span>&lt;Vec3b&gt;(i);</span><br><span class="line">		<span class="keyword">for</span> (<span class="type">int</span> j = <span class="number">0</span>; j &lt; cols; j++)</span><br><span class="line">		&#123;</span><br><span class="line">			<span class="keyword">if</span> (p_src[j](<span class="number">0</span>) &gt;= <span class="number">0</span> &amp;&amp; p_src[j](<span class="number">0</span>) &lt;= <span class="number">20</span></span><br><span class="line">				&amp;&amp; p_src[j](<span class="number">1</span>) &gt;= <span class="number">48</span> &amp;&amp; p_src[j](<span class="number">2</span>) &gt;= <span class="number">50</span>)</span><br><span class="line">			&#123;</span><br><span class="line">				mask.<span class="built_in">at</span>&lt;uchar&gt;(i, j) = <span class="number">255</span>;</span><br><span class="line">			&#125;</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">	</span><br><span class="line">	Mat hsv_detect;</span><br><span class="line">	src.<span class="built_in">copyTo</span>(hsv_detect, mask);</span><br><span class="line"></span><br><span class="line">	<span class="built_in">imshow</span>(<span class="string">&quot;hsv_mask&quot;</span>, mask);</span><br><span class="line">	<span class="built_in">imshow</span>(<span class="string">&quot;hsv_detect&quot;</span>, hsv_detect);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="基于ycrcb颜色空间的阈值肤色识别">基于YCrCb颜色空间的阈值肤色识别</h2>
+<p>正常黄种人的 Cr 分量大约在 140 至 175 之间，Cb 分量大约在 100 至 120 之间。</p>
+<h3 id="代码">代码</h3>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="type">void</span> <span class="title">YCrCb_range_Detect</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">	Mat ycrcb_img;</span><br><span class="line">	<span class="built_in">cvtColor</span>(src, ycrcb_img, COLOR_BGR2YCrCb);</span><br><span class="line">	Mat mask = Mat::<span class="built_in">zeros</span>(src.<span class="built_in">size</span>(), CV_8UC1);</span><br><span class="line">	<span class="keyword">for</span> (<span class="type">int</span> i = <span class="number">0</span>; i &lt; rows; i++)</span><br><span class="line">	&#123;</span><br><span class="line">		Vec3b* p_src = ycrcb_img.<span class="built_in">ptr</span>&lt;Vec3b&gt;(i);</span><br><span class="line">		<span class="keyword">for</span> (<span class="type">int</span> j = <span class="number">0</span>; j &lt; cols; j++)</span><br><span class="line">		&#123;</span><br><span class="line">			<span class="keyword">if</span> (p_src[j](<span class="number">2</span>) &gt;= <span class="number">77</span> &amp;&amp; p_src[j](<span class="number">2</span>) &lt;= <span class="number">130</span> &amp;&amp; p_src[j](<span class="number">1</span>) &gt;= <span class="number">133</span> &amp;&amp; p_src[j](<span class="number">1</span>) &lt;= <span class="number">173</span>)</span><br><span class="line">			&#123;</span><br><span class="line">				mask.<span class="built_in">at</span>&lt;uchar&gt;(i, j) = <span class="number">255</span>;</span><br><span class="line">			&#125;</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">	Mat ycrcb_detect;</span><br><span class="line">	src.<span class="built_in">copyTo</span>(ycrcb_detect, mask);</span><br><span class="line"></span><br><span class="line">	<span class="built_in">imshow</span>(<span class="string">&quot;ycrcb_mask&quot;</span>, mask);</span><br><span class="line">	<span class="built_in">imshow</span>(<span class="string">&quot;ycrcb_detect&quot;</span>, ycrcb_detect);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="基于ycrcb颜色空间和椭圆皮肤模型的皮肤识别">基于YCrCb颜色空间和椭圆皮肤模型的皮肤识别</h2>
+<p>研究发现，将皮肤映射到 YCrCb空间，则**在 YCrCb空间中皮肤的像素点近似成一个椭圆的分布。**因此如果我们得到了一个 CrCb 的椭圆，对于一个点的坐标（Cr, Cb），我们只需判断它是否在椭圆内（包括边界）就可以得知它是不是肤色点。</p>
+<p>该算法对于光线的敏感性没有这么高，基本上该检测到的皮肤都能够检测到，抗干扰能力相对较强。（原因大概是 YCrCb 中 Y分量表示明亮度，而“Cr”和“Cb” 表示的则是色度，作用是描述影像色彩及饱和度）</p>
+<p>肤色区域的颜色与亮度成非线性函数关系，在低亮度条件下，YCbCr 空间中色度的聚类性会随 Y 呈非线性变换降低。为了使肤色聚类不受亮度 Y 的影响并将 YCbCr 颜色空间中的色度 Cb、Cr进行非线性变换，在研究 YCbCr 颜色空间的肤色聚类情况的基础上，去掉高光阴影部分（即 Y 的最大最小值），YCbCr 空间色度非线性变换过程中，用 Cb·· Y 、 Cr·· Y 表示肤色区域的中轴线，肤色区域的宽度分别用 Vcb、Vcr 表示。</p>
+<p>即将图像转化到YCbCr 空间并且在CbCr平面进行投影，因此我们采集了肤色的样本点，将其投影到此平面，并且投影后，我们进行了相应的非线性变换K-L变换</p>
+<p><img src="ellipse.jpg" alt="ellipse"></p>
+<p>统计椭圆模型</p>
+<p><img src="ellipseInfer.jpg" alt="ellipseInfer"></p>
+<p>我们是用一副图像来存储上面的椭圆的，而不是直接采用椭圆数学方程。该图像是二值图像，即椭圆区域内部为白色，其它地方为黑色。所以当其需要判断其它像素点时，只需将该像素点转换成 Cr，Cb 两个坐标，然后在上面的椭圆中找到该坐标的值，如果非 0，则为皮肤，反之亦然。</p>
+<p>代码中直接采用 opencv 自带的绘制椭圆的 api 进行绘制。</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">Mat skinCrCbHist = Mat::<span class="built_in">zeros</span>(<span class="built_in">Size</span>(<span class="number">256</span>, <span class="number">256</span>), CV_8UC1); <span class="comment">// CrCb两个坐标轴的空间</span></span><br><span class="line">	<span class="comment">// 画一个填充的椭圆（白色）底色为黑色</span></span><br><span class="line">	<span class="built_in">ellipse</span>(skinCrCbHist, <span class="built_in">Point</span>(<span class="number">113</span>, <span class="number">155.6</span>), <span class="built_in">Size</span>(<span class="number">23.4</span>, <span class="number">15.2</span>), <span class="number">43.0</span>, <span class="number">0.0</span>, <span class="number">360.0</span>, Scalar::<span class="built_in">all</span>(<span class="number">255</span>), <span class="number">-1</span>);</span><br></pre></td></tr></table></figure>
+<h3 id="代码">代码</h3>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="type">void</span> <span class="title">YCrCb_ellipse_Detect</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">	Mat ycrcb_img;</span><br><span class="line">	<span class="built_in">cvtColor</span>(src, ycrcb_img, COLOR_BGR2YCrCb);</span><br><span class="line"></span><br><span class="line">	Mat skinCrCbHist = Mat::<span class="built_in">zeros</span>(<span class="built_in">Size</span>(<span class="number">256</span>, <span class="number">256</span>), CV_8UC1); <span class="comment">// CrCb两个坐标轴的空间</span></span><br><span class="line">	<span class="comment">// 画一个填充的椭圆（白色）底色为黑色</span></span><br><span class="line">	<span class="built_in">ellipse</span>(skinCrCbHist, <span class="built_in">Point</span>(<span class="number">113</span>, <span class="number">155.6</span>), <span class="built_in">Size</span>(<span class="number">23.4</span>, <span class="number">15.2</span>), <span class="number">43.0</span>, <span class="number">0.0</span>, <span class="number">360.0</span>, Scalar::<span class="built_in">all</span>(<span class="number">255</span>), <span class="number">-1</span>);</span><br><span class="line">	</span><br><span class="line">	Mat mask = Mat::<span class="built_in">zeros</span>(src.<span class="built_in">size</span>(), CV_8UC1);</span><br><span class="line"></span><br><span class="line">	<span class="keyword">for</span> (<span class="type">int</span> i = <span class="number">0</span>; i &lt; rows; i++)</span><br><span class="line">	&#123;</span><br><span class="line">		Vec3b* p_src = ycrcb_img.<span class="built_in">ptr</span>&lt;Vec3b&gt;(i);</span><br><span class="line">		<span class="keyword">for</span> (<span class="type">int</span> j = <span class="number">0</span>; j &lt; cols; j++)</span><br><span class="line">		&#123;</span><br><span class="line">			<span class="comment">// 落在椭圆模型内，则认为是皮肤</span></span><br><span class="line">			<span class="comment">// &lt;uchar&gt;(row, col) 而椭圆模型是以 Cb为横轴，Cr为纵轴</span></span><br><span class="line">			<span class="comment">// row -&gt; y, col - &gt; x，因此应该为&lt;uchar&gt;(Cr, Cb)</span></span><br><span class="line">			<span class="keyword">if</span> (skinCrCbHist.<span class="built_in">at</span>&lt;uchar&gt;(p_src[j](<span class="number">1</span>), p_src[j](<span class="number">2</span>)) &gt; <span class="number">0</span>)</span><br><span class="line">			&#123;</span><br><span class="line">				mask.<span class="built_in">at</span>&lt;uchar&gt;(i, j) = <span class="number">255</span>;</span><br><span class="line">			&#125;</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">	Mat ycrcb_ellipse_detect;</span><br><span class="line">	src.<span class="built_in">copyTo</span>(ycrcb_ellipse_detect, mask);</span><br><span class="line"></span><br><span class="line">	<span class="built_in">imshow</span>(<span class="string">&quot;skinCrCbHist&quot;</span>, skinCrCbHist);</span><br><span class="line">	<span class="built_in">imshow</span>(<span class="string">&quot;ycrcb_ellipse_mask&quot;</span>, mask);</span><br><span class="line">	<span class="built_in">imshow</span>(<span class="string">&quot;ycrcb_ellipse_detect&quot;</span>, ycrcb_ellipse_detect);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="基于ycbcr颜色空间的otsu阈值肤色识别">基于YCbCr颜色空间的Otsu阈值肤色识别</h2>
+<p>实现步骤很简单：实现 OTSU 阈值分割一般也是直接采用 opencv 自带的 api。</p>
+<ol>
+<li>
+<p>将 RGB图像转换到 YCrCb颜色空间，提取 Cr分量图像</p>
+</li>
+<li>
+<p>对 Cr 做自二值化阈值分割处理（Otsu法）</p>
+</li>
+</ol>
+<h3 id="otsu阈值法原理">OTSU阈值法原理</h3>
+<p>OTSU算法（大津法或最大类间方差法）使用的是<strong>聚类的思想</strong>，把图像的灰度数按灰度级分成 2 个部分，使得两个部分之间的灰度值差异最大，每个部分之间的灰度差异最小，通过方差的计算来寻找一个合适的灰度级别来划分。所以可以在二值化的时候采用 OTSU算法来自动选取阈值进行二值化。Otsu算法被认为是图像分割中阈值选取的最佳算法，<strong>计算简单，不受图像亮度和对比度的影响</strong>。因此，使类间方差最大的分割意味着错分概率最小。</p>
+<p>OTSU方法可以形象地理解为：求取直方图有两个峰值的图像中那两个峰值之间的<strong>低谷值T</strong></p>
+<p><strong>OTSU算法步骤：</strong></p>
+<ol>
+<li>统计灰度级中每个像素在整幅图像中的个数</li>
+<li>计算每个像素在整幅图像的概率分布</li>
+<li>对灰度级进行遍历搜索，计算当前灰度值下前景背景类间概率</li>
+<li>通过目标函数计算类间方差下对应的阈值（选择最大方差对应的阈值）</li>
+</ol>
+<table>
+<thead>
+<tr>
+<th style="text-align:center">参数</th>
+<th style="text-align:center">含义</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center">$ w_0 $</td>
+<td style="text-align:center">分开后前景像素点数占图像的比例</td>
+</tr>
+<tr>
+<td style="text-align:center">$ u_0 $</td>
+<td style="text-align:center">分开后前景像素点的平均灰度</td>
+</tr>
+<tr>
+<td style="text-align:center">$ w_1 $</td>
+<td style="text-align:center">分开后背景像素点数占图像的比例</td>
+</tr>
+<tr>
+<td style="text-align:center">$ u_1 $</td>
+<td style="text-align:center">分开后背景像素点的平均灰度</td>
+</tr>
+</tbody>
+</table>
+<p>设 t 为设定的阈值，图像总平均灰度为：</p>
+<p class='katex-block'><span class="katex-display"><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>u</mi><mo>=</mo><msub><mi>w</mi><mn>0</mn></msub><mo>∗</mo><msub><mi>u</mi><mn>0</mn></msub><mo>+</mo><msub><mi>w</mi><mn>1</mn></msub><mo>∗</mo><msub><mi>u</mi><mn>1</mn></msub></mrow><annotation encoding="application/x-tex">u=w_0*u_0+w_1*u_1
+</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.43056em;vertical-align:0em;"></span><span class="mord mathdefault">u</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span></span><span class="base"><span class="strut" style="height:0.61528em;vertical-align:-0.15em;"></span><span class="mord"><span class="mord mathdefault" style="margin-right:0.02691em;">w</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.30110799999999993em;"><span style="top:-2.5500000000000003em;margin-left:-0.02691em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight">0</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.2222222222222222em;"></span><span class="mbin">∗</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span></span><span class="base"><span class="strut" style="height:0.73333em;vertical-align:-0.15em;"></span><span class="mord"><span class="mord mathdefault">u</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.30110799999999993em;"><span style="top:-2.5500000000000003em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight">0</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.2222222222222222em;"></span><span class="mbin">+</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span></span><span class="base"><span class="strut" style="height:0.61528em;vertical-align:-0.15em;"></span><span class="mord"><span class="mord mathdefault" style="margin-right:0.02691em;">w</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.30110799999999993em;"><span style="top:-2.5500000000000003em;margin-left:-0.02691em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight">1</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.2222222222222222em;"></span><span class="mbin">∗</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span></span><span class="base"><span class="strut" style="height:0.58056em;vertical-align:-0.15em;"></span><span class="mord"><span class="mord mathdefault">u</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.30110799999999993em;"><span style="top:-2.5500000000000003em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight">1</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span></span></span></span></span></p>
+<p>从 L 个灰度级遍历 t，使得 t 为某个值的时候，前景和背景的方差最大，则这个 t 值便是我们要求得的阈值。其中，方差 g 的计算公式如下：</p>
+<p class='katex-block'><span class="katex-display"><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>g</mi><mo>=</mo><msub><mi>w</mi><mn>0</mn></msub><mo stretchy="false">(</mo><msub><mi>u</mi><mn>0</mn></msub><mo>−</mo><mi>u</mi><mo stretchy="false">)</mo><mo stretchy="false">(</mo><msub><mi>u</mi><mn>0</mn></msub><mo>−</mo><mi>u</mi><mo stretchy="false">)</mo><mo>+</mo><msub><mi>w</mi><mn>1</mn></msub><mo stretchy="false">(</mo><msub><mi>u</mi><mn>1</mn></msub><mo>−</mo><mi>u</mi><mo stretchy="false">)</mo><mo stretchy="false">(</mo><msub><mi>u</mi><mn>1</mn></msub><mo>−</mo><mi>u</mi><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">g = w_0(u_0 - u)(u_0 - u) + w_1(u_1 - u)(u_1 - u)
+</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.625em;vertical-align:-0.19444em;"></span><span class="mord mathdefault" style="margin-right:0.03588em;">g</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span></span><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord"><span class="mord mathdefault" style="margin-right:0.02691em;">w</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.30110799999999993em;"><span style="top:-2.5500000000000003em;margin-left:-0.02691em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight">0</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mopen">(</span><span class="mord"><span class="mord mathdefault">u</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.30110799999999993em;"><span style="top:-2.5500000000000003em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight">0</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.2222222222222222em;"></span><span class="mbin">−</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span></span><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathdefault">u</span><span class="mclose">)</span><span class="mopen">(</span><span class="mord"><span class="mord mathdefault">u</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.30110799999999993em;"><span style="top:-2.5500000000000003em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight">0</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.2222222222222222em;"></span><span class="mbin">−</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span></span><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathdefault">u</span><span class="mclose">)</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span><span class="mbin">+</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span></span><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord"><span class="mord mathdefault" style="margin-right:0.02691em;">w</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.30110799999999993em;"><span style="top:-2.5500000000000003em;margin-left:-0.02691em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight">1</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mopen">(</span><span class="mord"><span class="mord mathdefault">u</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.30110799999999993em;"><span style="top:-2.5500000000000003em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight">1</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.2222222222222222em;"></span><span class="mbin">−</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span></span><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathdefault">u</span><span class="mclose">)</span><span class="mopen">(</span><span class="mord"><span class="mord mathdefault">u</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.30110799999999993em;"><span style="top:-2.5500000000000003em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight">1</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.2222222222222222em;"></span><span class="mbin">−</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span></span><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathdefault">u</span><span class="mclose">)</span></span></span></span></span></p>
+<p>减少计算量可采用：</p>
+<p class='katex-block'><span class="katex-display"><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>g</mi><mo>=</mo><msub><mi>w</mi><mn>0</mn></msub><msub><mi>w</mi><mn>1</mn></msub><mo stretchy="false">(</mo><msub><mi>u</mi><mn>0</mn></msub><mo>−</mo><msub><mi>u</mi><mn>1</mn></msub><mo stretchy="false">)</mo><mo stretchy="false">(</mo><msub><mi>u</mi><mn>0</mn></msub><mo>−</mo><msub><mi>u</mi><mn>1</mn></msub><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">g = w_0w_1(u_0 - u_1)(u_0 - u_1)
+</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.625em;vertical-align:-0.19444em;"></span><span class="mord mathdefault" style="margin-right:0.03588em;">g</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span></span><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord"><span class="mord mathdefault" style="margin-right:0.02691em;">w</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.30110799999999993em;"><span style="top:-2.5500000000000003em;margin-left:-0.02691em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight">0</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mord"><span class="mord mathdefault" style="margin-right:0.02691em;">w</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.30110799999999993em;"><span style="top:-2.5500000000000003em;margin-left:-0.02691em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight">1</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mopen">(</span><span class="mord"><span class="mord mathdefault">u</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.30110799999999993em;"><span style="top:-2.5500000000000003em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight">0</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.2222222222222222em;"></span><span class="mbin">−</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span></span><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord"><span class="mord mathdefault">u</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.30110799999999993em;"><span style="top:-2.5500000000000003em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight">1</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mclose">)</span><span class="mopen">(</span><span class="mord"><span class="mord mathdefault">u</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.30110799999999993em;"><span style="top:-2.5500000000000003em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight">0</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.2222222222222222em;"></span><span class="mbin">−</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span></span><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord"><span class="mord mathdefault">u</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.30110799999999993em;"><span style="top:-2.5500000000000003em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight">1</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mclose">)</span></span></span></span></span></p>
+<h3 id="代码">代码</h3>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="type">void</span> <span class="title">YCrCb_otsu_Detect</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">	Mat ycrcb_img;</span><br><span class="line">	<span class="built_in">cvtColor</span>(src, ycrcb_img, COLOR_BGR2YCrCb);</span><br><span class="line">	<span class="comment">// 分离通道 提取Cr分量</span></span><br><span class="line">	vector&lt;Mat&gt; channels;</span><br><span class="line">	<span class="built_in">split</span>(ycrcb_img, channels);</span><br><span class="line">	</span><br><span class="line">	Mat cr_img = channels[<span class="number">1</span>];</span><br><span class="line">	<span class="built_in">threshold</span>(cr_img, cr_img, <span class="number">0</span>, <span class="number">255</span>, THRESH_BINARY | THRESH_OTSU);</span><br><span class="line">	</span><br><span class="line">	Mat ycrcb_otsu_detect;</span><br><span class="line">	src.<span class="built_in">copyTo</span>(ycrcb_otsu_detect, cr_img);</span><br><span class="line">	<span class="built_in">imshow</span>(<span class="string">&quot;cr_img&quot;</span>, cr_img);</span><br><span class="line">	<span class="built_in">imshow</span>(<span class="string">&quot;ycrcb_otsu_detect&quot;</span>, ycrcb_otsu_detect);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="opencv自带的函数">OpenCV自带的函数</h2>
+<p>看到一些博客都会讲到 官方自带的 api：CvAdaptiveSkinDetector，但是我这个版本（4.6.0）并没有找到这个 api。</p>
+<h2 id="实验图">实验图</h2>
+<p>这里只是简单的模拟了不同环境：正常下、黑暗下、灯光下、阳光下。实际上还需要大量的数据集进行测试，不是专门搞这方面，懒得找了。另外代码里的一些颜色范围是可以进行调整的，下图都是在各自实现方法相同的参数下实现，这里没有给出调参的对比。另外别问为什么都是手部的检测，因为做这个实验主要是为了下个实验做准备，哈哈哈。</p>
+<p><img src="hand_normal.png" alt="hand_normal"></p>
+<p><img src="hand_dark.png" alt="hand_dark"></p>
+<p><img src="hand_lighting.png" alt="hand_lighting"></p>
+<p><img src="hand_sunshine.png" alt="hand_sunshine"></p>
+<p>容易看出</p>
+<ul>
+<li>基于 RGB 颜色空间的阈值肤色识别太受光线的影响了，背景杂质也好多。</li>
+<li>基于 HSV 颜色空间的阈值肤色识别得出的结果也挺差的，背景杂质也好多，不过比 RGB 的方法好些。</li>
+<li>基于 YCrCb 颜色空间的阈值肤色识别比前两种好一些。</li>
+<li>基于肤色椭圆模型的算法的皮肤检测基本上该检测的皮肤都检测到了，对光线的抗干扰能力也是比较强的，检测出来的图像都比较干净，背景杂质较少。但是有时候</li>
+<li>基于 YCrCb 颜色空间 Cr 分量 + Otsu 法阈值分割的皮肤检测，这种经过多张图片实现发现效果是最好的，检测出来的图像杂质一般较少，也比较完整。不过这种方法调参比较的麻烦，我是采用 opencv 自带的 api 实现的，但用到的 api 基本是调不了什么参数的，真要调参数可能需要手动实现。</li>
+</ul>
+<p>总结：对于以上几种方法，如果单纯采用颜色空间的阈值进行识别的话，个人觉得采用 YCrCb 的方法会好一些，所以我觉得剩后三种方法来根据不同环境进行选择。</p>
+<h2 id="参考资料">参考资料</h2>
+<blockquote>
+<p><a target="_blank" rel="noopener" href="https://blog.csdn.net/qq_22527639/article/details/81501565">Opencv暑期历程–Day10（6种肤色检测方法，YCrCb肤色模型解释，再理解一遍掩模）_ellipse皮肤模型安装___计算机小白__的博客-CSDN博客</a></p>
+<p><a target="_blank" rel="noopener" href="https://blog.csdn.net/qq_21743659/article/details/119883944">OpenCV — 皮肤检测技术_鱼儿-1226的博客-CSDN博客</a></p>
+<p><a target="_blank" rel="noopener" href="https://blog.csdn.net/yangtrees/article/details/8269984">学习OpenCV——肤色检测：椭圆模型 （&amp;最大连通区域）_椭圆肤色检测_小熊不去实验室的博客-CSDN博客</a></p>
+</blockquote>
+</article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta">文章作者: </span><span class="post-copyright-info"><a href="obito.top">Obito</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta">文章链接: </span><span class="post-copyright-info"><a href="http://www.obito.top/2023/08/11/%E5%9F%BA%E4%BA%8EOpencv%E7%9A%84%E4%BA%BA%E4%BD%93%E8%82%A4%E8%89%B2%E6%A3%80%E6%B5%8B/">http://www.obito.top/2023/08/11/基于Opencv的人体肤色检测/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta">版权声明: </span><span class="post-copyright-info">本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">CC BY-NC-SA 4.0</a> 许可协议。转载请注明来自 <a href="http://www.obito.top" target="_blank">Obito Blog</a>！</span></div></div><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/opencv/">opencv</a></div><div class="post_share"><div class="social-share" data-image="/img/scenery_01.webp" data-sites="facebook,twitter,wechat,weibo,qq"></div><link rel="stylesheet" href="/pluginsSrc/butterfly-extsrc/sharejs/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="/pluginsSrc/butterfly-extsrc/sharejs/dist/js/social-share.min.js" defer></script></div></div><nav class="pagination-post" id="pagination"><div class="prev-post pull-left"><a href="/2023/08/14/%E5%9F%BA%E4%BA%8EOpencv%E7%9A%84%E6%89%8B%E5%8A%BF%E8%AF%86%E5%88%AB/" title="基于Opencv的手势识别"><img class="cover" src="/img/scenery_03.jpg" onerror="onerror=null;src='/img/error.png'" alt="cover of previous post"><div class="pagination-info"><div class="label">上一篇</div><div class="prev_info">基于Opencv的手势识别</div></div></a></div><div class="next-post pull-right"><a href="/2023/08/10/%E5%9F%BA%E4%BA%8EHarrcascades%E7%9A%84%E4%BA%BA%E8%84%B8%E8%AF%86%E5%88%AB/" title="基于Harrcascades的人脸识别"><img class="cover" src="/img/scenery_11.jpg" onerror="onerror=null;src='/img/error.png'" alt="cover of next post"><div class="pagination-info"><div class="label">下一篇</div><div class="next_info">基于Harrcascades的人脸识别</div></div></a></div></nav><div class="relatedPosts"><div class="headline"><i class="fas fa-thumbs-up fa-fw"></i><span>相关推荐</span></div><div class="relatedPosts-list"><div><a href="/2023/08/10/%E5%9F%BA%E4%BA%8EHarrcascades%E7%9A%84%E4%BA%BA%E8%84%B8%E8%AF%86%E5%88%AB/" title="基于Harrcascades的人脸识别"><img class="cover" src="/img/scenery_11.jpg" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2023-08-10</div><div class="title">基于Harrcascades的人脸识别</div></div></a></div><div><a href="/2023/08/09/%E5%9F%BA%E4%BA%8EOpencv%E7%9A%84%E5%BD%A2%E7%8A%B6%E8%AF%86%E5%88%AB/" title="基于Opencv的形状识别"><img class="cover" src="/img/scenery_11.jpg" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2023-08-09</div><div class="title">基于Opencv的形状识别</div></div></a></div><div><a href="/2023/08/14/%E5%9F%BA%E4%BA%8EOpencv%E7%9A%84%E6%89%8B%E5%8A%BF%E8%AF%86%E5%88%AB/" title="基于Opencv的手势识别"><img class="cover" src="/img/scenery_03.jpg" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2023-08-14</div><div class="title">基于Opencv的手势识别</div></div></a></div><div><a href="/2023/08/01/%E5%9F%BA%E4%BA%8EOpencv%E7%9A%84%E8%BD%A6%E9%81%93%E7%BA%BF%E6%A3%80%E6%B5%8B/" title="基于Opencv的车道线检测"><img class="cover" src="/2023/08/01/%E5%9F%BA%E4%BA%8EOpencv%E7%9A%84%E8%BD%A6%E9%81%93%E7%BA%BF%E6%A3%80%E6%B5%8B/scenery_01.webp" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2023-08-01</div><div class="title">基于Opencv的车道线检测</div></div></a></div></div></div><hr class="custom-hr"/><div id="post-comment"><div class="comment-head"><div class="comment-headline"><i class="fas fa-comments fa-fw"></i><span> 评论</span></div></div><div class="comment-wrap"><div><div id="twikoo-wrap"></div></div></div></div></div><div class="aside-content" id="aside-content"><div class="card-widget card-info"><div class="is-center"><div class="avatar-img"><img src="/img/head.jpg" onerror="this.onerror=null;this.src='/null'" alt="avatar"/></div><div class="author-info__name">Obito</div><div class="author-info__description">保持初心</div></div><div class="card-info-data site-data is-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">43</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">13</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">13</div></a></div><a id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/OBITOoaoa"><i class="fab fa-github"></i><span>Follow Me</span></a></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>目录</span><span class="toc-percentage"></span></div><div class="toc-content"><ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%89%8D%E8%A8%80"><span class="toc-text">前言</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%89%E7%A7%8D%E5%9B%BE%E5%83%8F%E9%A2%9C%E8%89%B2%E7%A9%BA%E9%97%B4"><span class="toc-text">三种图像颜色空间</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#rgb"><span class="toc-text">RGB</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#hsv"><span class="toc-text">HSV</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#ycrcb"><span class="toc-text">YCrCb</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%9F%BA%E4%BA%8Ergb%E9%A2%9C%E8%89%B2%E7%A9%BA%E9%97%B4%E7%9A%84%E9%98%88%E5%80%BC%E8%82%A4%E8%89%B2%E8%AF%86%E5%88%AB"><span class="toc-text">基于RGB颜色空间的阈值肤色识别</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BB%A3%E7%A0%81"><span class="toc-text">代码</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%9F%BA%E4%BA%8Ehsv%E9%A2%9C%E8%89%B2%E7%A9%BA%E9%97%B4%E7%9A%84%E9%98%88%E5%80%BC%E8%82%A4%E8%89%B2%E8%AF%86%E5%88%AB"><span class="toc-text">基于HSV颜色空间的阈值肤色识别</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BB%A3%E7%A0%81"><span class="toc-text">代码</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%9F%BA%E4%BA%8Eycrcb%E9%A2%9C%E8%89%B2%E7%A9%BA%E9%97%B4%E7%9A%84%E9%98%88%E5%80%BC%E8%82%A4%E8%89%B2%E8%AF%86%E5%88%AB"><span class="toc-text">基于YCrCb颜色空间的阈值肤色识别</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BB%A3%E7%A0%81"><span class="toc-text">代码</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%9F%BA%E4%BA%8Eycrcb%E9%A2%9C%E8%89%B2%E7%A9%BA%E9%97%B4%E5%92%8C%E6%A4%AD%E5%9C%86%E7%9A%AE%E8%82%A4%E6%A8%A1%E5%9E%8B%E7%9A%84%E7%9A%AE%E8%82%A4%E8%AF%86%E5%88%AB"><span class="toc-text">基于YCrCb颜色空间和椭圆皮肤模型的皮肤识别</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BB%A3%E7%A0%81"><span class="toc-text">代码</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%9F%BA%E4%BA%8Eycbcr%E9%A2%9C%E8%89%B2%E7%A9%BA%E9%97%B4%E7%9A%84otsu%E9%98%88%E5%80%BC%E8%82%A4%E8%89%B2%E8%AF%86%E5%88%AB"><span class="toc-text">基于YCbCr颜色空间的Otsu阈值肤色识别</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#otsu%E9%98%88%E5%80%BC%E6%B3%95%E5%8E%9F%E7%90%86"><span class="toc-text">OTSU阈值法原理</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BB%A3%E7%A0%81"><span class="toc-text">代码</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#opencv%E8%87%AA%E5%B8%A6%E7%9A%84%E5%87%BD%E6%95%B0"><span class="toc-text">OpenCV自带的函数</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%AE%9E%E9%AA%8C%E5%9B%BE"><span class="toc-text">实验图</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%8F%82%E8%80%83%E8%B5%84%E6%96%99"><span class="toc-text">参考资料</span></a></li></ol></div></div></div></div></main><footer id="footer" style="background-image: url('/img/scenery_01.webp')"><div id="footer-wrap"><div class="copyright">&copy;2020 - 2024 By Obito</div><div class="framework-info"><span>框架 </span><a target="_blank" rel="noopener" href="https://hexo.io">Hexo</a><span class="footer-separator">|</span><span>主题 </span><a target="_blank" rel="noopener" href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly</a></div><div class="footer_custom_text">I wish you to become your own sun, no need to rely on who's light.</div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="阅读模式"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="浅色和深色模式转换"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="单栏和双栏切换"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside_config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="目录"><i class="fas fa-list-ul"></i></button><a id="to_comment" href="#post-comment" title="直达评论"><i class="fas fa-comments"></i></a><button id="go-up" type="button" title="回到顶部"><span class="scroll-percent"></span><i class="fas fa-arrow-up"></i></button><button id="go-down" type="button" title="直达底部" onclick="btf.scrollToDest(document.body.scrollHeight, 500)"><i class="fas fa-arrow-down"></i></button></div></div><div id="rightMenu"><div class="rightMenu-group rightMenu-small"><a class="rightMenu-item" href="javascript:window.history.back();"><i class="fa-solid fa-arrow-left"></i></a><a class="rightMenu-item" href="javascript:window.location.reload();"><i class="fa-solid fa-arrow-rotate-right"></i></a><a class="rightMenu-item" href="javascript:window.history.forward();"><i class="fa-solid fa-arrow-right"></i></a><a class="rightMenu-item" id="menu-radompage" href="javascript:window.location.href = window.location.origin;"><i class="fa-solid fa-house"></i></a></div><div class="rightMenu-group rightMenu-line hide" id="menu-text"><a class="rightMenu-item" href="javascript:rmf.copySelect();"><i class="fa-solid fa-copy"></i><span>复制</span></a></div><div class="rightMenu-group rightMenu-line"><a class="rightMenu-item" href="javascript:rmf.switchDarkMode();"><i class="fa-solid fa-circle-half-stroke"></i><span>昼夜切换</span></a><a class="rightMenu-item" href="javascript:toRandomPost();"><i class="fa-solid fa-bus"></i><span>随便逛逛</span></a><a class="rightMenu-item" href="javascript:rmf.switchReadMode();"><i class="fa-solid fa-book"></i><span>阅读模式</span></a><a class="rightMenu-item" href="javascript:window.location.href = window.location.origin + '/archives/';"><i class="fa-solid fa-archive"></i><span>文章归档</span></a><a class="rightMenu-item" href="javascript:window.location.href = window.location.origin + '/categories/';"><i class="fa-solid fa-folder-open"></i><span>文章分类</span></a><a class="rightMenu-item" href="javascript:window.location.href = window.location.origin + '/tags/';"><i class="fa-solid fa-tags"></i><span>文章标签</span></a><a class="rightMenu-item" href="javascript:window.location.href = window.location.origin + '/about-website/';"><i class="fa-solid fa-envelope-open-text"></i><span>网站声明</span></a></div></div><div><script src="/js/utils.js"></script><script src="/js/main.js"></script><script src="/pluginsSrc/@fancyapps/ui/dist/fancybox/fancybox.umd.js"></script><div class="js-pjax"><script>(()=>{
+  const init = () => {
+    twikoo.init(Object.assign({
+      el: '#twikoo-wrap',
+      envId: 'https://twikoo.obito.top/',
+      region: '',
+      onCommentLoaded: function () {
+        btf.loadLightbox(document.querySelectorAll('#twikoo .tk-content img:not(.tk-owo-emotion)'))
+      }
+    }, null))
+  }
+
+  const getCount = () => {
+    const countELement = document.getElementById('twikoo-count')
+    if(!countELement) return
+    twikoo.getCommentsCount({
+      envId: 'https://twikoo.obito.top/',
+      region: '',
+      urls: [window.location.pathname],
+      includeReply: false
+    }).then(function (res) {
+      countELement.textContent = res[0].count
+    }).catch(function (err) {
+      console.error(err);
+    });
+  }
+
+  const runFn = () => {
+    init()
+    
+  }
+
+  const loadTwikoo = () => {
+    if (typeof twikoo === 'object') {
+      setTimeout(runFn,0)
+      return
+    } 
+    getScript('/pluginsSrc/twikoo/dist/twikoo.all.min.js').then(runFn)
+  }
+
+  if ('Twikoo' === 'Twikoo' || !true) {
+    if (true) btf.loadComment(document.getElementById('twikoo-wrap'), loadTwikoo)
+    else loadTwikoo()
+  } else {
+    window.loadOtherComment = () => {
+      loadTwikoo()
+    }
+  }
+})()</script></div><canvas id="universe"></canvas><script src="/js/universe.js"></script><script defer src="https://npm.elemecdn.com/jquery@latest/dist/jquery.min.js"></script><script src="/js/rightmenu.js"></script><script async src="/js/fps.js"></script><script src="/random.js"></script><script id="click-heart" src="/pluginsSrc/butterfly-extsrc/dist/click-heart.min.js" async="async" mobile="false"></script><script src="/pluginsSrc/pjax/pjax.min.js"></script><script>let pjaxSelectors = ["head > title","#config-diff","#body-wrap","#rightside-config-hide","#rightside-config-show",".js-pjax"]
+
+var pjax = new Pjax({
+  elements: 'a:not([target="_blank"])',
+  selectors: pjaxSelectors,
+  cacheBust: false,
+  analytics: false,
+  scrollRestoration: false
+})
+
+document.addEventListener('pjax:send', function () {
+
+  // removeEventListener scroll 
+  window.tocScrollFn && window.removeEventListener('scroll', window.tocScrollFn)
+  window.scrollCollect && window.removeEventListener('scroll', scrollCollect)
+
+  document.getElementById('rightside').style.cssText = "opacity: ''; transform: ''"
+  
+  if (window.aplayers) {
+    for (let i = 0; i < window.aplayers.length; i++) {
+      if (!window.aplayers[i].options.fixed) {
+        window.aplayers[i].destroy()
+      }
+    }
+  }
+
+  typeof typed === 'object' && typed.destroy()
+
+  //reset readmode
+  const $bodyClassList = document.body.classList
+  $bodyClassList.contains('read-mode') && $bodyClassList.remove('read-mode')
+
+  typeof disqusjs === 'object' && disqusjs.destroy()
+})
+
+document.addEventListener('pjax:complete', function () {
+  window.refreshFn()
+
+  document.querySelectorAll('script[data-pjax]').forEach(item => {
+    const newScript = document.createElement('script')
+    const content = item.text || item.textContent || item.innerHTML || ""
+    Array.from(item.attributes).forEach(attr => newScript.setAttribute(attr.name, attr.value))
+    newScript.appendChild(document.createTextNode(content))
+    item.parentNode.replaceChild(newScript, item)
+  })
+
+  GLOBAL_CONFIG.islazyload && window.lazyLoadInstance.update()
+
+  typeof panguInit === 'function' && panguInit()
+
+  // google analytics
+  typeof gtag === 'function' && gtag('config', '', {'page_path': window.location.pathname});
+
+  // baidu analytics
+  typeof _hmt === 'object' && _hmt.push(['_trackPageview',window.location.pathname]);
+
+  typeof loadMeting === 'function' && document.getElementsByClassName('aplayer').length && loadMeting()
+
+  // prismjs
+  typeof Prism === 'object' && Prism.highlightAll()
+})
+
+document.addEventListener('pjax:error', (e) => {
+  if (e.request.status === 404) {
+    pjax.loadUrl('/404.html')
+  }
+})</script><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script></div><!-- hexo injector body_end start --><script data-pjax>
+  function butterfly_clock_anzhiyu_injector_config(){
+    var parent_div_git = document.getElementsByClassName('sticky_layout')[0];
+    var item_html = '<div class="card-widget card-clock"><div class="card-glass"><div class="card-background"><div class="card-content"><div id="hexo_electric_clock"><img class="entered loading" id="card-clock-loading" src="https://cdn.cbd.int/hexo-butterfly-clock-anzhiyu/lib/loading.gif" style="height: 120px; width: 100%;" data-ll-status="loading"/></div></div></div></div></div>';
+    console.log('已挂载butterfly_clock_anzhiyu')
+    if(parent_div_git) {
+      parent_div_git.insertAdjacentHTML("afterbegin",item_html)
+    }
+  }
+  var elist = 'null'.split(',');
+  var cpage = location.pathname;
+  var epage = '/';
+  var qweather_key = 'b16a1fa0e63c46a4b8f28abfb06ae3fe';
+  var gaud_map_key = 'e2b04289e870b005374ee030148d64fd&s=rsv3';
+  var baidu_ak_key = 'undefined';
+  var flag = 0;
+  var clock_rectangle = '113.34532,23.15624';
+  var clock_default_rectangle_enable = 'false';
+
+  for (var i=0;i<elist.length;i++){
+    if (cpage.includes(elist[i])){
+      flag++;
+    }
+  }
+
+  if ((epage ==='all')&&(flag == 0)){
+    butterfly_clock_anzhiyu_injector_config();
+  }
+  else if (epage === cpage){
+    butterfly_clock_anzhiyu_injector_config();
+  }
+  </script><script src="https://widget.qweather.net/simple/static/js/he-simple-common.js?v=2.0"></script><script data-pjax src="https://cdn.cbd.int/hexo-butterfly-clock-anzhiyu/lib/clock.min.js"></script><!-- hexo injector body_end end --></body></html>

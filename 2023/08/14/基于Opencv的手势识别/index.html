@@ -1,0 +1,403 @@
+<!DOCTYPE html><html lang="zh-CN" data-theme="dark"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0,viewport-fit=cover"><title>基于Opencv的手势识别 | Obito Blog</title><meta name="author" content="Obito"><meta name="copyright" content="Obito"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#0d0d0d"><meta name="description" content="前言 本文采用 Opencv C++ 实现简单的手势识别；主要步骤为获取手部轮廓、提取特征、训练网络、预测结果。 肤色检测 这一步主要是便于后续的手部轮廓提取。这里用到的方法是 基于 YCrCb + OSTU 的方法的，其他方法可参考上一篇文章基于Opencv的人体肤色检测。 相关代码 1234567891011121314151617181920Mat YCrCb_otsu_Detect(Mat">
+<meta property="og:type" content="article">
+<meta property="og:title" content="基于Opencv的手势识别">
+<meta property="og:url" content="http://www.obito.top/2023/08/14/%E5%9F%BA%E4%BA%8EOpencv%E7%9A%84%E6%89%8B%E5%8A%BF%E8%AF%86%E5%88%AB/index.html">
+<meta property="og:site_name" content="Obito Blog">
+<meta property="og:description" content="前言 本文采用 Opencv C++ 实现简单的手势识别；主要步骤为获取手部轮廓、提取特征、训练网络、预测结果。 肤色检测 这一步主要是便于后续的手部轮廓提取。这里用到的方法是 基于 YCrCb + OSTU 的方法的，其他方法可参考上一篇文章基于Opencv的人体肤色检测。 相关代码 1234567891011121314151617181920Mat YCrCb_otsu_Detect(Mat">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="http://www.obito.top/img/scenery_03.jpg">
+<meta property="article:published_time" content="2023-08-14T08:18:04.000Z">
+<meta property="article:modified_time" content="2023-08-18T06:22:55.422Z">
+<meta property="article:author" content="Obito">
+<meta property="article:tag" content="opencv">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://www.obito.top/img/scenery_03.jpg"><link rel="shortcut icon" href="/img/favicon.png"><link rel="canonical" href="http://www.obito.top/2023/08/14/%E5%9F%BA%E4%BA%8EOpencv%E7%9A%84%E6%89%8B%E5%8A%BF%E8%AF%86%E5%88%AB/index.html"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="stylesheet" href="/css/index.css"><link rel="stylesheet" href="/pluginsSrc/@fortawesome/fontawesome-free/css/all.min.css" media="print" onload="this.media='all'"><link rel="stylesheet" href="/pluginsSrc/@fancyapps/ui/dist/fancybox/fancybox.css" media="print" onload="this.media='all'"><script>const GLOBAL_CONFIG = {
+  root: '/',
+  algolia: undefined,
+  localSearch: undefined,
+  translate: undefined,
+  noticeOutdate: {"limitDay":60,"position":"top","messagePrev":"It has been","messageNext":"days since the last update, the content of the article may be outdated."},
+  highlight: {"plugin":"highlighjs","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":300},
+  copy: {
+    success: '复制成功',
+    error: '复制错误',
+    noSupport: '浏览器不支持'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '天',
+  dateSuffix: {
+    just: '刚刚',
+    min: '分钟前',
+    hour: '小时前',
+    day: '天前',
+    month: '个月前'
+  },
+  copyright: undefined,
+  lightbox: 'fancybox',
+  Snackbar: undefined,
+  source: {
+    justifiedGallery: {
+      js: '/pluginsSrc/flickr-justified-gallery/dist/fjGallery.min.js',
+      css: '/pluginsSrc/flickr-justified-gallery/dist/fjGallery.css'
+    }
+  },
+  isPhotoFigcaption: false,
+  islazyload: false,
+  isAnchor: false,
+  percent: {
+    toc: true,
+    rightside: false,
+  },
+  autoDarkmode: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: '基于Opencv的手势识别',
+  isPost: true,
+  isHome: false,
+  isHighlightShrink: false,
+  isToc: true,
+  postUpdate: '2023-08-18 14:22:55'
+}</script><noscript><style type="text/css">
+  #nav {
+    opacity: 1
+  }
+  .justified-gallery img {
+    opacity: 1
+  }
+
+  #recent-posts time,
+  #post-meta time {
+    display: inline !important
+  }
+</style></noscript><script>(win=>{
+    win.saveToLocal = {
+      set: function setWithExpiry(key, value, ttl) {
+        if (ttl === 0) return
+        const now = new Date()
+        const expiryDay = ttl * 86400000
+        const item = {
+          value: value,
+          expiry: now.getTime() + expiryDay,
+        }
+        localStorage.setItem(key, JSON.stringify(item))
+      },
+
+      get: function getWithExpiry(key) {
+        const itemStr = localStorage.getItem(key)
+
+        if (!itemStr) {
+          return undefined
+        }
+        const item = JSON.parse(itemStr)
+        const now = new Date()
+
+        if (now.getTime() > item.expiry) {
+          localStorage.removeItem(key)
+          return undefined
+        }
+        return item.value
+      }
+    }
+  
+    win.getScript = url => new Promise((resolve, reject) => {
+      const script = document.createElement('script')
+      script.src = url
+      script.async = true
+      script.onerror = reject
+      script.onload = script.onreadystatechange = function() {
+        const loadState = this.readyState
+        if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
+        script.onload = script.onreadystatechange = null
+        resolve()
+      }
+      document.head.appendChild(script)
+    })
+  
+    win.getCSS = (url,id = false) => new Promise((resolve, reject) => {
+      const link = document.createElement('link')
+      link.rel = 'stylesheet'
+      link.href = url
+      if (id) link.id = id
+      link.onerror = reject
+      link.onload = link.onreadystatechange = function() {
+        const loadState = this.readyState
+        if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
+        link.onload = link.onreadystatechange = null
+        resolve()
+      }
+      document.head.appendChild(link)
+    })
+  
+      win.activateDarkMode = function () {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      win.activateLightMode = function () {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+        }
+      }
+      const t = saveToLocal.get('theme')
+    
+          if (t === 'dark') activateDarkMode()
+          else if (t === 'light') activateLightMode()
+        
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        if (asideStatus === 'hide') {
+          document.documentElement.classList.add('hide-aside')
+        } else {
+          document.documentElement.classList.remove('hide-aside')
+        }
+      }
+    
+    const detectApple = () => {
+      if(/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)){
+        document.documentElement.classList.add('apple')
+      }
+    }
+    detectApple()
+    })(window)</script><link rel="stylesheet" href="/css/universe.css"><link rel="stylesheet" href="/css/rightmenu.css"><span id="fps"></span><link rel="stylesheet" href="/css/custom.css"><!-- hexo injector head_end start --><link rel="stylesheet" href="https://cdn.cbd.int/hexo-butterfly-clock-anzhiyu/lib/clock.min.css" /><!-- hexo injector head_end end --><meta name="generator" content="Hexo 6.3.0"><link rel="alternate" href="/atom.xml" title="Obito Blog" type="application/atom+xml">
+<link href="https://cdn.bootcss.com/KaTeX/0.11.1/katex.min.css" rel="stylesheet" /></head><body><div id="loading-box"><div class="loading-left-bg"></div><div class="loading-right-bg"></div><div class="spinner-box"><div class="configure-border-1"><div class="configure-core"></div></div><div class="configure-border-2"><div class="configure-core"></div></div><div class="loading-word">加载中...</div></div></div><script>(()=>{
+  const $loadingBox = document.getElementById('loading-box')
+  const $body = document.body
+  const preloader = {
+    endLoading: () => {
+      $body.style.overflow = ''
+      $loadingBox.classList.add('loaded')
+    },
+    initLoading: () => {
+      $body.style.overflow = 'hidden'
+      $loadingBox.classList.remove('loaded')
+    }
+  }
+
+  preloader.initLoading()
+  window.addEventListener('load',() => { preloader.endLoading() })
+
+  if (true) {
+    document.addEventListener('pjax:send', () => { preloader.initLoading() })
+    document.addEventListener('pjax:complete', () => { preloader.endLoading() })
+  }
+})()</script><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img is-center"><img src="/img/head.jpg" onerror="onerror=null;src='null'" alt="avatar"/></div><div class="sidebar-site-data site-data is-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">43</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">13</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">13</div></a></div><hr class="custom-hr"/><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> Home</span></a></div><div class="menus_item"><a class="site-page" href="/notes/"><i class="fa-fw fa fa-sticky-note"></i><span> Notes</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> Archives</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> Tags</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> Categories</span></a></div><div class="menus_item"><a class="site-page group" href="javascript:void(0);"><i class="fa-fw fas fa-list"></i><span> List</span><i class="fas fa-chevron-down"></i></a><ul class="menus_item_child"><li><a class="site-page child" href="/music/"><i class="fa-fw fas fa-music"></i><span> Music</span></a></li><li><a class="site-page child" href="/movies/"><i class="fa-fw fas fa-video"></i><span> Movie</span></a></li></ul></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fas fa-link"></i><span> Link</span></a></div><div class="menus_item"><a class="site-page group" href="javascript:void(0);"><i class="fa-fw fas fa-heart"></i><span> About</span><i class="fas fa-chevron-down"></i></a><ul class="menus_item_child"><li><a class="site-page child" href="/about-me/"><i class="fa-fw fa-fw fas fa-medal"></i><span> AboutMe</span></a></li><li><a class="site-page child" href="/about-website/"><i class="fa-fw fa-fw fas fa-envelope-open-text"></i><span> Statement</span></a></li></ul></div></div></div></div><div class="post" id="body-wrap"><header class="post-bg" id="page-header" style="background-image: url('/img/scenery_03.jpg')"><nav id="nav"><span id="blog-info"><a href="/" title="Obito Blog"><span class="site-name">Obito Blog</span></a></span><div id="menus"><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> Home</span></a></div><div class="menus_item"><a class="site-page" href="/notes/"><i class="fa-fw fa fa-sticky-note"></i><span> Notes</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> Archives</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> Tags</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> Categories</span></a></div><div class="menus_item"><a class="site-page group" href="javascript:void(0);"><i class="fa-fw fas fa-list"></i><span> List</span><i class="fas fa-chevron-down"></i></a><ul class="menus_item_child"><li><a class="site-page child" href="/music/"><i class="fa-fw fas fa-music"></i><span> Music</span></a></li><li><a class="site-page child" href="/movies/"><i class="fa-fw fas fa-video"></i><span> Movie</span></a></li></ul></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fas fa-link"></i><span> Link</span></a></div><div class="menus_item"><a class="site-page group" href="javascript:void(0);"><i class="fa-fw fas fa-heart"></i><span> About</span><i class="fas fa-chevron-down"></i></a><ul class="menus_item_child"><li><a class="site-page child" href="/about-me/"><i class="fa-fw fa-fw fas fa-medal"></i><span> AboutMe</span></a></li><li><a class="site-page child" href="/about-website/"><i class="fa-fw fa-fw fas fa-envelope-open-text"></i><span> Statement</span></a></li></ul></div></div><div id="toggle-menu"><a class="site-page" href="javascript:void(0);"><i class="fas fa-bars fa-fw"></i></a></div></div></nav><div id="post-info"><h1 class="post-title">基于Opencv的手势识别</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">发表于</span><time class="post-meta-date-created" datetime="2023-08-14T08:18:04.000Z" title="发表于 2023-08-14 16:18:04">2023-08-14</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">更新于</span><time class="post-meta-date-updated" datetime="2023-08-18T06:22:55.422Z" title="更新于 2023-08-18 14:22:55">2023-08-18</time></span><span class="post-meta-categories"><span class="post-meta-separator">|</span><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/%E5%9B%BE%E5%83%8F%E5%A4%84%E7%90%86/">图像处理</a><i class="fas fa-angle-right post-meta-separator"></i><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/%E5%9B%BE%E5%83%8F%E5%A4%84%E7%90%86/opencv/">opencv</a></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-wordcount"><i class="far fa-file-word fa-fw post-meta-icon"></i><span class="post-meta-label">字数总计:</span><span class="word-count">3.5k</span><span class="post-meta-separator">|</span><i class="far fa-clock fa-fw post-meta-icon"></i><span class="post-meta-label">阅读时长:</span><span>14分钟</span></span><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title="基于Opencv的手势识别"><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">阅读量:</span><span id="busuanzi_value_page_pv"><i class="fa-solid fa-spinner fa-spin"></i></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="post-content" id="article-container"><h2 id="前言">前言</h2>
+<p>本文采用 Opencv C++ 实现简单的手势识别；主要步骤为获取手部轮廓、提取特征、训练网络、预测结果。</p>
+<h2 id="肤色检测">肤色检测</h2>
+<p>这一步主要是便于后续的手部轮廓提取。这里用到的方法是 基于 YCrCb + OSTU 的方法的，其他方法可参考上一篇文章<a target="_blank" rel="noopener" href="http://obito.top/2023/08/11/%E5%9F%BA%E4%BA%8EOpencv%E7%9A%84%E4%BA%BA%E4%BD%93%E8%82%A4%E8%89%B2%E6%A3%80%E6%B5%8B/">基于Opencv的人体肤色检测</a>。</p>
+<h3 id="相关代码">相关代码</h3>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="function">Mat <span class="title">YCrCb_otsu_Detect</span><span class="params">(Mat&amp; src)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">	<span class="comment">//resize(src, src, Size(300,300));</span></span><br><span class="line"></span><br><span class="line">	Mat ycrcb_img;</span><br><span class="line">	<span class="built_in">cvtColor</span>(src, ycrcb_img, COLOR_BGR2YCrCb);</span><br><span class="line">	<span class="comment">// 分离通道 提取Cr分量</span></span><br><span class="line">	vector&lt;Mat&gt; channels;</span><br><span class="line">	<span class="built_in">split</span>(ycrcb_img, channels);</span><br><span class="line"></span><br><span class="line">	Mat cr_img = channels[<span class="number">1</span>];</span><br><span class="line">	<span class="built_in">threshold</span>(cr_img, cr_img, <span class="number">0</span>, <span class="number">255</span>, THRESH_BINARY | THRESH_OTSU);</span><br><span class="line"></span><br><span class="line">	Mat ycrcb_otsu_detect;</span><br><span class="line">	src.<span class="built_in">copyTo</span>(ycrcb_otsu_detect, cr_img);</span><br><span class="line">	<span class="comment">//imshow(&quot;cr_img&quot;, cr_img);</span></span><br><span class="line">	<span class="comment">//imshow(&quot;ycrcb_otsu_detect&quot;, ycrcb_otsu_detect);</span></span><br><span class="line"></span><br><span class="line">	<span class="keyword">return</span> cr_img;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="获取手部轮廓和特征">获取手部轮廓和特征</h2>
+<p>获取手部外轮廓直接采用 <code>findContours()函数</code>即可，特征这里本文采用的是傅里叶描述子。手势识别受平移、旋转、缩放这些因素的影响要很小，因为识别一个手势主要在于它整体的一个轮廓，所以这里采用了归一化的傅里叶描述子，可以使得描述子在旋转和尺度变化下具有不变性。</p>
+<h3 id="傅里叶描述子的基本原理">傅里叶描述子的基本原理</h3>
+<p>傅里叶描述子（Fourier Descriptors）是一种在计算机视觉和图像处理中用于形状分析的技术，也可以在OpenCV中使用。傅里叶描述子通过将形状的边界曲线表示为频域上的复数信号，然后应用傅里叶变换，将形状的信息转换到频域中。这种技术通常用于对象识别、模式匹配、形状比较等任务。</p>
+<p>傅里叶描述子的<strong>基本思想是将形状的轮廓信息从空间域（即图像中的像素坐标）转换到频域</strong>，通过这种方式来对形状进行表示和分析。</p>
+<p>总之，傅立叶描述子可以很好地描述轮廓特征，并且只需<strong>少量的描述子</strong>（即向量中的数不需要太多）即可大致代表<strong>整个轮廓</strong>。其次，对傅立叶描述字进行简单的<strong>归一化操作</strong>后，即可使描述子具有<strong>平移、旋转、尺度不变性</strong>，即不受轮廓在图像中的位置、角度及轮廓的缩放等影响，是一个鲁棒性较好的图像特征。</p>
+<p><strong>归一化的傅里叶描述子</strong>是一种在计算傅里叶描述子时常用的方法，它可以<strong>使得描述子在旋转和尺度变化下具有不变性。</strong></p>
+<p>在冈萨雷斯的《数字图象处理》一书有详细的推导过程如下：</p>
+<p><img src="image-20230817195818813.png" alt="image-20230817195818813"></p>
+<h3 id="相关代码">相关代码</h3>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="type">void</span> <span class="title">getGesture</span><span class="params">(Mat&amp; binary, Mat&amp; Fourier_Out)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">	<span class="comment">//binary = YCrCb_otsu_Detect();</span></span><br><span class="line"></span><br><span class="line">	vector &lt;vector&lt;Point&gt;&gt; contours;</span><br><span class="line">	<span class="built_in">findContours</span>(binary, contours, RETR_EXTERNAL, CHAIN_APPROX_NONE);</span><br><span class="line"></span><br><span class="line">	<span class="type">int</span> max_size = <span class="number">0</span>; <span class="comment">// 保存最大轮廓的size</span></span><br><span class="line">	<span class="type">int</span> contours_num = <span class="number">0</span>; <span class="comment">// 保存最大轮廓的索引</span></span><br><span class="line">	<span class="comment">// 这里用的方式是: RETR_EXTERNAL，所以好像size一直为1，因为内部已经找出最外的轮廓了</span></span><br><span class="line">	<span class="keyword">for</span> (<span class="type">int</span> i = <span class="number">0</span>; i &lt; contours.<span class="built_in">size</span>(); i++)</span><br><span class="line">	&#123;</span><br><span class="line">		<span class="keyword">if</span> (contours[i].<span class="built_in">size</span>() &gt; max_size)</span><br><span class="line">		&#123;</span><br><span class="line">			max_size = contours[i].<span class="built_in">size</span>();</span><br><span class="line">			contours_num = i;</span><br><span class="line">		&#125;</span><br><span class="line">		<span class="comment">/*cout &lt;&lt; &quot;size:&quot; &lt;&lt; contours.size() &lt;&lt; endl;</span></span><br><span class="line"><span class="comment">		cout &lt;&lt; &quot;max_size:&quot; &lt;&lt; max_size &lt;&lt; endl;*/</span></span><br><span class="line">	&#125;</span><br><span class="line">	Mat contour_img = Mat::<span class="built_in">zeros</span>(binary.<span class="built_in">size</span>(), CV_8UC1);</span><br><span class="line">	<span class="built_in">drawContours</span>(contour_img, contours, contours_num, Scalar::<span class="built_in">all</span>(<span class="number">255</span>), <span class="number">2</span>, <span class="number">8</span>);</span><br><span class="line">	<span class="comment">//imshow(&quot;contour_img&quot;, contour_img);</span></span><br><span class="line"></span><br><span class="line">	vector&lt;<span class="type">float</span>&gt; fourier;</span><br><span class="line">	vector&lt;<span class="type">float</span>&gt; fourier_normal; <span class="comment">// 存储归一化后的傅里叶描述子</span></span><br><span class="line">	<span class="comment">// 计算傅里叶描述子</span></span><br><span class="line">	<span class="keyword">for</span> (<span class="type">int</span> u = <span class="number">0</span>; u &lt; max_size; u++)</span><br><span class="line">	&#123;</span><br><span class="line">		<span class="type">float</span> x, y, sum_x = <span class="number">0</span>, sum_y = <span class="number">0</span>;</span><br><span class="line">		<span class="keyword">for</span> (<span class="type">int</span> j = <span class="number">0</span>; j &lt; max_size; j++)</span><br><span class="line">		&#123;</span><br><span class="line">			x = contours[contours_num][j].x;</span><br><span class="line">			y = contours[contours_num][j].y;</span><br><span class="line">			sum_x += (<span class="type">float</span>)(x * <span class="built_in">cos</span>(<span class="number">2</span> * CV_PI * u * j / max_size) + y * <span class="built_in">sin</span>(<span class="number">2</span> * CV_PI * u * j / max_size));</span><br><span class="line">			sum_y += (<span class="type">float</span>)(y * <span class="built_in">cos</span>(<span class="number">2</span> * CV_PI * u * j / max_size) - x * <span class="built_in">sin</span>(<span class="number">2</span> * CV_PI * u * j / max_size));</span><br><span class="line">		&#125;</span><br><span class="line">		fourier.<span class="built_in">push_back</span>(<span class="built_in">sqrt</span>((sum_x * sum_x) + (sum_y * sum_y))); <span class="comment">// 计算复数的模</span></span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	fourier_normal.<span class="built_in">push_back</span>(<span class="number">0</span>); <span class="comment">// 第 0 位无用处</span></span><br><span class="line">	<span class="comment">// 归一化存储前14位即可，轮廓信息是低频</span></span><br><span class="line">	<span class="keyword">for</span> (<span class="type">int</span> k = <span class="number">2</span>; k &lt; <span class="number">16</span>; k++)</span><br><span class="line">	&#123;</span><br><span class="line">		fourier[k] = fourier[k] / fourier[<span class="number">1</span>];</span><br><span class="line">		fourier_normal.<span class="built_in">push_back</span>(fourier[k]);</span><br><span class="line">		<span class="comment">//cout &lt;&lt; &quot;fourier_normal: &quot; &lt;&lt; fourier[k] &lt;&lt; endl;</span></span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	Fourier_Out = Mat::<span class="built_in">zeros</span>(<span class="number">1</span>, fourier_normal.<span class="built_in">size</span>(), CV_32F); <span class="comment">// 一维用来存储计算之后的手势特征</span></span><br><span class="line">	<span class="keyword">for</span> (<span class="type">int</span> i = <span class="number">0</span>; i &lt; fourier_normal.<span class="built_in">size</span>(); i++)</span><br><span class="line">	&#123;</span><br><span class="line">		Fourier_Out.<span class="built_in">at</span>&lt;<span class="type">float</span>&gt;(i) = fourier_normal[i];</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="实验图">实验图</h3>
+<p><img src="img.png" alt="img"></p>
+<p><img src="mini_img.png" alt="mini_img"></p>
+<p><img src="flip_img.png" alt="flip_img"></p>
+<p>可见在经过缩小旋转下，归一化后的傅里叶描述子基本一样。</p>
+<h2 id="建立特征库">建立特征库</h2>
+<p>这一步主要是对一些样本进行特征提取，样本的来源我比较懒所以就直接用手机拍 5 个手势，每个手势 10 个样本，大小为 512 * 512 ，保存格式为 i_j.jpg，表示手势 i 第 j 个图像。当然你也可以写一段代码通过数据增强的方法采集不同的手势，这样可以使得后续训练的网络具有泛化性。</p>
+<p>如果你采用别人的数据集的话，那么这个数据集需要很大并且多样化，不然等到后面你用自己的手势去进行识别的话效果一般会很差。</p>
+<p>建立特征库只需要执行一次就行，如果你要重新建立特征库则再重新执行。</p>
+<p><strong>FileStorage 类的使用可参考：</strong></p>
+<blockquote>
+<p><a target="_blank" rel="noopener" href="https://blog.csdn.net/iracer/article/details/51339377">OpenCV —数据持久化: FileStorage类的数据存取操作与示例_getfirsttoplevelnode_iracer的博客-CSDN博客</a></p>
+<p><a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/101262148">【OpenCV 4开发详解】保存和读取XML和YMAL文件 - 知乎 (zhihu.com)</a></p>
+<p><a target="_blank" rel="noopener" href="https://docs.opencv.org/3.4/da/d56/classcv_1_1FileStorage.html">OpenCV: cv::FileStorage Class Reference</a></p>
+</blockquote>
+<h3 id="相关代码">相关代码</h3>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="type">void</span> <span class="title">getAnnXml</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">	<span class="function">FileStorage <span class="title">fs</span><span class="params">(<span class="string">&quot;My_ann_xml.xml&quot;</span>, FileStorage::WRITE)</span></span>; <span class="comment">// 存储位置为当前目录下</span></span><br><span class="line">	<span class="keyword">if</span> (!fs.<span class="built_in">isOpened</span>())</span><br><span class="line">	&#123;</span><br><span class="line">		cout &lt;&lt; <span class="string">&quot;Could not open xml file&quot;</span> &lt;&lt; endl;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	Mat Classes = Mat::<span class="built_in">zeros</span>(sample_classes * sample_nums, <span class="number">1</span>, CV_8UC1); <span class="comment">// 标记样本所属类别</span></span><br><span class="line"></span><br><span class="line">	Mat TrainData;  <span class="comment">// 存放样本的特征数据，后面用来训练网络</span></span><br><span class="line">	Mat sample_read; <span class="comment">// 样本矩阵</span></span><br><span class="line">	<span class="type">char</span> Samplepath[<span class="number">100</span>]; <span class="comment">// 读取图片的路径，这里要注意路径的大小，根据情况设置</span></span><br><span class="line">	<span class="comment">// 遍历训练样本</span></span><br><span class="line">	<span class="keyword">for</span> (<span class="type">int</span> i = <span class="number">1</span>; i &lt;= sample_classes; i++) <span class="comment">// 训练 sample_classes 类手势</span></span><br><span class="line">	&#123;</span><br><span class="line">		<span class="keyword">for</span> (<span class="type">int</span> j = <span class="number">1</span>; j &lt;= sample_nums; j++) <span class="comment">// 每个手势 sample_nums 个样本</span></span><br><span class="line">		&#123;</span><br><span class="line">			<span class="built_in">sprintf_s</span>(Samplepath, <span class="string">&quot;G:\\opencv-python-image\\MyHandImg\\%d_%d.jpg&quot;</span>, i, j);</span><br><span class="line">			sample_read = <span class="built_in">imread</span>(Samplepath);</span><br><span class="line">			cout &lt;&lt; <span class="string">&quot;Samplepath:&quot;</span> &lt;&lt; Samplepath &lt;&lt; endl;</span><br><span class="line">			</span><br><span class="line">			Mat binary = <span class="built_in">YCrCb_otsu_Detect</span>(sample_read); <span class="comment">// 肤色检测</span></span><br><span class="line">			Mat feature_dst;</span><br><span class="line">			<span class="built_in">getGesture</span>(binary, feature_dst);	<span class="comment">// 提取手势特征</span></span><br><span class="line"></span><br><span class="line">			TrainData.<span class="built_in">push_back</span>(feature_dst);</span><br><span class="line">			Classes.<span class="built_in">at</span>&lt;uchar&gt;((i - <span class="number">1</span>) * sample_nums + j - <span class="number">1</span>) = i;</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">	</span><br><span class="line">	fs &lt;&lt; <span class="string">&quot;TrainData&quot;</span> &lt;&lt; TrainData;		<span class="comment">// 训练数据写入文件</span></span><br><span class="line">	fs &lt;&lt; <span class="string">&quot;Classes&quot;</span> &lt;&lt; Classes;			<span class="comment">// 训练类别写入文件</span></span><br><span class="line">	fs.<span class="built_in">release</span>(); <span class="comment">// 释放资源</span></span><br><span class="line"></span><br><span class="line">	cout &lt;&lt; <span class="string">&quot;数据和类别写入xml文件完成！&quot;</span> &lt;&lt; endl;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>保存完的两个文件内容大致如下：</p>
+<p><img src="ann_xml.png" alt="ann_xml"></p>
+<p><img src="ann_param.png" alt="ann_param"></p>
+<h2 id="训练网络">训练网络</h2>
+<p>这里采用 Opencv 的 ML 模块里的 ANN 网络对样本特征进行训练。步骤跟正常的神经网络训练差不多。</p>
+<p>OpenCV 中的 ML 模块（Machine Learning）提供了各种机器学习算法的实现，包括神经网络。其中，<code>cv2.ANN_MLP</code>（Artificial Neural Network - Multi-Layer Perceptron）是OpenCV中用于实现多层感知器（MLP）神经网络的类。</p>
+<p>多层感知器是一种前馈神经网络结构，由输入层、多个隐藏层和输出层组成。<code>cv2.ANN_MLP</code>可以用于分类和回归任务，如图像分类、预测等。以下是使用<code>cv2.ANN_MLP</code>的基本步骤：</p>
+<ol>
+<li><strong>创建网络：</strong> 使用<code>cv2.ANN_MLP.create()</code>方法创建一个<code>cv2.ANN_MLP</code>对象，并设置网络的参数，如层的数量、神经元的数量、激活函数等。</li>
+<li><strong>准备训练数据：</strong> 将训练数据准备为适当的格式。通常，你需要将特征作为输入，将标签作为输出。</li>
+<li><strong>训练网络：</strong> 使用创建的<code>cv2.ANN_MLP</code>对象的<code>train()</code>方法来对网络进行训练。你需要提供训练数据和相应的标签，以及设置训练的一些参数，如迭代次数、学习率等。</li>
+<li><strong>预测：</strong> 使用训练好的网络进行预测，可以使用<code>predict()</code>方法。将特征作为输入传递给网络，得到预测结果。</li>
+<li><strong>评估：</strong> 对于分类任务，你可以使用一些指标（如准确率、混淆矩阵）来评估模型的性能。</li>
+</ol>
+<p>训练网络只需要执行一次就行，如果你要重新训练网络则再重新执行。</p>
+<h3 id="相关代码">相关代码</h3>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="type">void</span> <span class="title">AnnTrain</span><span class="params">(<span class="type">int</span> hidden_layer, <span class="type">int</span> out_layer)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">	<span class="comment">// 读取xml文件</span></span><br><span class="line">	Mat TrainData, Classes;</span><br><span class="line">	<span class="function">FileStorage <span class="title">fs</span><span class="params">(<span class="string">&quot;My_ann_xml.xml&quot;</span>, FileStorage::READ)</span></span>;</span><br><span class="line">	fs[<span class="string">&quot;TrainData&quot;</span>] &gt;&gt; TrainData;</span><br><span class="line">	fs[<span class="string">&quot;Classes&quot;</span>] &gt;&gt; Classes;</span><br><span class="line"></span><br><span class="line">	<span class="function">Mat <span class="title">layerSizes</span><span class="params">(<span class="number">1</span>, <span class="number">3</span>, CV_32SC1)</span></span>;</span><br><span class="line">	layerSizes.<span class="built_in">at</span>&lt;<span class="type">int</span>&gt;(<span class="number">0</span>) = TrainData.cols; <span class="comment">// 输入层神经元结点数，依据xml文件数据</span></span><br><span class="line">	layerSizes.<span class="built_in">at</span>&lt;<span class="type">int</span>&gt;(<span class="number">1</span>) = hidden_layer;	<span class="comment">// 隐藏层神经元结点数，传参设置</span></span><br><span class="line">	layerSizes.<span class="built_in">at</span>&lt;<span class="type">int</span>&gt;(<span class="number">2</span>) = out_layer;		<span class="comment">// 输出层神经元结点数，传参设置</span></span><br><span class="line"></span><br><span class="line">	Ptr&lt;ANN_MLP&gt; ann = ANN_MLP::<span class="built_in">create</span>();</span><br><span class="line">	ann-&gt;<span class="built_in">setLayerSizes</span>(layerSizes);					  <span class="comment">// 神经网络的层数信息</span></span><br><span class="line">	ann-&gt;<span class="built_in">setActivationFunction</span>(ANN_MLP::SIGMOID_SYM, <span class="number">1.0</span>, <span class="number">1.0</span>); <span class="comment">// 激活函数</span></span><br><span class="line">	ann-&gt;<span class="built_in">setTrainMethod</span>(ANN_MLP::BACKPROP, <span class="number">0.1</span>, <span class="number">0.1</span>); <span class="comment">// 训练方法:反向传播算法，后两个参数： 权梯度项的强度（一般设置为0.1） 动量项的强度（一般设置为0.1）</span></span><br><span class="line">	ann-&gt;<span class="built_in">setTermCriteria</span>(<span class="built_in">TermCriteria</span>(TermCriteria::MAX_ITER, <span class="number">5000</span>, <span class="number">0.01</span>)); <span class="comment">// 迭代终止条件，后两项参数为迭代次数和误差最小值</span></span><br><span class="line"></span><br><span class="line">	Mat TrainClasses = Mat::<span class="built_in">zeros</span>(TrainData.rows, out_layer, CV_32FC1); <span class="comment">// 有监督学习，标记每个样本所属类别</span></span><br><span class="line">	<span class="comment">// 行表示第几个样本，列表示第几个(需要加1)类别 </span></span><br><span class="line">	<span class="keyword">for</span> (<span class="type">int</span> i = <span class="number">0</span>; i &lt; TrainClasses.rows; i++)</span><br><span class="line">	&#123;</span><br><span class="line">		<span class="keyword">for</span> (<span class="type">int</span> j = <span class="number">0</span>; j &lt; TrainClasses.cols; j++)</span><br><span class="line">		&#123;</span><br><span class="line">			<span class="keyword">if</span> ((j + <span class="number">1</span>) == (<span class="type">int</span>)Classes.<span class="built_in">at</span>&lt;uchar&gt;(i))</span><br><span class="line">				TrainClasses.<span class="built_in">at</span>&lt;<span class="type">float</span>&gt;(i, j) = <span class="number">1</span>;</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">	cout &lt;&lt; <span class="string">&quot;Start Train！&quot;</span> &lt;&lt; endl;</span><br><span class="line">	cout &lt;&lt; <span class="string">&quot;Training...&quot;</span> &lt;&lt; endl;</span><br><span class="line"></span><br><span class="line">	ann-&gt;<span class="built_in">train</span>(TrainData, ml::ROW_SAMPLE, TrainClasses); <span class="comment">// ml::ROW_SAMPLE: 每一行表示样本</span></span><br><span class="line"></span><br><span class="line">	cout &lt;&lt; <span class="string">&quot;Train Succeed！&quot;</span> &lt;&lt; endl;</span><br><span class="line">	cout &lt;&lt; <span class="string">&quot;Save Train Param！&quot;</span> &lt;&lt; endl;</span><br><span class="line"></span><br><span class="line">	ann-&gt;<span class="built_in">save</span>(<span class="string">&quot;My_ann_param&quot;</span>);</span><br><span class="line"></span><br><span class="line">	cout &lt;&lt; <span class="string">&quot;Param Save Succeed！&quot;</span> &lt;&lt; endl;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="预测结果">预测结果</h2>
+<p>通过<code>ann-&gt;predict(gesture_feature, output);</code>得到该手势对应每个手势的可能性，再通过 <code>minMaxLoc()</code>找出占比最大的值，则为对应的手势。</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="type">int</span> <span class="title">GestureClassify</span><span class="params">(Ptr&lt;ANN_MLP&gt; ann, Mat&amp; original_img)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">	<span class="type">int</span> result = <span class="number">-1</span>;</span><br><span class="line">	Mat binary = <span class="built_in">YCrCb_otsu_Detect</span>(original_img);</span><br><span class="line">	Mat gesture_feature;</span><br><span class="line">	<span class="built_in">getGesture</span>(binary, gesture_feature);</span><br><span class="line"></span><br><span class="line">	Mat output;</span><br><span class="line">	ann-&gt;<span class="built_in">predict</span>(gesture_feature, output);</span><br><span class="line"></span><br><span class="line">	Point maxLoc;</span><br><span class="line">	<span class="type">double</span> maxVal = <span class="number">0</span>;</span><br><span class="line">	<span class="built_in">minMaxLoc</span>(output, <span class="number">0</span>, &amp;maxVal, <span class="number">0</span>, &amp;maxLoc);  <span class="comment">// 找出占比最大的值，看哪个是最符合的。</span></span><br><span class="line"></span><br><span class="line">	result = maxLoc.x;</span><br><span class="line">	<span class="keyword">return</span> (result + <span class="number">1</span>);</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="计算训练集准确率">计算训练集准确率</h2>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="type">void</span> <span class="title">train_test</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">	Mat original_img;</span><br><span class="line">	<span class="type">char</span> Samplepath[<span class="number">100</span>]; <span class="comment">// 读取图片的路径，这里要注意路径的大小，根据情况设置</span></span><br><span class="line">	Ptr&lt;ANN_MLP&gt; ann = ANN_MLP::<span class="built_in">load</span>(<span class="string">&quot;My_ann_param&quot;</span>); <span class="comment">// 加载训练完的神经网络的参数</span></span><br><span class="line">	</span><br><span class="line">	<span class="type">int</span> accurate_num = <span class="number">0</span>, error_num = <span class="number">0</span>;</span><br><span class="line">	<span class="comment">// 遍历训练样本</span></span><br><span class="line">	<span class="keyword">for</span> (<span class="type">int</span> i = <span class="number">1</span>; i &lt;= sample_classes; i++) <span class="comment">// 先训练 sample_classes 类手势</span></span><br><span class="line">	&#123;</span><br><span class="line">		<span class="keyword">for</span> (<span class="type">int</span> j = <span class="number">1</span>; j &lt;= sample_nums; j++) <span class="comment">// 每个手势 sample_nums 个样本</span></span><br><span class="line">		&#123;</span><br><span class="line">			<span class="built_in">sprintf_s</span>(Samplepath, <span class="string">&quot;G:\\opencv-python-image\\MyHandImg\\%d_%d.jpg&quot;</span>, i, j);</span><br><span class="line">			original_img = <span class="built_in">imread</span>(Samplepath);</span><br><span class="line"></span><br><span class="line">			<span class="type">int</span> result = <span class="built_in">GestureClassify</span>(ann, original_img);		<span class="comment">// 预测结果</span></span><br><span class="line">			<span class="built_in">printf</span>(<span class="string">&quot;%d_%d.jpg的&quot;</span>, i, j);</span><br><span class="line">			cout &lt;&lt; <span class="string">&quot;预测手势是: &quot;</span> &lt;&lt; result &lt;&lt; endl;</span><br><span class="line">			<span class="built_in">imshow</span>(<span class="string">&quot;src&quot;</span>, original_img);</span><br><span class="line"></span><br><span class="line">			<span class="type">char</span> str[<span class="number">20</span>];</span><br><span class="line">			<span class="built_in">sprintf_s</span>(str, <span class="string">&quot;Gesture: %d&quot;</span>, result);</span><br><span class="line">			string text = str;</span><br><span class="line">			<span class="built_in">putText</span>(original_img, text, <span class="built_in">Point</span>(<span class="number">20</span>, <span class="number">30</span>), FONT_HERSHEY_SIMPLEX, <span class="number">1</span>, <span class="built_in">Scalar</span>(<span class="number">255</span>, <span class="number">255</span>, <span class="number">0</span>), <span class="number">2</span>, <span class="number">8</span>);</span><br><span class="line">			<span class="built_in">imshow</span>(<span class="string">&quot;result&quot;</span>, original_img);</span><br><span class="line"></span><br><span class="line">			<span class="keyword">if</span> (i == result)&#123;</span><br><span class="line">				accurate_num++;</span><br><span class="line">			&#125;</span><br><span class="line">			<span class="keyword">else</span> &#123;</span><br><span class="line">				error_num++;</span><br><span class="line">			&#125;</span><br><span class="line">			<span class="built_in">waitKey</span>(<span class="number">200</span>);</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;	</span><br><span class="line">	cout &lt;&lt; <span class="string">&quot;准确率: &quot;</span> &lt;&lt; <span class="built_in">double</span>(accurate_num) / <span class="built_in">double</span>(accurate_num + error_num) &lt;&lt; endl;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="主函数代码">主函数代码</h2>
+<p>这里采用摄像头截取手部识别手势，如果对视频每一帧就不断识别（处理结果时间较长 200ms左右）会导致视频帧率很低，估计就 5 帧左右；因此我这里改为当按下空格键再截取视频帧图像并进行识别显示。</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span><span class="string">&lt;opencv2/opencv.hpp&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span><span class="string">&lt;iostream&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;string&gt;</span></span></span><br><span class="line"><span class="keyword">using</span> <span class="keyword">namespace</span> std;</span><br><span class="line"><span class="keyword">using</span> <span class="keyword">namespace</span> cv;</span><br><span class="line"><span class="keyword">using</span> <span class="keyword">namespace</span> ml;</span><br><span class="line"></span><br><span class="line"><span class="type">int</span> sample_classes = <span class="number">5</span>;	<span class="comment">// 训练几个类别</span></span><br><span class="line"><span class="type">int</span> sample_nums = <span class="number">10</span>;	<span class="comment">// 每个类别有几个样本</span></span><br><span class="line"></span><br><span class="line"><span class="function">Mat <span class="title">YCrCb_otsu_Detect</span><span class="params">(Mat&amp; src)</span></span>; <span class="comment">// 肤色检测</span></span><br><span class="line"><span class="function"><span class="type">void</span> <span class="title">getGesture</span><span class="params">(Mat&amp; binary, Mat&amp; Fourier_Out)</span></span>; <span class="comment">// 提取一个图像的傅里叶描述子特征</span></span><br><span class="line"><span class="function"><span class="type">void</span> <span class="title">getAnnXml</span><span class="params">()</span></span>; <span class="comment">// 对大量样本进行特征提取，并存储为xml文件，若没修改训练样本，提取一次即可。</span></span><br><span class="line"><span class="function"><span class="type">void</span> <span class="title">AnnTrain</span><span class="params">(<span class="type">int</span> hidden_layer, <span class="type">int</span> out_layer)</span></span>;  <span class="comment">// 对样本进行神经网络训练，若没修改训练样本，训练一次即可。</span></span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">GestureClassify</span><span class="params">(Ptr&lt;ANN_MLP&gt; ann, Mat&amp; original_img)</span></span>;	<span class="comment">// 对测试样本进行预测</span></span><br><span class="line"><span class="function"><span class="type">void</span> <span class="title">train_test</span><span class="params">()</span></span>;	<span class="comment">// 计算训练集准确率</span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">main</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">	<span class="comment">//getAnnXml();	// 将特征写入xml文件</span></span><br><span class="line">	<span class="comment">//AnnTrain(24, sample_classes);	// 训练网络 24隐藏层结点，5个输出结点</span></span><br><span class="line"></span><br><span class="line">	<span class="comment">//train_test(); // 测试训练集的训练结果</span></span><br><span class="line"></span><br><span class="line">	<span class="type">char</span> Samplepath[<span class="number">100</span>]; <span class="comment">// 读取图片的路径，这里要注意路径的大小，根据情况设置</span></span><br><span class="line">	Ptr&lt;ANN_MLP&gt; ann = ANN_MLP::<span class="built_in">load</span>(<span class="string">&quot;My_ann_param&quot;</span>); <span class="comment">// 加载训练完的神经网络的参数</span></span><br><span class="line"></span><br><span class="line">	<span class="function">VideoCapture <span class="title">capture</span><span class="params">(<span class="number">0</span>)</span></span>;</span><br><span class="line">	<span class="keyword">if</span> (!capture.<span class="built_in">isOpened</span>())</span><br><span class="line">	&#123;</span><br><span class="line">		cout &lt;&lt; <span class="string">&quot;Video load error&quot;</span> &lt;&lt; endl;</span><br><span class="line">		<span class="built_in">exit</span>(<span class="number">-1</span>);</span><br><span class="line">		<span class="keyword">return</span> <span class="number">-1</span>;</span><br><span class="line">	&#125;</span><br><span class="line">	</span><br><span class="line">	<span class="built_in">namedWindow</span>(<span class="string">&quot;frame&quot;</span>, WINDOW_NORMAL);</span><br><span class="line">	<span class="built_in">resizeWindow</span>(<span class="string">&quot;frame&quot;</span>, <span class="number">512</span>, <span class="number">512</span>);</span><br><span class="line"></span><br><span class="line">	Mat frame;</span><br><span class="line">     <span class="keyword">while</span> (capture.<span class="built_in">read</span>(frame))</span><br><span class="line">	&#123;</span><br><span class="line">		<span class="type">char</span> key = <span class="built_in">waitKey</span>(<span class="number">100</span>);</span><br><span class="line">		<span class="keyword">if</span> (key == <span class="number">27</span>) <span class="comment">// Esc 退出</span></span><br><span class="line">			<span class="keyword">break</span>;</span><br><span class="line"></span><br><span class="line">		<span class="keyword">if</span> (key == <span class="string">&#x27; &#x27;</span>) <span class="comment">// 空格截取图像并识别</span></span><br><span class="line">		&#123;</span><br><span class="line">			<span class="type">clock_t</span> StartTime = <span class="built_in">clock</span>();</span><br><span class="line">			Mat processed_frame;</span><br><span class="line">			<span class="built_in">flip</span>(frame, processed_frame, <span class="number">0</span>);</span><br><span class="line"></span><br><span class="line">			<span class="type">int</span> result = <span class="built_in">GestureClassify</span>(ann, processed_frame);		<span class="comment">// 预测结果</span></span><br><span class="line">			cout &lt;&lt; <span class="string">&quot;预测手势是: &quot;</span> &lt;&lt; result &lt;&lt; endl;</span><br><span class="line"></span><br><span class="line">			<span class="type">char</span> str[<span class="number">20</span>];</span><br><span class="line">			<span class="built_in">sprintf_s</span>(str, <span class="string">&quot;Gesture: %d&quot;</span>, result);</span><br><span class="line">			string text = str;</span><br><span class="line">			<span class="built_in">putText</span>(processed_frame, text, <span class="built_in">Point</span>(<span class="number">20</span>, <span class="number">30</span>), FONT_HERSHEY_SIMPLEX, <span class="number">1</span>, <span class="built_in">Scalar</span>(<span class="number">255</span>, <span class="number">255</span>, <span class="number">0</span>), <span class="number">2</span>, <span class="number">8</span>);</span><br><span class="line">			<span class="built_in">imshow</span>(<span class="string">&quot;processed_frame&quot;</span>, processed_frame);</span><br><span class="line">			cout &lt;&lt; <span class="string">&quot;Each Frame Wastes Time: &quot;</span> &lt;&lt; <span class="built_in">clock</span>() - StartTime &lt;&lt; endl;</span><br><span class="line">		&#125;</span><br><span class="line">		<span class="built_in">imshow</span>(<span class="string">&quot;frame&quot;</span>, frame);</span><br><span class="line">	&#125;</span><br><span class="line">    capture.<span class="built_in">release</span>();</span><br><span class="line">	<span class="built_in">waitKey</span>(<span class="number">0</span>);</span><br><span class="line">	<span class="built_in">destroyAllWindows</span>();</span><br><span class="line">	<span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="结果图">结果图</h2>
+<p><img src="result.png" alt="result.png"></p>
+<p>每个手势样本只有 10 个，训练集准确率还有 0.96，还是不错的，不过这样的话重新拍照手势进行识别时，对测试图像的拍摄要求就相对高一些，要想使得识别更具有泛化性，还需要更多的训练样本进行训练。</p>
+<h2 id="结语">结语</h2>
+<p>本文使用 Opencv 实现一个简单的手势识别，该项目值得优化的地方还有很多，比如增加训练样本、修改网络参数、对代码进行优化减少识别时间等等。</p>
+<p>主要步骤有：获取手部轮廓、计算傅里叶描述子、训练 ANN_MLP 网络、预测结果及识别效果显示。</p>
+<h2 id="参考资料">参考资料</h2>
+<blockquote>
+<p><a target="_blank" rel="noopener" href="https://blog.csdn.net/qq_42884797/article/details/110917941">基于OPENCV的手势识别技术_opencv手势识别_Lingyoha的博客-CSDN博客</a></p>
+<p><a target="_blank" rel="noopener" href="https://blog.csdn.net/didi_ya/article/details/114256766">OpenCV之傅里叶描述子特征构建（Fourier Descriptor）_opencv 傅里叶描述子_wendy_ya的博客-CSDN博客</a></p>
+<p><a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/101262148">【OpenCV 4开发详解】保存和读取XML和YMAL文件 - 知乎 (zhihu.com)</a></p>
+</blockquote>
+</article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta">文章作者: </span><span class="post-copyright-info"><a href="obito.top">Obito</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta">文章链接: </span><span class="post-copyright-info"><a href="http://www.obito.top/2023/08/14/%E5%9F%BA%E4%BA%8EOpencv%E7%9A%84%E6%89%8B%E5%8A%BF%E8%AF%86%E5%88%AB/">http://www.obito.top/2023/08/14/基于Opencv的手势识别/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta">版权声明: </span><span class="post-copyright-info">本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">CC BY-NC-SA 4.0</a> 许可协议。转载请注明来自 <a href="http://www.obito.top" target="_blank">Obito Blog</a>！</span></div></div><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/opencv/">opencv</a></div><div class="post_share"><div class="social-share" data-image="/img/scenery_03.jpg" data-sites="facebook,twitter,wechat,weibo,qq"></div><link rel="stylesheet" href="/pluginsSrc/butterfly-extsrc/sharejs/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="/pluginsSrc/butterfly-extsrc/sharejs/dist/js/social-share.min.js" defer></script></div></div><nav class="pagination-post" id="pagination"><div class="prev-post pull-left"><a href="/2023/08/17/Windows%E4%BD%BF%E7%94%A8Docker%E8%AE%BF%E9%97%AEChatGPT/" title="Windows使用Docker访问ChatGPT"><img class="cover" src="/img/scenery_11.jpg" onerror="onerror=null;src='/img/error.png'" alt="cover of previous post"><div class="pagination-info"><div class="label">上一篇</div><div class="prev_info">Windows使用Docker访问ChatGPT</div></div></a></div><div class="next-post pull-right"><a href="/2023/08/11/%E5%9F%BA%E4%BA%8EOpencv%E7%9A%84%E4%BA%BA%E4%BD%93%E8%82%A4%E8%89%B2%E6%A3%80%E6%B5%8B/" title="基于Opencv的人体肤色检测"><img class="cover" src="/img/scenery_01.webp" onerror="onerror=null;src='/img/error.png'" alt="cover of next post"><div class="pagination-info"><div class="label">下一篇</div><div class="next_info">基于Opencv的人体肤色检测</div></div></a></div></nav><div class="relatedPosts"><div class="headline"><i class="fas fa-thumbs-up fa-fw"></i><span>相关推荐</span></div><div class="relatedPosts-list"><div><a href="/2023/08/10/%E5%9F%BA%E4%BA%8EHarrcascades%E7%9A%84%E4%BA%BA%E8%84%B8%E8%AF%86%E5%88%AB/" title="基于Harrcascades的人脸识别"><img class="cover" src="/img/scenery_11.jpg" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2023-08-10</div><div class="title">基于Harrcascades的人脸识别</div></div></a></div><div><a href="/2023/08/11/%E5%9F%BA%E4%BA%8EOpencv%E7%9A%84%E4%BA%BA%E4%BD%93%E8%82%A4%E8%89%B2%E6%A3%80%E6%B5%8B/" title="基于Opencv的人体肤色检测"><img class="cover" src="/img/scenery_01.webp" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2023-08-11</div><div class="title">基于Opencv的人体肤色检测</div></div></a></div><div><a href="/2023/08/09/%E5%9F%BA%E4%BA%8EOpencv%E7%9A%84%E5%BD%A2%E7%8A%B6%E8%AF%86%E5%88%AB/" title="基于Opencv的形状识别"><img class="cover" src="/img/scenery_11.jpg" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2023-08-09</div><div class="title">基于Opencv的形状识别</div></div></a></div><div><a href="/2023/08/01/%E5%9F%BA%E4%BA%8EOpencv%E7%9A%84%E8%BD%A6%E9%81%93%E7%BA%BF%E6%A3%80%E6%B5%8B/" title="基于Opencv的车道线检测"><img class="cover" src="/2023/08/01/%E5%9F%BA%E4%BA%8EOpencv%E7%9A%84%E8%BD%A6%E9%81%93%E7%BA%BF%E6%A3%80%E6%B5%8B/scenery_01.webp" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2023-08-01</div><div class="title">基于Opencv的车道线检测</div></div></a></div></div></div><hr class="custom-hr"/><div id="post-comment"><div class="comment-head"><div class="comment-headline"><i class="fas fa-comments fa-fw"></i><span> 评论</span></div></div><div class="comment-wrap"><div><div id="twikoo-wrap"></div></div></div></div></div><div class="aside-content" id="aside-content"><div class="card-widget card-info"><div class="is-center"><div class="avatar-img"><img src="/img/head.jpg" onerror="this.onerror=null;this.src='/null'" alt="avatar"/></div><div class="author-info__name">Obito</div><div class="author-info__description">保持初心</div></div><div class="card-info-data site-data is-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">43</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">13</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">13</div></a></div><a id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/OBITOoaoa"><i class="fab fa-github"></i><span>Follow Me</span></a></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>目录</span><span class="toc-percentage"></span></div><div class="toc-content"><ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%89%8D%E8%A8%80"><span class="toc-text">前言</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%82%A4%E8%89%B2%E6%A3%80%E6%B5%8B"><span class="toc-text">肤色检测</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%9B%B8%E5%85%B3%E4%BB%A3%E7%A0%81"><span class="toc-text">相关代码</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%8E%B7%E5%8F%96%E6%89%8B%E9%83%A8%E8%BD%AE%E5%BB%93%E5%92%8C%E7%89%B9%E5%BE%81"><span class="toc-text">获取手部轮廓和特征</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%82%85%E9%87%8C%E5%8F%B6%E6%8F%8F%E8%BF%B0%E5%AD%90%E7%9A%84%E5%9F%BA%E6%9C%AC%E5%8E%9F%E7%90%86"><span class="toc-text">傅里叶描述子的基本原理</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%9B%B8%E5%85%B3%E4%BB%A3%E7%A0%81"><span class="toc-text">相关代码</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%AE%9E%E9%AA%8C%E5%9B%BE"><span class="toc-text">实验图</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%BB%BA%E7%AB%8B%E7%89%B9%E5%BE%81%E5%BA%93"><span class="toc-text">建立特征库</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%9B%B8%E5%85%B3%E4%BB%A3%E7%A0%81"><span class="toc-text">相关代码</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%AE%AD%E7%BB%83%E7%BD%91%E7%BB%9C"><span class="toc-text">训练网络</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%9B%B8%E5%85%B3%E4%BB%A3%E7%A0%81"><span class="toc-text">相关代码</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E9%A2%84%E6%B5%8B%E7%BB%93%E6%9E%9C"><span class="toc-text">预测结果</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%AE%A1%E7%AE%97%E8%AE%AD%E7%BB%83%E9%9B%86%E5%87%86%E7%A1%AE%E7%8E%87"><span class="toc-text">计算训练集准确率</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%BB%E5%87%BD%E6%95%B0%E4%BB%A3%E7%A0%81"><span class="toc-text">主函数代码</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%BB%93%E6%9E%9C%E5%9B%BE"><span class="toc-text">结果图</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%BB%93%E8%AF%AD"><span class="toc-text">结语</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%8F%82%E8%80%83%E8%B5%84%E6%96%99"><span class="toc-text">参考资料</span></a></li></ol></div></div></div></div></main><footer id="footer" style="background-image: url('/img/scenery_03.jpg')"><div id="footer-wrap"><div class="copyright">&copy;2020 - 2024 By Obito</div><div class="framework-info"><span>框架 </span><a target="_blank" rel="noopener" href="https://hexo.io">Hexo</a><span class="footer-separator">|</span><span>主题 </span><a target="_blank" rel="noopener" href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly</a></div><div class="footer_custom_text">I wish you to become your own sun, no need to rely on who's light.</div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="阅读模式"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="浅色和深色模式转换"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="单栏和双栏切换"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside_config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="目录"><i class="fas fa-list-ul"></i></button><a id="to_comment" href="#post-comment" title="直达评论"><i class="fas fa-comments"></i></a><button id="go-up" type="button" title="回到顶部"><span class="scroll-percent"></span><i class="fas fa-arrow-up"></i></button><button id="go-down" type="button" title="直达底部" onclick="btf.scrollToDest(document.body.scrollHeight, 500)"><i class="fas fa-arrow-down"></i></button></div></div><div id="rightMenu"><div class="rightMenu-group rightMenu-small"><a class="rightMenu-item" href="javascript:window.history.back();"><i class="fa-solid fa-arrow-left"></i></a><a class="rightMenu-item" href="javascript:window.location.reload();"><i class="fa-solid fa-arrow-rotate-right"></i></a><a class="rightMenu-item" href="javascript:window.history.forward();"><i class="fa-solid fa-arrow-right"></i></a><a class="rightMenu-item" id="menu-radompage" href="javascript:window.location.href = window.location.origin;"><i class="fa-solid fa-house"></i></a></div><div class="rightMenu-group rightMenu-line hide" id="menu-text"><a class="rightMenu-item" href="javascript:rmf.copySelect();"><i class="fa-solid fa-copy"></i><span>复制</span></a></div><div class="rightMenu-group rightMenu-line"><a class="rightMenu-item" href="javascript:rmf.switchDarkMode();"><i class="fa-solid fa-circle-half-stroke"></i><span>昼夜切换</span></a><a class="rightMenu-item" href="javascript:toRandomPost();"><i class="fa-solid fa-bus"></i><span>随便逛逛</span></a><a class="rightMenu-item" href="javascript:rmf.switchReadMode();"><i class="fa-solid fa-book"></i><span>阅读模式</span></a><a class="rightMenu-item" href="javascript:window.location.href = window.location.origin + '/archives/';"><i class="fa-solid fa-archive"></i><span>文章归档</span></a><a class="rightMenu-item" href="javascript:window.location.href = window.location.origin + '/categories/';"><i class="fa-solid fa-folder-open"></i><span>文章分类</span></a><a class="rightMenu-item" href="javascript:window.location.href = window.location.origin + '/tags/';"><i class="fa-solid fa-tags"></i><span>文章标签</span></a><a class="rightMenu-item" href="javascript:window.location.href = window.location.origin + '/about-website/';"><i class="fa-solid fa-envelope-open-text"></i><span>网站声明</span></a></div></div><div><script src="/js/utils.js"></script><script src="/js/main.js"></script><script src="/pluginsSrc/@fancyapps/ui/dist/fancybox/fancybox.umd.js"></script><div class="js-pjax"><script>(()=>{
+  const init = () => {
+    twikoo.init(Object.assign({
+      el: '#twikoo-wrap',
+      envId: 'https://twikoo.obito.top/',
+      region: '',
+      onCommentLoaded: function () {
+        btf.loadLightbox(document.querySelectorAll('#twikoo .tk-content img:not(.tk-owo-emotion)'))
+      }
+    }, null))
+  }
+
+  const getCount = () => {
+    const countELement = document.getElementById('twikoo-count')
+    if(!countELement) return
+    twikoo.getCommentsCount({
+      envId: 'https://twikoo.obito.top/',
+      region: '',
+      urls: [window.location.pathname],
+      includeReply: false
+    }).then(function (res) {
+      countELement.textContent = res[0].count
+    }).catch(function (err) {
+      console.error(err);
+    });
+  }
+
+  const runFn = () => {
+    init()
+    
+  }
+
+  const loadTwikoo = () => {
+    if (typeof twikoo === 'object') {
+      setTimeout(runFn,0)
+      return
+    } 
+    getScript('/pluginsSrc/twikoo/dist/twikoo.all.min.js').then(runFn)
+  }
+
+  if ('Twikoo' === 'Twikoo' || !true) {
+    if (true) btf.loadComment(document.getElementById('twikoo-wrap'), loadTwikoo)
+    else loadTwikoo()
+  } else {
+    window.loadOtherComment = () => {
+      loadTwikoo()
+    }
+  }
+})()</script></div><canvas id="universe"></canvas><script src="/js/universe.js"></script><script defer src="https://npm.elemecdn.com/jquery@latest/dist/jquery.min.js"></script><script src="/js/rightmenu.js"></script><script async src="/js/fps.js"></script><script src="/random.js"></script><script id="click-heart" src="/pluginsSrc/butterfly-extsrc/dist/click-heart.min.js" async="async" mobile="false"></script><script src="/pluginsSrc/pjax/pjax.min.js"></script><script>let pjaxSelectors = ["head > title","#config-diff","#body-wrap","#rightside-config-hide","#rightside-config-show",".js-pjax"]
+
+var pjax = new Pjax({
+  elements: 'a:not([target="_blank"])',
+  selectors: pjaxSelectors,
+  cacheBust: false,
+  analytics: false,
+  scrollRestoration: false
+})
+
+document.addEventListener('pjax:send', function () {
+
+  // removeEventListener scroll 
+  window.tocScrollFn && window.removeEventListener('scroll', window.tocScrollFn)
+  window.scrollCollect && window.removeEventListener('scroll', scrollCollect)
+
+  document.getElementById('rightside').style.cssText = "opacity: ''; transform: ''"
+  
+  if (window.aplayers) {
+    for (let i = 0; i < window.aplayers.length; i++) {
+      if (!window.aplayers[i].options.fixed) {
+        window.aplayers[i].destroy()
+      }
+    }
+  }
+
+  typeof typed === 'object' && typed.destroy()
+
+  //reset readmode
+  const $bodyClassList = document.body.classList
+  $bodyClassList.contains('read-mode') && $bodyClassList.remove('read-mode')
+
+  typeof disqusjs === 'object' && disqusjs.destroy()
+})
+
+document.addEventListener('pjax:complete', function () {
+  window.refreshFn()
+
+  document.querySelectorAll('script[data-pjax]').forEach(item => {
+    const newScript = document.createElement('script')
+    const content = item.text || item.textContent || item.innerHTML || ""
+    Array.from(item.attributes).forEach(attr => newScript.setAttribute(attr.name, attr.value))
+    newScript.appendChild(document.createTextNode(content))
+    item.parentNode.replaceChild(newScript, item)
+  })
+
+  GLOBAL_CONFIG.islazyload && window.lazyLoadInstance.update()
+
+  typeof panguInit === 'function' && panguInit()
+
+  // google analytics
+  typeof gtag === 'function' && gtag('config', '', {'page_path': window.location.pathname});
+
+  // baidu analytics
+  typeof _hmt === 'object' && _hmt.push(['_trackPageview',window.location.pathname]);
+
+  typeof loadMeting === 'function' && document.getElementsByClassName('aplayer').length && loadMeting()
+
+  // prismjs
+  typeof Prism === 'object' && Prism.highlightAll()
+})
+
+document.addEventListener('pjax:error', (e) => {
+  if (e.request.status === 404) {
+    pjax.loadUrl('/404.html')
+  }
+})</script><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script></div><!-- hexo injector body_end start --><script data-pjax>
+  function butterfly_clock_anzhiyu_injector_config(){
+    var parent_div_git = document.getElementsByClassName('sticky_layout')[0];
+    var item_html = '<div class="card-widget card-clock"><div class="card-glass"><div class="card-background"><div class="card-content"><div id="hexo_electric_clock"><img class="entered loading" id="card-clock-loading" src="https://cdn.cbd.int/hexo-butterfly-clock-anzhiyu/lib/loading.gif" style="height: 120px; width: 100%;" data-ll-status="loading"/></div></div></div></div></div>';
+    console.log('已挂载butterfly_clock_anzhiyu')
+    if(parent_div_git) {
+      parent_div_git.insertAdjacentHTML("afterbegin",item_html)
+    }
+  }
+  var elist = 'null'.split(',');
+  var cpage = location.pathname;
+  var epage = '/';
+  var qweather_key = 'b16a1fa0e63c46a4b8f28abfb06ae3fe';
+  var gaud_map_key = 'e2b04289e870b005374ee030148d64fd&s=rsv3';
+  var baidu_ak_key = 'undefined';
+  var flag = 0;
+  var clock_rectangle = '113.34532,23.15624';
+  var clock_default_rectangle_enable = 'false';
+
+  for (var i=0;i<elist.length;i++){
+    if (cpage.includes(elist[i])){
+      flag++;
+    }
+  }
+
+  if ((epage ==='all')&&(flag == 0)){
+    butterfly_clock_anzhiyu_injector_config();
+  }
+  else if (epage === cpage){
+    butterfly_clock_anzhiyu_injector_config();
+  }
+  </script><script src="https://widget.qweather.net/simple/static/js/he-simple-common.js?v=2.0"></script><script data-pjax src="https://cdn.cbd.int/hexo-butterfly-clock-anzhiyu/lib/clock.min.js"></script><!-- hexo injector body_end end --></body></html>
