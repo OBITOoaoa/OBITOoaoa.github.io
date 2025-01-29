@@ -1,10 +1,12 @@
+http://www.obito.top/2024/03/04/%E8%8A%AF%E7%89%87%E7%9B%B8%E5%85%B3%E5%90%8D%E8%AF%8D/
+http://www.obito.top/2024/03/04/ROM-RAM-FLASH/
+http://www.obito.top/2024/12/30/Git%E7%9A%84%E4%BD%BF%E7%94%A8%E5%8F%8A%E5%87%BA%E7%8E%B0%E7%9A%84%E9%97%AE%E9%A2%98/
 http://www.obito.top/2024/12/26/%E6%9C%AC%E5%9C%B0%E5%AE%89%E8%A3%85MySQL%E6%95%B0%E6%8D%AE%E5%BA%93%E4%BB%A5%E5%8F%8A%E5%9C%A8Qt%E4%B8%AD%E7%9A%84%E4%BD%BF%E7%94%A8/
 http://www.obito.top/2024/12/21/%E9%87%8D%E8%A3%85%E7%B3%BB%E7%BB%9F%E5%90%8E%E9%87%8D%E6%96%B0%E9%85%8D%E7%BD%AEhexo%E5%92%8Cdocsify%E7%8E%AF%E5%A2%83/
 http://www.obito.top/2024/12/21/Qt-Android%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA/
 http://www.obito.top/2024/07/22/%E4%BD%BF%E7%94%A8EMQX%E6%90%AD%E5%BB%BAMQTT%E6%9C%8D%E5%8A%A1%E5%99%A8/
 http://www.obito.top/2024/09/25/%E6%90%AD%E5%BB%BATeamSpeak%E6%9C%8D%E5%8A%A1%E5%99%A8/
 http://www.obito.top/2024/08/24/Linux%E5%86%85%E6%A0%B8%E9%94%81%E6%9C%BA%E5%88%B6/
-http://www.obito.top/2024/03/04/ROM-RAM-FLASH/
 http://www.obito.top/2024/08/11/Linux-V4L2-USB-Camera/
 http://www.obito.top/2024/07/07/Linux-%E8%A7%A6%E6%91%B8%E5%B1%8F%E9%A9%B1%E5%8A%A8/
 http://www.obito.top/2024/06/28/Linux-SPI-ICM20608/
@@ -24,7 +26,6 @@ http://www.obito.top/2024/06/18/%E5%9F%BA%E4%BA%8EIIC%E7%9A%84OLED%E9%A9%B1%E5%8
 http://www.obito.top/2023/05/08/%E7%A1%AC%E4%BB%B6%E9%80%9A%E8%AE%AF%E5%8D%8F%E8%AE%AE/
 http://www.obito.top/2023/05/19/%E5%B5%8C%E5%85%A5%E5%BC%8F%E5%AE%9E%E4%B9%A0/
 http://www.obito.top/2024/03/05/%E4%B8%96%E7%95%8C%E4%B8%8A%E6%9C%80%E7%A5%9E%E5%A5%87%E7%9A%8460%E4%B8%AA%E7%BB%8F%E5%85%B8%E5%AE%9A%E5%BE%8B/
-http://www.obito.top/2024/03/04/%E8%8A%AF%E7%89%87%E7%9B%B8%E5%85%B3%E5%90%8D%E8%AF%8D/
 http://www.obito.top/2023/08/09/%E5%9F%BA%E4%BA%8EOpencv%E7%9A%84%E5%BD%A2%E7%8A%B6%E8%AF%86%E5%88%AB/
 http://www.obito.top/notes/index.html
 http://www.obito.top/2023/09/10/%E5%88%B7%E8%B7%AF%E7%94%B1%E5%99%A8%E6%B5%81%E7%A8%8B/
@@ -75,5 +76,5 @@ http://www.obito.top/categories/%E5%9B%BE%E5%83%8F%E5%A4%84%E7%90%86/
 http://www.obito.top/categories/%E8%B7%AF%E7%94%B1%E5%99%A8/Openwrt/
 http://www.obito.top/categories/%E5%9B%BE%E5%83%8F%E5%A4%84%E7%90%86/opencv/
 http://www.obito.top/categories/%E7%A1%AC%E4%BB%B6/
-http://www.obito.top/categories/%E5%B5%8C%E5%85%A5%E5%BC%8F/stm32/
 http://www.obito.top/categories/%E7%A1%AC%E4%BB%B6/%E7%84%8A%E6%8E%A5/
+http://www.obito.top/categories/%E5%B5%8C%E5%85%A5%E5%BC%8F/stm32/
