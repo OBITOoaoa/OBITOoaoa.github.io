@@ -536,13 +536,6 @@
   </url>
   
   <url>
-    <loc>http://www.obito.top/tags/Docker/</loc>
-    <lastmod>2025-08-08</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.2</priority>
-  </url>
-  
-  <url>
     <loc>http://www.obito.top/tags/%E8%99%9A%E6%8B%9F%E6%9C%BA/</loc>
     <lastmod>2025-08-08</lastmod>
     <changefreq>weekly</changefreq>
@@ -551,6 +544,13 @@
   
   <url>
     <loc>http://www.obito.top/tags/Ubuntu/</loc>
+    <lastmod>2025-08-08</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
+    <loc>http://www.obito.top/tags/Docker/</loc>
     <lastmod>2025-08-08</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
@@ -629,14 +629,14 @@
   </url>
   
   <url>
-    <loc>http://www.obito.top/categories/Docker/</loc>
+    <loc>http://www.obito.top/categories/Linux/</loc>
     <lastmod>2025-08-08</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
   </url>
   
   <url>
-    <loc>http://www.obito.top/categories/Linux/</loc>
+    <loc>http://www.obito.top/categories/Docker/</loc>
     <lastmod>2025-08-08</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
